@@ -18,6 +18,10 @@ namespace PhotoManager {
 
         public DBHandler(string workingdirectory) {
             currentworkingdirectory = workingdirectory;
+            //MessageBox.Show(currentworkingdirectory);
+
+            //connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename="+currentworkingdirectory+@"\Database.mdf;Integrated Security=True";
+
             connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename=C:\Users\Henk\Source\Repos\indexmyphotos\PhotoManager\PhotoManager\Database.mdf;Integrated Security=True";
             //connection = "Data Source=(LocalDB)\\v13.0;AttachDbFilename=D:\\Dokumente\\Source\\Repos\\PHviee\\phviewer\\phviewer\\Database.mdf;Integrated Security=True";
             createTable();
@@ -121,6 +125,32 @@ namespace PhotoManager {
                 con.Open();
                 try {
                     using (SqlCommand command = new SqlCommand("SELECT * FROM imgdb", con)) {
+                        ;
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read()) {
+                            Image img = new Image(reader.GetGuid(0).ToString(), reader.GetString(2));
+                            string location = reader.GetString(3);
+                            string tags = reader.GetString(4);
+                            DateTime date = reader.GetDateTime(5);
+                            string description = reader.GetString(6);
+                            img.setTags(date, location, description, tags);
+                            imagelist.Add(img);
+                        }
+                    }
+                } catch {
+                    Debug.WriteLine("Error loading");
+                }
+                con.Close();
+            }
+            return imagelist;
+        }
+
+        public List<Image> matchSearchQuery(string like) {
+            List<Image> imagelist = new List<Image>();
+            using (SqlConnection con = new SqlConnection(connection)) {
+                con.Open();
+                try {
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM imgdb WHERE tags LIKE '" + like + "'", con)) {
                         ;
                         SqlDataReader reader = command.ExecuteReader();
                         while (reader.Read()) {

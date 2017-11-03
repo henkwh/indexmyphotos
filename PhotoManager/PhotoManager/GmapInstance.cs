@@ -71,9 +71,9 @@ namespace PhotoManager {
         }
 
         public void removeMarkers() {
-            //Overlays.Remove(overlay);
-            //overlay.Markers.Clear();
-            //Overlays.Add(overlay);
+            Overlays.Remove(overlay);
+            overlay.Markers.Clear();
+            Overlays.Add(overlay);
         }
 
         public void setEditMode(bool editMode) {

@@ -36,7 +36,9 @@ namespace PhotoManager {
 
         public Form1() {
             currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
+
             InitializeComponent();
+            
             db = new DBHandler(currentworkingdirectory);
             images = db.loadAll();
             foreach (Image img in images) {
@@ -158,105 +160,31 @@ namespace PhotoManager {
             }
         }
 
-        private void worker_DoWork2(object sender, DoWorkEventArgs e) {
-
-            try {
-                map.removeMarkers();
-                //Get Images matching the request
-                shown = Sorting.sort(tb_search.Text, images);
-                //Invoke and Reset ProgressBar
-                if (pb_loaded.InvokeRequired) {
-                    pb_loaded.BeginInvoke((MethodInvoker)delegate {
-                        pb_loaded.Maximum = shown.Count;
-                        pb_loaded.Value = 0;
-                    });
-                }
-                //Invoke and Reset Label
-                if (label_picturesof.InvokeRequired) {
-                    label_picturesof.BeginInvoke((MethodInvoker)delegate {
-                        label_picturesof.Text = shown.Count + "/" + images.Count;
-                    });
-                }
-
-                int counter = 0;    //Counts the Loops for a delay so the main thread may refresh the Interface
-                foreach (Image i in shown) {
-                    if (counter > 5) {
-                        Thread.Sleep(50);
-                        counter = 0;
-                    }
-                    if (i.getPreview() == null) {   //No Preview Icon so far
-                        try {
-                            Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, i.getName() + i.getFileType());
-                            i.setPreview(bmp);
-                            i.Size = bmp.Size;
-                            i.Image = bmp;
-                        } catch {
-                            Sorting.addMessage("Error creating Preview for file: " + i.getName(), i);
-                        }
-                    } else if (Math.Max(i.Size.Height, i.Size.Width) != ImageGenerator.SIZE) {
-                        panel_overview.BeginInvoke((MethodInvoker)delegate {
-                            i.Size = ImageGenerator.genSize(i);
-                        });
-
-                    }
-
-                    if (!i.getLocation().Equals("")) {          //No Location set -> No marker
-                        map.addMarker(i.getLocation(), i.getPreview());
-                    }
-
-                    if (panel_overview.InvokeRequired) {    //Invoke main panel to add Preview Icon
-                        panel_overview.BeginInvoke((MethodInvoker)delegate {
-                            panel_overview.Controls.Add(i);
-                            panel_overview.Refresh();
-                        });
-                    } else {
-                        panel_overview.Controls.Add(i);
-                    }
-                    if (pb_loaded.InvokeRequired) {
-                        pb_loaded.BeginInvoke((MethodInvoker)delegate {
-                            pb_loaded.Value++;
-                        });
-                    }
-                    counter++;
-                    if (e.Cancel || worker.CancellationPending) {   //Abort Worker
-                        Debug.WriteLine("Exit");
-                        break;
-                    }
-                }
-            } catch {
-                MessageBox.Show("Error: Restarting Worker");
-            }
-
-            if (panel_overview.InvokeRequired) {        //Invoke main panel to refresh the UI
-                panel_overview.BeginInvoke((MethodInvoker)delegate {
-                    panel_overview.Refresh();
-                    panel_overview.Update();
-                });
-                Thread.Sleep(10);   //10 ms sleep before a new worker can be created
-            }
-        }
-
-
+      
         private void worker_DoWork(object sender, DoWorkEventArgs e) {
             try {
                 map.removeMarkers();
                 //Get Images matching the request
                 shown = Sorting.sort(tb_search.Text, images);
+                //shown = db.matchSearchQuery(tb_search.Text);
                 //Invoke and Reset ProgressBar
                 if (InvokeRequired) {
                     BeginInvoke((MethodInvoker)delegate {
-                        pb_loaded.Maximum = shown.Count;
-                        pb_loaded.Value = 0;
-                        label_picturesof.Text = shown.Count + "/" + images.Count;
+                        tsprogressbar.Maximum = shown.Count;
+                        tsprogressbar.Value = 0;
+                        tslabel_picturesof.Text = shown.Count + "/" + images.Count;
                     });
                 }
-
+                ToolTip tt = new ToolTip();
                 int counter = 0;    //Counts the Loops for a delay so the main thread may refresh the Interface
                 foreach (Image i in shown) {
                     /*if (counter > 5) {
                         Thread.Sleep(50);
                         counter = 0;
                     }*/
+
+                    tt.SetToolTip(i, Sorting.getToolTipTextForImage(i));
+
                     if (i.getPreview() == null) {   //No Preview Icon so far
                         try {
                             Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, i.getName() + i.getFileType());
@@ -280,12 +208,12 @@ namespace PhotoManager {
                     if (InvokeRequired) {    //Invoke main panel to add Preview Icon
                         BeginInvoke((MethodInvoker)delegate {
                             panel_overview.Controls.Add(i);
-                            pb_loaded.Value++;
+                            tsprogressbar.Value++;
                             panel_overview.Refresh();
                         });
                     } else {
                         panel_overview.Controls.Add(i);
-                        pb_loaded.Value++;
+                        tsprogressbar.Value++;
                         panel_overview.Refresh();
                     }
 
@@ -323,14 +251,16 @@ namespace PhotoManager {
                     if (ModifierKeys == Keys.Control) {
                         if (multiedit.Contains(i)) {
                             multiedit.Remove(i);
-                            //i.BorderStyle = BorderStyle.None;
-                            i.showBordernot();
+                            i.hideBorder();
                         } else {
                             multiedit.Add(i);
-                            //i.BorderStyle = BorderStyle.Fixed3D;
                             i.showBorder();
                         }
 
+                    } else {
+                        tabControl1.SelectedTab = tabPage_viewer;
+                        pictureBox1.Image = new Bitmap(currentworkingdirectory+dir_full+i.getName()+i.getFileType());
+                        tslabel_description.Text = i.getDescription();
                     }
                 }
             }
@@ -418,7 +348,7 @@ namespace PhotoManager {
                 }
             }
             multiedit.Remove(i);
-            i.showBordernot();
+            i.hideBorder();
             panel_tagedit.Update();
             if (multiedit.Count == 1) {
                 tabControl1_SelectedIndexChanged(multiedit[0], null);
@@ -531,7 +461,7 @@ namespace PhotoManager {
         private void resetMultiedit() {
             foreach (Image i in multiedit) {
                 //i.BorderStyle = BorderStyle.None;
-                i.showBordernot();
+                i.hideBorder();
                 panel_tagedit.Controls.Clear();
             }
             multiedit.Clear();

@@ -84,7 +84,7 @@ namespace PhotoManager{
             BackColor = Color.OrangeRed;
         }
 
-        public void showBordernot() {
+        public void hideBorder() {
             if (BackColor == Color.Transparent) {
                 return;
             }

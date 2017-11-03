@@ -18,77 +18,7 @@ namespace PhotoManager {
         private static string KEYWORD_LOC = "location:";
         private static string KEYWORD_DATE = "date:";
 
-        public static List<Image> sort2(string input, List<Image> imagelist) {
-            if (input.Equals("")) {
-                return imagelist;
-            }
-
-            List<Image> ret = new List<Image>();
-            string[] inputs = input.ToLower().Replace(" ", "").Split(',');
-
-            List<string> add = new List<string>();// inputs.ToList();
-            List<string> subst = new List<string>();
-            List<string> location = new List<string>();
-
-            for (int i = 0; i < add.Count; i++) {
-                bool minus = false;
-                if (add[i].Length > 1 && add[i].ElementAt(0) == '-') {
-                    subst.Add(add[i].Substring(1));
-                    add[i] = add[i].Substring(1);
-                } else if (add[i].Contains("location:") && i < add.Count - 1) {
-                    string orttemp = add[i].Substring(4) + ", " + add[i + 1];
-                    location.Add(orttemp);
-                    add.RemoveAt(i + 1);
-                    add.RemoveAt(i);
-                    minus = true;
-                    if (i >= add.Count) {
-                        break;
-                    }
-                }
-                if (add[i].Length == 0 || add[i].Equals("")) {
-                    add.RemoveAt(i);
-                    minus = true;
-                }
-                //Debug.WriteLine("Gesucht: " + add[i] + " Gültig: " + !minus + " subtrahiert: " + subst.Contains(add[i].Substring(1)));
-                if (minus == true) {
-                    i--;
-                    if (i < 0) {
-                        break;
-                    }
-                }
-            }
-            if (add.Count == 0 && location.Count == 0) {
-                ret = imagelist;
-            }
-
-            foreach (Image i in imagelist) {
-                string tags = i.getTags().ToLower();
-                bool disable = false;
-                foreach (string s in add) {
-                    if (tags.Contains("#" + s + "#")) {
-                        if (!ret.Contains(i)) {
-                            ret.Add(i);
-                        }
-                        if (subst.Contains(s)) {
-                            disable = true;
-                        }
-                    }
-                }
-                foreach (string l in location) {
-                    if (i.getLocation().Equals(l)) {
-                        ret.Add(i);
-                    }
-                }
-
-                if (disable == true) {
-                    ret.Remove(i);
-                }
-            }
-            return ret;
-        }
-
-
-
+       
         public static List<Image> sort(string input, List<Image> imagelist) {
             if (input.Equals("")) {
                 return imagelist;
@@ -145,18 +75,26 @@ namespace PhotoManager {
                 }
                 foreach (string l in location) {
                     if (i.getLocation().Equals(l)) {
-                        Debug.WriteLine("LOC COMP: " + i.getLocation() + "  " + l);
                         ret.Add(i);
                     }
                 }
                 foreach (string d in date) {
                     if (i.getDate().Equals(d)) {
-                        Debug.WriteLine("DATE COMP: " + i.getDate() + "  " + d);
                         ret.Add(i);
                     }
                 }
             }
             return ret;
+        }
+
+
+        public static string getToolTipTextForImage(Image i) {
+            string s = i.getName()+i.getFileType()+"\n";
+            s += "Location: "+i.getLocation()+ "\n";
+            s += "Date: "+i.getDate() +"\n";
+            s += "tags: " + i.getTags() +"\n";
+            s += "Description: " + i.getDescription();
+            return s;
         }
 
 
@@ -205,6 +143,7 @@ namespace PhotoManager {
                 delete.Remove(i);
             }
         }
+
 
         private static TagAlert ta;
         public static bool JoinForAll = false, DisposeForAll = false;
