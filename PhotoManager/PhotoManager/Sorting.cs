@@ -19,16 +19,22 @@ namespace PhotoManager {
         public const string KEYWORD_LOC = "location:";
         public const string KEYWORD_DATE = "date:";
 
-        public const int WORKER_FILL_INTERVAL = 10;
-        public const int WORKER_SLEEP_TIME = 20;
+        public const int WORKER_FILL_INTERVAL = 20;
+        public const int WORKER_SLEEP_TIME = 50;
+
+
+        public const int SCALE_MIN = 50;
+        public const int SCALE_MAX = 200;
+        public const int SCALE_DEF = 100; //SCALE_MIN <= SCALE_DEF <= SCALE_MAX
+        public const int SCALE_TICKS = 5;
 
 
 
-          public static string getToolTipTextForImage(Image i) {
-            string s = i.getName()+i.getFileType()+"\n";
-            s += "Location: "+i.getLocation()+ "\n";
-            s += "Date: "+i.getDate() +"\n";
-            s += "tags: " + i.getTags() +"\n";
+        public static string getToolTipTextForImage(Image i) {
+            string s = i.getName() + i.getFileType() + "\n";
+            s += "Location: " + i.getLocation() + "\n";
+            s += "Date: " + i.getDate() + "\n";
+            s += "tags: " + i.getTags() + "\n";
             s += "Description: " + i.getDescription();
             return s;
         }
@@ -85,7 +91,7 @@ namespace PhotoManager {
         public static bool JoinForAll = false, DisposeForAll = false;
         private static TagAlert.uotnotification isChosenJoin, isChosenDispose;
 
-        public static UpdateParemeters checkInputTags(Image i, string location, string tags, string description, string dt) {//Jahr, Monat, Tag
+        public static UpdateParemeters checkInputTags(Image i, string location, string tags, string description, string dt) {//
             UpdateParemeters up = new UpdateParemeters();
             if (!location.Equals("") && !i.getLocation().Equals("") && !location.Equals(i.getLocation())) {
                 TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getLocation() + "\r\nwith\r\n" + location + "?");
@@ -100,13 +106,12 @@ namespace PhotoManager {
                     up.setLocation("");
                 }
             }
-            bool ImagetagEmptyOrHash = i.getTags().Equals("") || i.getTags().Equals("#");
-            if (tags != null && !tags.Equals("") && !ImagetagEmptyOrHash && !tags.Equals(i.getTags())) {
+            if (tags != null && !tags.Equals("") && !i.getTags().Equals("") && !tags.Equals(i.getTags())) {
                 TagAlert.uotnotification sol = showTagAlert(i, false, "Replace " + i.getTags() + "\r\nwith\r\n" + tags + "?");
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setTags(tags);
                 } else if (sol == TagAlert.uotnotification.JOIN) {
-                    up.setTags(tags+i.getTags());
+                    up.setTags(tags + i.getTags());
                 } else if (sol == TagAlert.uotnotification.ABORT) {
                     return null;
                 }
@@ -130,7 +135,7 @@ namespace PhotoManager {
             }
 
             if (dt != YEAR_STD && i.getDate() != YEAR_STD && dt != i.getDate()) {
-                TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getDate().Substring(6,2) + "." + i.getDate().Substring(4,2) + "." + i.getDate().Substring(0,4) + "\r\nwith\r\n" + dt.Substring(6, 2) + "." + dt.Substring(4, 2) + "." + dt.Substring(0, 4) + "?");
+                TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getDate() + "\r\nwith\r\n" + dt + "?");
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setDateTime(dt);
                 } else if (sol == TagAlert.uotnotification.ABORT) {
@@ -178,7 +183,7 @@ namespace PhotoManager {
             return TagAlert.uotnotification.ABORT;
         }
 
-       
+
         public static string JoinTags(string uno1, string duo2) {
             string[] uno = uno1.Split(',');
             string[] duo = duo2.Split(',');

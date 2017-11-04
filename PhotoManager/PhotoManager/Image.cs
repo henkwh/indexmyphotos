@@ -14,6 +14,8 @@ namespace PhotoManager{
         private string name;
         private string date;
         private string filetype, location, description, tags;
+        private Size size;
+        private PictureBoxSizeMode mode = PictureBoxSizeMode.Zoom;
 
         public Image(string name, string filetype) {
             //date = new DateTime(Sorting.YEAR_STD, 01, 01);
@@ -23,6 +25,7 @@ namespace PhotoManager{
             location = null;
             description = null;
             this.filetype = filetype;
+            SizeMode = mode;
         }
 
         public void setTags(string date, string loc, string desc, string tags) {
@@ -30,7 +33,6 @@ namespace PhotoManager{
             location = loc;
             description = desc;
             this.tags = tags;
-
         }
 
         public void setPreview(Bitmap bmp) {
@@ -41,6 +43,11 @@ namespace PhotoManager{
             if (preview == null) {
                 preview = bmp;
             }
+        }
+
+        public void setSize(int s) {
+            size = new Size(s, s);
+            Size = size;
         }
 
         public string getName() {
@@ -79,9 +86,6 @@ namespace PhotoManager{
             if (BackColor == Color.OrangeRed) {
                 return;
             }
-            SizeMode = PictureBoxSizeMode.CenterImage;
-            Size = Image.Size;
-            Image = ImageGenerator.resizeImage((Bitmap)Image, Math.Max((int)(Image.Size.Width * 0.9), (int)(Image.Size.Height * 0.9)));
             BackColor = Color.OrangeRed;
         }
 
@@ -89,9 +93,7 @@ namespace PhotoManager{
             if (BackColor == Color.Transparent) {
                 return;
             }
-            Image = ImageGenerator.resizeImage((Bitmap)Image, Math.Max(this.Size.Width, this.Size.Height));
             BackColor = Color.Transparent;
-            SizeMode = PictureBoxSizeMode.AutoSize;
         }
 
 

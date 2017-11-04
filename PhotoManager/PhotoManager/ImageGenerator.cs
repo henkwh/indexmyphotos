@@ -57,6 +57,8 @@ namespace PhotoManager {
             return new Bitmap(imgToResize, ret);
         }
 
+
+
         public static Size genSize(Image box) {
             Size ret = new Size();
             if (box.Height > box.Width) {

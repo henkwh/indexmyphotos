@@ -14,7 +14,6 @@ namespace PhotoManager {
 
         private List<string> date;
 
-
         private bool empty;
 
         public SearchQuery(string q) {
@@ -27,7 +26,8 @@ namespace PhotoManager {
         }
 
         public void parseQuery(string q) {
-            empty = (q.Replace(" ", "").Equals("")) ? true : false;
+            empty = (q.Equals("")) ? true : false;
+
             string[] inputs = q.ToLower().Replace(" ", "").Split(',');
             for (int i = 0; i < inputs.Count(); i++) {
                 string s = inputs[i];
@@ -47,11 +47,11 @@ namespace PhotoManager {
         }
 
 
-
         public string getQuery() {
             if (isEmpty()) {
                 return "";
             }
+
             string s = "";
 
             bool insertAND = false;
@@ -78,13 +78,13 @@ namespace PhotoManager {
             c = 0;
             s += (insertAND && date.Count > 0) ? " OR " : "";
             foreach (string keyword in date) {
-                if(keyword.Length < 1) {
+                if (keyword.Length < 1) {
                     continue;
                 }
                 string tempkey = keyword;
                 string restriction = "=";
                 if (keyword[0].Equals('>') || keyword[0].Equals('<')) {
-                    restriction = keyword[0]+restriction;
+                    restriction = keyword[0] + restriction;
                     tempkey = keyword.Substring(1, keyword.Count() - 1);
                 }
                 s += " f.date " + restriction + "'" + tempkey + "'";
@@ -96,12 +96,11 @@ namespace PhotoManager {
             }
 
             c = 0;
-            s += (insertAND && doesnotcontain.Count > 0) ? " AND " : "";
+            s += (insertAND && doesnotcontain.Count > 0) ? " AND f.id NOT IN(SELECT DISTINCT f.id FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE" : "";
             foreach (string keyword in doesnotcontain) {
-                s += " f.id NOT IN(SELECT DISTINCT f.id FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE";
                 s += " t.tag LIKE '" + keyword + "'";
                 if (c != doesnotcontain.Count() - 1) {
-                    s += " AND";
+                    s += " OR";
                 }
                 c++;
                 insertAND = true;

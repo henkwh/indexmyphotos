@@ -140,9 +140,6 @@ namespace PhotoManager {
             Overlays.Remove(overlay);
             //overlay.Markers.Add(new GMarkerGoogle(new PointLatLng(55.0051436, 15.3826013), GMarkerGoogleType.blue));
             Overlays.Add(overlay);
-                BeginInvoke((MethodInvoker)delegate {
-                    Update();
-                });
         }
     }
 }

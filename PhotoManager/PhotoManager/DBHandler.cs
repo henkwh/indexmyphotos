@@ -230,7 +230,7 @@ namespace PhotoManager {
         }
 
 
-        public List<Image> loadAll2(SearchQuery sq) {
+        public List<Image> loadAll(SearchQuery sq) {
             string comm = "SELECT DISTINCT f.id, f.filetype, f.location, f.date, f.description FROM Foto f";
 
             if (sq == null || sq.isEmpty()) {
@@ -250,18 +250,10 @@ namespace PhotoManager {
                         while (reader.Read()) {
                             Image img = new Image(reader.GetGuid(0).ToString(), reader[1] as string);
                             string location = reader[2] as string;
-
-                            Debug.WriteLine("L: " + location + " Bonus3: " + reader[3]);
-
                             string[] date = reader[3].ToString().Split('.');
                             string dateinput = (date.Count() >= 3) ? date[2].Substring(0, 4) + date[1] + date[0] : Sorting.YEAR_STD;
-
-
-                            Debug.WriteLine("D: " + date + " / " + dateinput);
-
                             string description = reader[4] as string;
                             Debug.WriteLine(description + "");
-
                             img.setTags(dateinput, location, description, "");
                             loadinglist.Add(img);
                         }
