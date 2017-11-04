@@ -11,84 +11,20 @@ using System.Windows.Forms;
 namespace PhotoManager {
     static class Sorting {
 
-        public static int YEAR_STD = 1777, YEAR_ERR = 1776;
+        public const string YEAR_STD = "17770101", YEAR_ERR = "1776";
         public static string Message = "";
         public static List<Image> delete = new List<Image>();
 
-        private static string KEYWORD_LOC = "location:";
-        private static string KEYWORD_DATE = "date:";
+        //Identify extendsd commands in search
+        public const string KEYWORD_LOC = "location:";
+        public const string KEYWORD_DATE = "date:";
 
-       
-        public static List<Image> sort(string input, List<Image> imagelist) {
-            if (input.Equals("")) {
-                return imagelist;
-            }
-
-            List<Image> ret = new List<Image>();
-            string[] inputs = input.ToLower().Replace(" ", "").Split(',');
-            List<string> add = new List<string>();// inputs.ToList();
-            List<string> subst = new List<string>();
-            List<string> location = new List<string>();
-            List<string> date = new List<string>();
-
-            for (int i = 0; i < inputs.Count(); i++) {
-                string s = inputs[i];
-                if (s.StartsWith(KEYWORD_LOC) && i + 1 < inputs.Count()) {
-                    string joinedloc = s.Substring(KEYWORD_LOC.Count()) + ", " + inputs[i + 1];
-                    location.Add(joinedloc);
-                    i++;
-                } else if (s.StartsWith(KEYWORD_DATE)) {
-                    string tmpdate = s.Substring(KEYWORD_DATE.Count());
-                    date.Add(tmpdate);
-                } else if (s.StartsWith("-")) {
-                    subst.Add(s.Substring(1));
-                } else if (!s.Equals("")) {
-                    add.Add(s);
-                }
-            }
-
-            if (add.Count == 0 && location.Count == 0 && date.Count == 0) {
-                ret = imagelist;
-            }
-
-            foreach (Image i in imagelist) {
-                string tags = i.getTags().ToLower();
-
-                bool canceliteration = false;
-                foreach (string s in subst) {
-                    if (tags.Contains("#" + s + "#")) {
-                        canceliteration = true;
-                        break;
-                    }
-                }
-                if (canceliteration) {
-                    continue;
-                }
+        public const int WORKER_FILL_INTERVAL = 10;
+        public const int WORKER_SLEEP_TIME = 20;
 
 
-                foreach (string s in add) {
-                    if (tags.Contains("#" + s + "#")) {
-                        if (!ret.Contains(i)) {
-                            ret.Add(i);
-                        }
-                    }
-                }
-                foreach (string l in location) {
-                    if (i.getLocation().Equals(l)) {
-                        ret.Add(i);
-                    }
-                }
-                foreach (string d in date) {
-                    if (i.getDate().Equals(d)) {
-                        ret.Add(i);
-                    }
-                }
-            }
-            return ret;
-        }
 
-
-        public static string getToolTipTextForImage(Image i) {
+          public static string getToolTipTextForImage(Image i) {
             string s = i.getName()+i.getFileType()+"\n";
             s += "Location: "+i.getLocation()+ "\n";
             s += "Date: "+i.getDate() +"\n";
@@ -149,7 +85,7 @@ namespace PhotoManager {
         public static bool JoinForAll = false, DisposeForAll = false;
         private static TagAlert.uotnotification isChosenJoin, isChosenDispose;
 
-        public static UpdateParemeters checkInputTags(Image i, string location, string tags, string description, DateTime dt) {//Jahr, Monat, Tag
+        public static UpdateParemeters checkInputTags(Image i, string location, string tags, string description, string dt) {//Jahr, Monat, Tag
             UpdateParemeters up = new UpdateParemeters();
             if (!location.Equals("") && !i.getLocation().Equals("") && !location.Equals(i.getLocation())) {
                 TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getLocation() + "\r\nwith\r\n" + location + "?");
@@ -170,15 +106,12 @@ namespace PhotoManager {
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setTags(tags);
                 } else if (sol == TagAlert.uotnotification.JOIN) {
-                    up.setTags(JoinTags(tags, i.getTags()));
+                    up.setTags(tags+i.getTags());
                 } else if (sol == TagAlert.uotnotification.ABORT) {
                     return null;
                 }
             } else if (tags != null && !tags.Equals("")) {
                 up.setTags(tags);
-                if (tags.Equals("#")) {
-                    up.setTags("");
-                }
             }
             if (!description.Equals("") && !i.getDescription().Equals("") && !description.Equals(i.getDescription())) {
                 TagAlert.uotnotification sol = showTagAlert(i, false, "Replace " + i.getDescription() + "\r\nwith\r\n" + description + "?");
@@ -196,14 +129,14 @@ namespace PhotoManager {
                 }
             }
 
-            if (dt.Year != YEAR_STD && i.getDate().Year != YEAR_STD && dt != i.getDate()) {
-                TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getDate().Day + "." + i.getDate().Month + "." + i.getDate().Year + "\r\nwith\r\n" + dt.Day + "." + dt.Month + "." + dt.Year + "?");
+            if (dt != YEAR_STD && i.getDate() != YEAR_STD && dt != i.getDate()) {
+                TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getDate().Substring(6,2) + "." + i.getDate().Substring(4,2) + "." + i.getDate().Substring(0,4) + "\r\nwith\r\n" + dt.Substring(6, 2) + "." + dt.Substring(4, 2) + "." + dt.Substring(0, 4) + "?");
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setDateTime(dt);
                 } else if (sol == TagAlert.uotnotification.ABORT) {
                     return null;
                 }
-            } else if (dt.Year != YEAR_STD) {
+            } else if (dt != YEAR_STD) {
                 up.setDateTime(dt);
             }
             return up;
@@ -245,40 +178,14 @@ namespace PhotoManager {
             return TagAlert.uotnotification.ABORT;
         }
 
-        public static DateTime DateTimeIn(string[] datetime) {
-            int[] conv = new int[3];
-            if (datetime[0].Equals("") || datetime[0].Equals(" ")) {
-                return new DateTime(YEAR_STD, 1, 1);
-            }
-            if (!datetime[0].Equals("") && datetime[1].Equals("") && datetime[2].Equals("")) {
-                try {
-                    conv[0] = Convert.ToInt32(datetime[0]);
-                    conv[1] = 1;
-                    conv[2] = 1;
-                } catch {
-                    return new DateTime(YEAR_ERR, 1, 1);
-                }
-            } else {
-
-
-                try {
-                    conv[0] = Convert.ToInt32(datetime[0]);
-                    conv[1] = Convert.ToInt32(datetime[1]);
-                    conv[2] = Convert.ToInt32(datetime[2]);
-                } catch {
-                    return new DateTime(YEAR_ERR, 1, 1);
-                }
-            }
-            return new DateTime(conv[0], conv[1], conv[2]);
-        }
-
+       
         public static string JoinTags(string uno1, string duo2) {
-            string[] uno = uno1.Split('#');
-            string[] duo = duo2.Split('#');
-            string ret = "#";
+            string[] uno = uno1.Split(',');
+            string[] duo = duo2.Split(',');
+            string ret = "";
             foreach (string u in uno) {
                 if (!u.Equals("")) {
-                    ret += u + "#";
+                    ret += u + ",";
                 }
             }
             foreach (string d in duo) {
@@ -290,7 +197,7 @@ namespace PhotoManager {
                     }
                 }
                 if (add == true) {
-                    ret += d + "#";
+                    ret += d + ",";
                 }
             }
             return ret;
@@ -299,9 +206,9 @@ namespace PhotoManager {
 
         public static string TagsIn(string s) {
             if (s.Equals("")) {
-                return null;
+                return "";
             }
-            s = ("#" + s.Replace(" ", "").Replace("\r\n", "").Replace(",", "#") + "#").Replace("##", "#");
+            s = (s.Replace(" ", "").Replace("\r\n", ""));
             return s;
         }
 

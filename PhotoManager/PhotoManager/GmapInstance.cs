@@ -72,6 +72,10 @@ namespace PhotoManager {
 
         public void removeMarkers() {
             Overlays.Remove(overlay);
+            Debug.WriteLine(overlay.Markers.Count());
+            if (overlay.Markers.Count() > 0) {
+                Debug.WriteLine(overlay.Markers[0] == null);
+            }
             overlay.Markers.Clear();
             Overlays.Add(overlay);
         }
@@ -88,13 +92,14 @@ namespace PhotoManager {
 
         private void myMap_Click(object sender, MouseEventArgs e) {
             if (!editmode) {
+                string location = "";
                 foreach (GMapMarker marker in overlay.Markers) {
                     if (marker.IsMouseOver) {
-                        string location = marker.Tag.ToString();
-                        form.ClickedMap(location);
+                        location = marker.Tag.ToString();
                         break;
                     }
                 }
+                form.ClickedMap(location);
             } else {
                 double lat = FromLocalToLatLng(e.X, e.Y).Lat;
                 double lng = FromLocalToLatLng(e.X, e.Y).Lng;
@@ -135,7 +140,9 @@ namespace PhotoManager {
             Overlays.Remove(overlay);
             //overlay.Markers.Add(new GMarkerGoogle(new PointLatLng(55.0051436, 15.3826013), GMarkerGoogleType.blue));
             Overlays.Add(overlay);
-            Update();
+                BeginInvoke((MethodInvoker)delegate {
+                    Update();
+                });
         }
     }
 }

@@ -10,7 +10,7 @@ namespace PhotoManager {
 
         private string location, tag, description;
         public bool locationbool, tagbool, descriptionbool, dtbool;
-        private DateTime dt;
+        private string dt;
 
         public UpdateParemeters() {
 
@@ -29,17 +29,16 @@ namespace PhotoManager {
             this.description = description;
             descriptionbool = true;
         }
-        public void setDateTime(DateTime dt) {
+        public void setDateTime(string dt) {
             this.dt = dt;
             dtbool = true;
         }
 
-        public string getTags(string s) {
+        public string[] getTags() {
             if (tagbool) {
-                return tag;
-            } else {
-                return s;
+                return tag.Split(',');
             }
+            return null;
         }
         public string getLocation(string s) {
             if (locationbool) {
@@ -55,11 +54,11 @@ namespace PhotoManager {
                 return s;
             }
         }
-        public DateTime getDate(DateTime s) {
+        public string getDate() {
             if (dtbool) {
                 return dt;
             } else {
-                return s;
+                return Sorting.YEAR_STD;
             }
         }
 

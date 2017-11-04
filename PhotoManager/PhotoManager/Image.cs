@@ -12,11 +12,12 @@ namespace PhotoManager{
 
         private Bitmap preview;
         private string name;
-        private DateTime date;
+        private string date;
         private string filetype, location, description, tags;
 
         public Image(string name, string filetype) {
-            date = new DateTime(Sorting.YEAR_STD, 01, 01);
+            //date = new DateTime(Sorting.YEAR_STD, 01, 01);
+            date = Sorting.YEAR_STD;
             this.name = name;
             this.Image = null;
             location = null;
@@ -24,8 +25,8 @@ namespace PhotoManager{
             this.filetype = filetype;
         }
 
-        public void setTags(DateTime dt, string loc, string desc, string tags) {
-            date = dt;
+        public void setTags(string date, string loc, string desc, string tags) {
+            this.date = date;
             location = loc;
             description = desc;
             this.tags = tags;
@@ -66,7 +67,7 @@ namespace PhotoManager{
             return description;
         }
 
-        public DateTime getDate() {
+        public string getDate() {
             return date;
         }
 
