@@ -32,6 +32,7 @@
             this.btn_tagAlert_joinall = new System.Windows.Forms.Button();
             this.btn_tagAlert_overwrite = new System.Windows.Forms.Button();
             this.btn_tagAlert_overwriteall = new System.Windows.Forms.Button();
+            this.btn_Cancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -117,6 +118,7 @@
             this.tableLayoutPanel1.Controls.Add(this.btn_tagAlert_joinall, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.btn_tagAlert_overwrite, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.btn_tagAlert_overwriteall, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btn_Cancel, 4, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -133,7 +135,7 @@
             this.btn_tagAlert_join.Name = "btn_tagAlert_join";
             this.btn_tagAlert_join.Size = new System.Drawing.Size(118, 35);
             this.btn_tagAlert_join.TabIndex = 0;
-            this.btn_tagAlert_join.Text = "Discard";
+            this.btn_tagAlert_join.Text = "Join";
             this.btn_tagAlert_join.UseVisualStyleBackColor = true;
             this.btn_tagAlert_join.Click += new System.EventHandler(this.btn_tagAlert_join_Click);
             // 
@@ -145,7 +147,7 @@
             this.btn_tagAlert_joinall.Name = "btn_tagAlert_joinall";
             this.btn_tagAlert_joinall.Size = new System.Drawing.Size(118, 35);
             this.btn_tagAlert_joinall.TabIndex = 0;
-            this.btn_tagAlert_joinall.Text = "Discard all";
+            this.btn_tagAlert_joinall.Text = "Join all";
             this.btn_tagAlert_joinall.UseVisualStyleBackColor = true;
             this.btn_tagAlert_joinall.Click += new System.EventHandler(this.btn_tagAlert_joinall_Click);
             // 
@@ -157,7 +159,7 @@
             this.btn_tagAlert_overwrite.Name = "btn_tagAlert_overwrite";
             this.btn_tagAlert_overwrite.Size = new System.Drawing.Size(118, 35);
             this.btn_tagAlert_overwrite.TabIndex = 0;
-            this.btn_tagAlert_overwrite.Text = "Replace";
+            this.btn_tagAlert_overwrite.Text = "Overwrite";
             this.btn_tagAlert_overwrite.UseVisualStyleBackColor = true;
             this.btn_tagAlert_overwrite.Click += new System.EventHandler(this.btn_tagAlert_overwrite_Click);
             // 
@@ -169,9 +171,21 @@
             this.btn_tagAlert_overwriteall.Name = "btn_tagAlert_overwriteall";
             this.btn_tagAlert_overwriteall.Size = new System.Drawing.Size(118, 35);
             this.btn_tagAlert_overwriteall.TabIndex = 1;
-            this.btn_tagAlert_overwriteall.Text = "Replace all";
+            this.btn_tagAlert_overwriteall.Text = "Overwrite all";
             this.btn_tagAlert_overwriteall.UseVisualStyleBackColor = true;
             this.btn_tagAlert_overwriteall.Click += new System.EventHandler(this.btn_tagAlert_overwriteall_Click);
+            // 
+            // btn_Cancel
+            // 
+            this.btn_Cancel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_Cancel.Location = new System.Drawing.Point(562, 10);
+            this.btn_Cancel.Margin = new System.Windows.Forms.Padding(10);
+            this.btn_Cancel.Name = "btn_Cancel";
+            this.btn_Cancel.Size = new System.Drawing.Size(120, 35);
+            this.btn_Cancel.TabIndex = 2;
+            this.btn_Cancel.Text = "Keep Old";
+            this.btn_Cancel.UseVisualStyleBackColor = true;
+            this.btn_Cancel.Click += new System.EventHandler(this.btn_Cancel_Click);
             // 
             // TagAlert
             // 
@@ -208,5 +222,6 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.PictureBox pb_previewtagedit;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btn_Cancel;
     }
 }

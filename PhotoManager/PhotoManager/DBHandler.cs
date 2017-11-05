@@ -18,16 +18,15 @@ namespace PhotoManager {
 
         public DBHandler(string workingdirectory) {
             currentworkingdirectory = workingdirectory;
-            //MessageBox.Show(currentworkingdirectory);
-
-            //connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename="+currentworkingdirectory+@"\Database.mdf;Integrated Security=True";
-
             connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename=C:\Users\Henk\Source\Repos\indexmyphotos\PhotoManager\PhotoManager\Database.mdf;Integrated Security=True";
-            //connection = "Data Source=(LocalDB)\\v13.0;AttachDbFilename=D:\\Dokumente\\Source\\Repos\\PHviee\\phviewer\\phviewer\\Database.mdf;Integrated Security=True";
             createTable();
+            removeUnusedTags();
             entryCount = countEntrys();
         }
 
+        /*
+   * Creates required tables Foto, Tag, FotoTag
+   */
         private void createTable() {
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
@@ -61,16 +60,13 @@ namespace PhotoManager {
             }
         }
 
-
+        /*
+      * Adds a connection between image and tag
+      */
         public void connectTag(string id, string tag) {
-
             if (!tagexists(tag)) {
                 insertTag(tag);
             }
-            /*if (connectionExists(id, tag)) {
-
-            }*/
-
             string comm = "INSERT INTO FotoTag(FotoID, TagID) SELECT f.id, t.id FROM Foto f, Tag t WHERE f.id = @id AND t.tag LIKE @tag";
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
@@ -81,13 +77,14 @@ namespace PhotoManager {
                         command.ExecuteNonQuery();
                     }
                 } catch {
-                    //MessageBox.Show("Error connecting " + id + " and " + tag);
                 }
             }
         }
 
 
-
+        /*
+         * Inserts a new entry
+         */
         public Image addImage(string path, string hash, string filetype) {
             Image f = null;
             Guid g = genGUID();
@@ -110,25 +107,8 @@ namespace PhotoManager {
             updateEntry(g.ToString(), "date", Sorting.YEAR_STD);
             updateEntry(g.ToString(), "location", "");
             updateEntry(g.ToString(), "description", "");
+            entryCount = countEntrys();
             return f;
-        }
-
-
-        public void updateDateEntry(string id, DateTime value) {
-            using (SqlConnection con = new SqlConnection(connection)) {
-                con.Open();
-                try {
-                    using (SqlCommand command = new SqlCommand("UPDATE Foto SET date = @value WHERE id LIKE @id", con)) {
-                        command.Parameters.AddWithValue("@value", value.ToString("yyyy-MM-dd HH:mm:ss"));
-                        command.Parameters.AddWithValue("@id", id);
-                        command.ExecuteNonQuery();
-                        Debug.WriteLine("Updated!");
-                    }
-                } catch {
-                    Debug.WriteLine("Table Foto not updated.");
-                    MessageBox.Show("Error updating " + id);
-                }
-            }
         }
 
         public bool ImageExists(string hash) {
@@ -147,6 +127,9 @@ namespace PhotoManager {
             return ret;
         }
 
+        /*
+         * returns true if string tag already exists
+         */
         public bool tagexists(string tag) {
             Int32 count = 0;
             using (SqlConnection con = new SqlConnection(connection)) {
@@ -163,6 +146,9 @@ namespace PhotoManager {
             return count == 0 ? false : true;
         }
 
+        /*
+         * Inserts a new tag in Tag DB
+         */
         public void insertTag(string tag) {
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
@@ -179,7 +165,9 @@ namespace PhotoManager {
             }
         }
 
-
+        /*
+         * Updates a value in DB
+         */
         public void updateEntry(string id, string type, string value) {
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
@@ -191,12 +179,14 @@ namespace PhotoManager {
                         Debug.WriteLine("Updated!");
                     }
                 } catch {
-                    Debug.WriteLine("Table Foto not updated.");
                     MessageBox.Show("Error updating " + id);
                 }
             }
         }
 
+        /*
+         * Deletes an entry from Foto DB
+         */
         public void deleteEntry(string id) {
             removeTags(id);
             using (SqlConnection con = new SqlConnection(connection)) {
@@ -208,12 +198,15 @@ namespace PhotoManager {
                         Debug.WriteLine("Deleted: " + id);
                     }
                 } catch {
-                    Debug.WriteLine("Table Foto not updated.");
                     MessageBox.Show("Error deleting Foto " + id);
                 }
             }
+            entryCount = countEntrys();
         }
 
+        /*
+         * Removes every tag related to an image
+         */
         public void removeTags(string id) {
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
@@ -228,9 +221,23 @@ namespace PhotoManager {
                 }
             }
         }
+            private void removeUnusedTags() {
+            using (SqlConnection con = new SqlConnection(connection)) {
+                con.Open();
+                try {
+                    using (SqlCommand command = new SqlCommand("DELETE FROM Tag WHERE NOT EXISTS(SELECT * FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID WHERE ft.TagID = Tag.id)", con)) {
+                        command.ExecuteNonQuery();
+                    }
+                } catch {
+                    return;
+                }
+            }
+        }
 
-
-        public List<Image> loadAll(SearchQuery sq) {
+        /*
+         * Loads images matching the SearchQuery
+         */
+        public List<Image> loadEntries(SearchQuery sq) {
             string comm = "SELECT DISTINCT f.id, f.filetype, f.location, f.date, f.description FROM Foto f";
 
             if (sq == null || sq.isEmpty()) {
@@ -266,10 +273,12 @@ namespace PhotoManager {
             return loadinglist;
         }
 
-
+        /*
+         * returns all tags connected with the id (of the image)
+         */
         public string getConnectedTags(string id) {
             string ret = "";
-            string comm = "SELECT DISTINCT t.tag FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE f.id LIKE @id";
+            string comm = "SELECT t.tag FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE f.id LIKE @id";
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
                 try {
@@ -288,6 +297,9 @@ namespace PhotoManager {
             return ret;
         }
 
+        /*
+        * returns the amount of entries
+        */
         public int countEntrys() {
             Int32 count = 0;
             using (SqlConnection con = new SqlConnection(connection)) {
@@ -303,6 +315,9 @@ namespace PhotoManager {
             return count;
         }
 
+        /*
+        * generates a new GUID
+        */
         private Guid genGUID() {
             Guid g = Guid.NewGuid();
             return Guid.NewGuid();
