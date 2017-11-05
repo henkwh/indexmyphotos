@@ -27,23 +27,7 @@ namespace PhotoManager {
 
         public void parseQuery(string q) {
             empty = (q.Equals("")) ? true : false;
-
-            string[] inputs = q.ToLower().Replace(" ", "").Split(',');
-            for (int i = 0; i < inputs.Count(); i++) {
-                string s = inputs[i];
-                if (s.StartsWith(Sorting.KEYWORD_LOC) && i + 1 < inputs.Count()) {
-                    string joinedloc = s.Substring(Sorting.KEYWORD_LOC.Count()) + ", " + inputs[i + 1];
-                    locations.Add(joinedloc);
-                    i++;
-                } else if (s.StartsWith(Sorting.KEYWORD_DATE)) {
-                    string temps = s.Substring(Sorting.KEYWORD_DATE.Count());
-                    date.Add(temps);
-                } else if (s.StartsWith("-")) {
-                    doesnotcontain.Add(s.Substring(1));
-                } else {
-                    contains.Add(s);
-                }
-            }
+            contains.AddRange(q.ToLower().Split(' '));
         }
 
 
@@ -53,60 +37,37 @@ namespace PhotoManager {
             }
 
             string s = "";
+            for(int i = 0; i < contains.Count(); i++) {
+                string keyword = contains[i];
+                if (keyword.StartsWith(Sorting.KEYWORD_LOC) && i+1 < contains.Count()){
+                    keyword = keyword.Substring(Sorting.KEYWORD_LOC.Count());
+                    i++;
+                    s += " f.location LIKE '" + keyword +" "+ contains[i]+"'";
+                } else if (keyword.StartsWith(Sorting.KEYWORD_DATE)) {
+                    keyword = keyword.Substring(Sorting.KEYWORD_DATE.Count());
+                    string restriction = "=";
+                    string tempkey = "";
+                    if (keyword[0].Equals('>') || keyword[0].Equals('<')) {
+                        restriction = keyword[0] + restriction;
+                        tempkey = keyword.Substring(1, keyword.Count() - 1);
+                    }
+                    s += " f.date " + restriction + "'" + tempkey + "'";
+                } else if (keyword.StartsWith("-")) {
+                    s += " f.id NOT IN(SELECT DISTINCT f.id FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE t.tag LIKE '" + keyword.Substring(1) + "')";
+                } else {
+                    //s += " t.tag LIKE '" + keyword + "'";
+                    s += " EXISTS (SELECT DISTINCT fo.id FROM Foto fo LEFT JOIN FotoTag ft ON fo.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE f.id = fo.id AND t.tag LIKE '" + keyword + "')";
+                }
 
-            bool insertAND = false;
-            int c = 0;
-            foreach (string keyword in contains) {
-                s += " t.tag LIKE '" + keyword + "'";
-                if (c != contains.Count() - 1) {
-                    s += " OR";
+                i++;
+                if (i < contains.Count) {
+                    if(!contains[i].Equals("or") && !contains[i].Equals("and")) {
+                        System.Windows.Forms.MessageBox.Show("Syntax error - Expected 'AND' or 'OR' instead of '"+contains[i]+"'");
+                        return " f.id IS NULL";
+                    }
+                    s += " "+contains[i];
                 }
-                c++;
-                insertAND = true;
             }
-            c = 0;
-            s += (insertAND && locations.Count > 0) ? " OR " : "";
-            foreach (string keyword in locations) {
-                s += " f.location LIKE '" + keyword + "'";
-                if (c != locations.Count() - 1) {
-                    s += " AND";
-                }
-                c++;
-                insertAND = true;
-            }
-
-            c = 0;
-            s += (insertAND && date.Count > 0) ? " OR " : "";
-            foreach (string keyword in date) {
-                if (keyword.Length < 1) {
-                    continue;
-                }
-                string tempkey = keyword;
-                string restriction = "=";
-                if (keyword[0].Equals('>') || keyword[0].Equals('<')) {
-                    restriction = keyword[0] + restriction;
-                    tempkey = keyword.Substring(1, keyword.Count() - 1);
-                }
-                s += " f.date " + restriction + "'" + tempkey + "'";
-                if (c != date.Count() - 1) {
-                    s += " AND";
-                }
-                c++;
-                insertAND = true;
-            }
-
-            c = 0;
-            s += (insertAND && doesnotcontain.Count > 0) ? " AND f.id NOT IN(SELECT DISTINCT f.id FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE" : "";
-            foreach (string keyword in doesnotcontain) {
-                s += " t.tag LIKE '" + keyword + "'";
-                if (c != doesnotcontain.Count() - 1) {
-                    s += " OR";
-                }
-                c++;
-                insertAND = true;
-            }
-            s += (doesnotcontain.Count > 0) ? ")" : "";
-
             return s;
         }
 

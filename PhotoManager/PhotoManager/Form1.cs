@@ -453,7 +453,7 @@ namespace PhotoManager {
                     }
                     break;
                 case Keys.Space:
-                    newWorker();
+                    //newWorker();
                     break;
                 case Keys.Escape:
                     resetMultiedit();
@@ -519,7 +519,6 @@ namespace PhotoManager {
         private void tb_search_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Return) {
                 newWorker();
-
                 multiedit.Clear();
                 tb_history.Text += DateTime.Now.ToString("h:mm") + " | " + tb_search.Text + "\r\n";
             }
