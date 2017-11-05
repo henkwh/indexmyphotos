@@ -40,18 +40,18 @@ namespace PhotoManager {
             }
             return null;
         }
-        public string getLocation(string s) {
+        public string getLocation() {
             if (locationbool) {
                 return location;
             } else {
-                return s;
+                return "";
             }
         }
-        public string getDescription(string s) {
+        public string getDescription() {
             if (descriptionbool) {
                 return description;
             } else {
-                return s;
+                return "";
             }
         }
         public string getDate() {

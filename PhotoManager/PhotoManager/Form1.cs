@@ -22,31 +22,25 @@ namespace PhotoManager {
 
         private List<Image> multiedit = new List<Image>();
         private List<Image> shown = new List<Image>();
-        private List<Image> images;
 
         private DBHandler db;
 
         private int imagescale;
 
-        /*
-         * TODO
-         * worker crash after set location on map and then reload main panel
-         *
-         */
         public Form1() {
             currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
             InitializeComponent();
-            images = new List<Image>();
             db = new DBHandler(currentworkingdirectory);
             this.AllowDrop = true;
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
             map = new GMapInstance(this, currentworkingdirectory);
             tabPage_Map.Controls.Add(map);
-            trackBar1.Maximum = Sorting.SCALE_MAX;
-            trackBar1.Minimum = Sorting.SCALE_MIN;
-            trackBar1.Value = Sorting.SCALE_DEF;
-            imagescale = Sorting.SCALE_DEF;
+
+            trackBar1.Maximum = Sorting.SCALE_TICKS;
+            trackBar1.Minimum = 0;
+            trackBar1.Value = (int)((Sorting.SCALE_DEF - Sorting.SCALE_MIN) * (1.0 * Sorting.SCALE_TICKS / (1.0 * Sorting.SCALE_MAX - Sorting.SCALE_MIN)));
+            trackBar1_Scroll(trackBar1, EventArgs.Empty);
 
             if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
                 System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
@@ -57,15 +51,10 @@ namespace PhotoManager {
             newWorker();
         }
 
-        private void panel_overview_Paint(object sender, PaintEventArgs e) {
-            Debug.WriteLine("paint");
-
-        }
 
         /*
-         * Handles Drag-and-Drop of FIles
+         * Handles Drag-and-Drop of Files
          */
-
         void Form1_DragDrop(object sender, DragEventArgs e) {
             int counter = 0;
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -94,20 +83,19 @@ namespace PhotoManager {
 
         /*
           * Checks if Dag-Dropped file is valid
-         *@path Path to FIle or Directory
+         *@path Path to File or Directory
          */
         private bool loadFile(string path) {
             string filetype = System.IO.Path.GetExtension(path).ToLower();
             if (filetype.Equals(".png") || filetype.Equals(".jpg") || filetype.Equals(".jpeg")) {
                 string hash = Sorting.getHash(path);
                 if (db.ImageExists(hash)) {
-                    //Sorting.addMessage("Datei " + path + " already exists. Skipping...", null);
                     MessageBox.Show("File " + path + " already exists. Skipping...");
                     return false;
                 }
                 Image img = db.addImage(path, hash, filetype);
                 System.IO.File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, false);
-                images.Add(img);
+                ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
                 return true;
             } else {
                 MessageBox.Show("File " + path + " is not a supported Image File. Skipping...");
@@ -125,10 +113,9 @@ namespace PhotoManager {
         }
 
         /*
-         * Worker adds previews to the main panel
+         * Creates a new worker instance
          */
         private void newWorker() {
-            //panel_overview.SuspendLayout();
             if (ThreadRunning == true) {
                 newWorkerRequested = true;
                 worker.CancelAsync();
@@ -152,7 +139,9 @@ namespace PhotoManager {
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_finished);
             worker.RunWorkerAsync();
         }
-
+        /*
+         * called if worker is finished
+         */
         private void worker_finished(object sender, RunWorkerCompletedEventArgs e) {
             ThreadRunning = false;
             if (newWorkerRequested == true) {
@@ -163,11 +152,10 @@ namespace PhotoManager {
 
 
         private void worker_DoWork(object sender, DoWorkEventArgs e) {
-            // try {
-
+            //Get images matching the input string
             SearchQuery sq = new SearchQuery(tb_search.Text);
-            shown = db.loadAll(sq);
-            //Invoke and Reset ProgressBar
+            shown = db.loadEntries(sq);
+
             if (InvokeRequired) {
                 panel_overview.BeginInvoke((MethodInvoker)delegate {
                     map.removeMarkers();
@@ -176,7 +164,7 @@ namespace PhotoManager {
                     tslabel_picturesof.Text = shown.Count + "/" + db.getEntryCount();
                 });
             }
-            ToolTip tt = new ToolTip();
+            ToolTip toolTip = new ToolTip();
             int i = 0;
             while (i < shown.Count) {
                 for (int j = 0; j < Sorting.WORKER_FILL_INTERVAL; j++) {
@@ -184,10 +172,8 @@ namespace PhotoManager {
                         break;
                     }
                     Image img = shown[i + j];
-
                     setHandler(img);
                     addMenuItems(img);
-                    //tt.SetToolTip(img, Sorting.getToolTipTextForImage(img));
                     Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
                     img.setPreview(bmp);
                     img.Image = bmp;
@@ -196,18 +182,18 @@ namespace PhotoManager {
                     }
                 }
                 bool wait = true;
-                //panel_overview.SuspendLayout();
                 BeginInvoke((MethodInvoker)delegate {
                     for (int j = 0; j < Sorting.WORKER_FILL_INTERVAL; j++) {
-                        if (i + j >= shown.Count()) {
+                        if (i + j >= shown.Count() || e.Cancel || worker.CancellationPending) {
                             break;
                         }
+                        toolTip.SetToolTip(shown[i + j], Sorting.getToolTipTextForImage(shown[i + j]));
                         shown[i + j].setSize(imagescale);
                         panel_overview.Controls.Add(shown[i + j]);
                         tsprogressbar.Value++;
-                        panel_overview.Update();
-                        map.Update();
                     }
+                    panel_overview.Update();
+                    map.Update();
                     wait = false;
                 });
                 while (wait) {
@@ -217,15 +203,7 @@ namespace PhotoManager {
                 if (e.Cancel || worker.CancellationPending) {   //Abort Worker
                     break;
                 }
-                //panel_overview.ResumeLayout();
             }
-            //  } catch {
-            //     MessageBox.Show("Error: Restarting Worker");
-            //  }
-        }
-
-        private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e) {
-
         }
 
         /*
@@ -285,11 +263,6 @@ namespace PhotoManager {
             }
         }
 
-        public void rescale(int scale) {
-            imagescale = scale;
-            newWorker();
-        }
-
         /*
         * Adds border to selected preview images in main panel
         */
@@ -299,9 +272,7 @@ namespace PhotoManager {
             if (!multiedit.Contains(i)) {
                 multiedit.Add(i);
             }
-            //i.BorderStyle = BorderStyle.Fixed3D;
             i.showBorder();
-            removeDoublesinmultiedit();
         }
 
 
@@ -321,23 +292,6 @@ namespace PhotoManager {
                 cm.MenuItems.Add(menuItem);
                 tageditbox.ContextMenu = cm;
                 panel_tagedit.Controls.Add(tageditbox);
-                if (multiedit.Count == 1) {
-                    tb_location.Text = i.getLocation();
-                    tb_tags.Text = i.getTags();
-                    tb_description.Text = i.getDescription();
-                    if (!i.getDate().Equals(Sorting.YEAR_STD)) {
-                        tb_dateday.Text = i.getDate().Substring(6, 2);
-                        tb_datemonth.Text = i.getDate().Substring(4, 2);
-                        tb_dateyear.Text = i.getDate().Substring(0, 4);
-                    }
-                } else {
-                    tb_location.Text = "";
-                    tb_tags.Text = "";
-                    tb_description.Text = "";
-                    tb_dateday.Text = "";
-                    tb_datemonth.Text = "";
-                    tb_dateyear.Text = "";
-                }
             }
         }
 
@@ -375,7 +329,6 @@ namespace PhotoManager {
                     multiedit[0].Image.Dispose();
                     multiedit[0].Image = null;
                 }
-                images.Remove(multiedit[0]);
                 multiedit[0].Dispose();
                 multiedit[0] = null;
                 multiedit.RemoveAt(0);
@@ -392,29 +345,11 @@ namespace PhotoManager {
             newWorker();
         }
 
-        private void removeDoublesinmultiedit() {
-            for (int u = 0; u < multiedit.Count; u++) {
-                int cntr = 0;
-                foreach (Image i in multiedit) {
-                    if (i == multiedit[u]) {
-                        cntr++;
-                    }
-                }
-                if (cntr > 1) {
-                    multiedit.RemoveAt(u);
-                    u--;
-                }
-            }
-            panel_tagedit.Controls.Clear();
-        }
-
-
         /*
         * Deletes a single image instance by click of ContetMenu
         */
         private void Delete_Entry(Image i) {
             db.deleteEntry(i.getName());
-            images.Remove(i);
             multiedit.Remove(i);
             string name = i.getName();
             string type = i.getFileType();
@@ -489,17 +424,19 @@ namespace PhotoManager {
 
                 UpdateParemeters up = Sorting.checkInputTags(i, location, tags, desc, dtin);
                 if (up.tagbool) {
+                    db.removeTags(i.getName());
                     string[] st = up.getTags();
                     foreach (String s in st) {
-                        Debug.WriteLine("onetagis: " + s + " of " + st.Count());
                         if (!s.Equals("")) {
                             db.connectTag(i.getName(), s);
                         }
                     }
+                    i.setTags(db.getConnectedTags(i.getName()));
+                    Debug.WriteLine(i.getTags());
                 }
-                if (up.locationbool) { db.updateEntry(i.getName(), "location", up.getLocation("")); }
-                if (up.descriptionbool) { db.updateEntry(i.getName(), "description", up.getDescription("")); }
-                if (up.dtbool) { db.updateEntry(i.getName(), "date", up.getDate()); }
+                if (up.locationbool) { db.updateEntry(i.getName(), "location", up.getLocation()); i.setLocation(up.getLocation()); }
+                if (up.descriptionbool) { db.updateEntry(i.getName(), "description", up.getDescription()); i.setDescription(up.getDescription()); }
+                if (up.dtbool) { db.updateEntry(i.getName(), "date", up.getDate()); i.setDate(up.getDate()); }
                 tsprogressbar.Value++;
             }
             Sorting.JoinForAll = false;
@@ -512,7 +449,7 @@ namespace PhotoManager {
                 }
             }
         }
-        private void button1_Click(object sender, EventArgs e) {
+        private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
         }
 
@@ -545,18 +482,21 @@ namespace PhotoManager {
                 tb_dateday.Text = tb_datemonth.Text = tb_dateyear.Text = tb_location.Text = tb_description.Text = tb_tags.Text = "";
                 if (multiedit.Count == 1) {
                     tb_location.Text = multiedit[0].getLocation();
-                    tb_tags.Text = multiedit[0].getTags();
+                    Debug.WriteLine("TAG IS "+ db.getConnectedTags(multiedit[0].getName()));
+                    tb_tags.Text = db.getConnectedTags(multiedit[0].getName());
                     tb_description.Text = multiedit[0].getDescription();
                     if (!multiedit[0].getDate().Equals(Sorting.YEAR_STD)) {
                         tb_dateyear.Text = multiedit[0].getDate().Substring(0, 4);
-                        tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2);
-                        tb_dateday.Text = multiedit[0].getDate().Substring(6, 2);
+                        if (multiedit[0].getDate().Count() == Sorting.YEAR_STD.Count()) {
+                            tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2);
+                            tb_dateday.Text = multiedit[0].getDate().Substring(6, 2);
+                        }
                     }
                 }
 
             } else if (tabControl1.SelectedTab == tabPage_Log) {
                 tb_log.Text = "";// "           Name                      Type |        Date         | Hash | Loc | Tags | Beschreibung\r\n\r\n";
-                List<Image> ListAll = db.loadAll(new SearchQuery(""));
+                List<Image> ListAll = db.loadEntries(new SearchQuery(""));
                 foreach (Image i in ListAll) {
                     tb_log.Text += i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Sorting.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocation() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n";
                 }
@@ -571,14 +511,6 @@ namespace PhotoManager {
             } else if (tabControl1.SelectedTab == tabPage_Map) {
                 map.setEditMode(false);
             }
-        }
-
-        private void tb_search_TextChanged(object sender, EventArgs e) {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e) {
-
         }
 
         private void btn_showonMap_Click(object sender, EventArgs e) {
@@ -613,16 +545,8 @@ namespace PhotoManager {
             }
         }
 
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e) {
-
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e) {
-
-        }
-
         private void trackBar1_Scroll(object sender, EventArgs e) {
-            imagescale = trackBar1.Value;
+            imagescale = (int)(1.0 * Sorting.SCALE_MIN + trackBar1.Value * (1.0 * (Sorting.SCALE_MAX - Sorting.SCALE_MIN) / Sorting.SCALE_TICKS));
             newWorker();
         }
 

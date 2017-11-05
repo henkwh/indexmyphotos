@@ -26,6 +26,8 @@ namespace PhotoManager {
             form = f;
             overlay = new GMapOverlay("markers");
             addBrowser();
+
+            //System.IO.Stream s = PhotoManager.Properties.Resources.pin;
             pincursor = new Cursor(cwd + "\\pin.cur");
             editmode = false;
         }
@@ -64,10 +66,6 @@ namespace PhotoManager {
             }
             Position = mypos;
             Update();
-        }
-
-        private void myMap_Hover(object sender, EventArgs e) {
-            //Debug.WriteLine(Cursor.Position.X + " " + Cursor.Position.Y);
         }
 
         public void removeMarkers() {
@@ -117,7 +115,6 @@ namespace PhotoManager {
             if (position == null || position.Equals("")) {
                 return;
             }
-
             string[] pos = positionextruded.Split(';');
             if (pos.Length != 2) {
                 return;
@@ -138,7 +135,6 @@ namespace PhotoManager {
             marker.Tag = position;
             overlay.Markers.Add(marker);
             Overlays.Remove(overlay);
-            //overlay.Markers.Add(new GMarkerGoogle(new PointLatLng(55.0051436, 15.3826013), GMarkerGoogleType.blue));
             Overlays.Add(overlay);
         }
     }

@@ -7,42 +7,25 @@ using System.Threading.Tasks;
 namespace PhotoManager {
     class SearchQuery {
 
-        private List<string> contains;
-        private List<string> doesnotcontain;
-
-        private List<string> locations;
-
-        private List<string> date;
-
-        private bool empty;
+        private string SQLCommand;
 
         public SearchQuery(string q) {
-            contains = new List<string>();
-            doesnotcontain = new List<string>();
-            locations = new List<string>();
-            date = new List<String>();
-            empty = true;
-            parseQuery(q);
+            SQLCommand = parseQuery(q);
         }
 
-        public void parseQuery(string q) {
-            empty = (q.Equals("")) ? true : false;
-            contains.AddRange(q.ToLower().Split(' '));
-        }
-
-
-        public string getQuery() {
-            if (isEmpty()) {
+        private string parseQuery(string q) {
+            if (q.Equals("")) {
                 return "";
             }
-
+            List<string> contains = new List<string>();
+            contains.AddRange(q.ToLower().Split(' '));
             string s = "";
-            for(int i = 0; i < contains.Count(); i++) {
+            for (int i = 0; i < contains.Count(); i++) {
                 string keyword = contains[i];
-                if (keyword.StartsWith(Sorting.KEYWORD_LOC) && i+1 < contains.Count()){
+                if (keyword.StartsWith(Sorting.KEYWORD_LOC) && i + 1 < contains.Count()) {
                     keyword = keyword.Substring(Sorting.KEYWORD_LOC.Count());
                     i++;
-                    s += " f.location LIKE '" + keyword +" "+ contains[i]+"'";
+                    s += " f.location LIKE '" + keyword + " " + contains[i] + "'";
                 } else if (keyword.StartsWith(Sorting.KEYWORD_DATE)) {
                     keyword = keyword.Substring(Sorting.KEYWORD_DATE.Count());
                     string restriction = "=";
@@ -58,21 +41,24 @@ namespace PhotoManager {
                     //s += " t.tag LIKE '" + keyword + "'";
                     s += " EXISTS (SELECT DISTINCT fo.id FROM Foto fo LEFT JOIN FotoTag ft ON fo.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE f.id = fo.id AND t.tag LIKE '" + keyword + "')";
                 }
-
                 i++;
                 if (i < contains.Count) {
-                    if(!contains[i].Equals("or") && !contains[i].Equals("and")) {
-                        System.Windows.Forms.MessageBox.Show("Syntax error - Expected 'AND' or 'OR' instead of '"+contains[i]+"'");
+                    if (!contains[i].Equals("or") && !contains[i].Equals("and")) {
+                        System.Windows.Forms.MessageBox.Show("Syntax error - Expected 'AND' or 'OR' instead of '" + contains[i] + "'");
                         return " f.id IS NULL";
                     }
-                    s += " "+contains[i];
+                    s += " " + contains[i];
                 }
             }
             return s;
         }
 
+        public string getQuery() {
+            return SQLCommand;
+        }
+
         public bool isEmpty() {
-            return empty;
+            return SQLCommand.Equals("");
         }
     }
 

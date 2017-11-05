@@ -11,81 +11,33 @@ using System.Windows.Forms;
 namespace PhotoManager {
     static class Sorting {
 
-        public const string YEAR_STD = "17770101", YEAR_ERR = "1776";
-        public static string Message = "";
-        public static List<Image> delete = new List<Image>();
+        //Default date
+        public const string YEAR_STD = "17770101";
 
-        //Identify extendsd commands in search
+        //Identify extended commands in search
         public const string KEYWORD_LOC = "location:";
         public const string KEYWORD_DATE = "date:";
 
+        //Defines the images that are added to the panel at once
         public const int WORKER_FILL_INTERVAL = 20;
+        //Defines the time the worker waits during the evoke processs
         public const int WORKER_SLEEP_TIME = 50;
 
-
+        //Defines the min/max/default scale of the preview images
         public const int SCALE_MIN = 50;
         public const int SCALE_MAX = 200;
-        public const int SCALE_DEF = 100; //SCALE_MIN <= SCALE_DEF <= SCALE_MAX
+        public const int SCALE_DEF = 100;
+        //Defines the ticks tha size can be changed
         public const int SCALE_TICKS = 5;
 
-
-
-        public static string getToolTipTextForImage(Image i) {
-            string s = i.getName() + i.getFileType() + "\n";
-            s += "Location: " + i.getLocation() + "\n";
-            s += "Date: " + i.getDate() + "\n";
-            s += "tags: " + i.getTags() + "\n";
-            s += "Description: " + i.getDescription();
-            return s;
-        }
-
-
+        /*
+         * Creates Hash value from file
+         */
         public static string getHash(string filepath) {
             FileStream fop = File.OpenRead(filepath);
             return BitConverter.ToString(System.Security.Cryptography.SHA1.Create().ComputeHash(fop));
 
         }
-
-        public static void addMessage(string text, Image i) {
-            Message += text + "\n";
-            delete.Add(i);
-        }
-
-        public static void showMessageBox() {
-            if (Message.Equals("")) {
-                return;
-            }
-
-            //AlertBox a = new AlertBox("Error", Message);
-            //a.show();
-            //a.getDel().Click += DeleteEntrys;
-
-
-            var dialogTypeName = "System.Windows.Forms.PropertyGridInternal.GridErrorDlg";
-            var dialogType = typeof(Form).Assembly.GetType(dialogTypeName);
-
-            // Create dialog instance.
-            var dialog = (Form)Activator.CreateInstance(dialogType, new PropertyGrid());
-            // Populate relevant properties on the dialog instance.
-            dialog.Width = 300;
-            dialog.Height = 100;
-            dialog.Text = "Error";
-            dialogType.GetProperty("Details").SetValue(dialog, Message, null);
-            dialogType.GetProperty("Message").SetValue(dialog, "Error", null);
-
-            // Display dialog.
-            var result = dialog.ShowDialog();
-            Message = "";
-        }
-
-        private static void DeleteEntrys(object sender, EventArgs e) {
-            foreach (Image i in delete) {
-                i.Image = null;
-                i.Dispose();
-                delete.Remove(i);
-            }
-        }
-
 
         private static TagAlert ta;
         public static bool JoinForAll = false, DisposeForAll = false;
@@ -93,7 +45,7 @@ namespace PhotoManager {
 
         public static UpdateParemeters checkInputTags(Image i, string location, string tags, string description, string dt) {//
             UpdateParemeters up = new UpdateParemeters();
-            if (!location.Equals("") && !i.getLocation().Equals("") && !location.Equals(i.getLocation())) {
+            if (!location.Equals(i.getLocation())) {
                 TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getLocation() + "\r\nwith\r\n" + location + "?");
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setLocation(location);
@@ -106,19 +58,20 @@ namespace PhotoManager {
                     up.setLocation("");
                 }
             }
-            if (tags != null && !tags.Equals("") && !i.getTags().Equals("") && !tags.Equals(i.getTags())) {
+            tags = tags.ToLower();
+            if (tags != null && !i.getTags().Equals("") && !tags.Equals(i.getTags())) {
                 TagAlert.uotnotification sol = showTagAlert(i, false, "Replace " + i.getTags() + "\r\nwith\r\n" + tags + "?");
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setTags(tags);
                 } else if (sol == TagAlert.uotnotification.JOIN) {
-                    up.setTags(tags + i.getTags());
+                    up.setTags(tags +","+ i.getTags());
                 } else if (sol == TagAlert.uotnotification.ABORT) {
                     return null;
                 }
-            } else if (tags != null && !tags.Equals("")) {
+            } else if (tags != null) {
                 up.setTags(tags);
             }
-            if (!description.Equals("") && !i.getDescription().Equals("") && !description.Equals(i.getDescription())) {
+            if (!i.getDescription().Equals("") && !description.Equals(i.getDescription())) {
                 TagAlert.uotnotification sol = showTagAlert(i, false, "Replace " + i.getDescription() + "\r\nwith\r\n" + description + "?");
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setDescription(description);
@@ -134,7 +87,7 @@ namespace PhotoManager {
                 }
             }
 
-            if (dt != YEAR_STD && i.getDate() != YEAR_STD && dt != i.getDate()) {
+            if (i.getDate() != YEAR_STD && dt != i.getDate()) {
                 TagAlert.uotnotification sol = showTagAlert(i, true, "Replace " + i.getDate() + "\r\nwith\r\n" + dt + "?");
                 if (sol == TagAlert.uotnotification.OVERWRITE) {
                     up.setDateTime(dt);
@@ -183,32 +136,9 @@ namespace PhotoManager {
             return TagAlert.uotnotification.ABORT;
         }
 
-
-        public static string JoinTags(string uno1, string duo2) {
-            string[] uno = uno1.Split(',');
-            string[] duo = duo2.Split(',');
-            string ret = "";
-            foreach (string u in uno) {
-                if (!u.Equals("")) {
-                    ret += u + ",";
-                }
-            }
-            foreach (string d in duo) {
-                bool add = true;
-                foreach (string u in uno) {
-                    if (d.Equals("") || d.Equals(u)) {
-                        add = false;
-                        break;
-                    }
-                }
-                if (add == true) {
-                    ret += d + ",";
-                }
-            }
-            return ret;
-        }
-
-
+        /*
+         * Checks weather Textfield tags is empty or not
+         */
         public static string TagsIn(string s) {
             if (s.Equals("")) {
                 return "";
@@ -217,24 +147,39 @@ namespace PhotoManager {
             return s;
         }
 
+        /*
+     * Checks weather Textfield location is empty or not
+     */
         public static string LocationIn(string s) {
-            if (s.Equals("") || s.Equals(" ")) {
-                return "";
-            }
-
             if (s.Length > 19) {
                 if (s.Contains(",") && s.Contains(".")) {
                     return s;
                 }
             }
-
-            return YEAR_ERR.ToString();
+            return "";
         }
 
+        /*
+     * Converts location string into string that can be read by GMap
+     */
         public static string parseLocation(string location) {
             string temp = location.Replace(",", ";").Replace(" ", "");
             temp = temp.Replace(".", ",");
             return temp;
+        }
+
+
+
+        /*
+         * Creates text showing in tooltip 
+         */
+        public static string getToolTipTextForImage(Image i) {
+            string s = i.getName() + i.getFileType() + "\n";
+            s += "Location: " + i.getLocation() + "\n";
+            s += "Date: " + i.getDate() + "\n";
+            s += "tags: " + i.getTags() + "\n";
+            s += "Description: " + i.getDescription();
+            return s;
         }
     }
 }

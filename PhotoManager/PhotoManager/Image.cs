@@ -18,7 +18,6 @@ namespace PhotoManager{
         private PictureBoxSizeMode mode = PictureBoxSizeMode.Zoom;
 
         public Image(string name, string filetype) {
-            //date = new DateTime(Sorting.YEAR_STD, 01, 01);
             date = Sorting.YEAR_STD;
             this.name = name;
             this.Image = null;
@@ -35,11 +34,26 @@ namespace PhotoManager{
             this.tags = tags;
         }
 
+        public void setDate(string d) {
+            date = d;
+        }
+
+        public void setLocation(string l) {
+            location = l;
+        }
+
+        public void setDescription(string d) {
+            description = d;
+        }
+
+        public void setTags(string t) {
+            tags = t;
+        }
+
         public void setPreview(Bitmap bmp) {
             if (bmp == null) {
                 preview.Dispose();
             }
-            //this.Image = bmp;
             if (preview == null) {
                 preview = bmp;
             }
@@ -82,6 +96,7 @@ namespace PhotoManager{
             return tags == null || tags.Equals("");
         }
 
+       
         public void showBorder() {
             if (BackColor == Color.OrangeRed) {
                 return;

@@ -17,8 +17,11 @@ namespace PhotoManager {
         public static int SIZE = MAXSIZE;
         public static int[] MINMAXSIZE = { 100, 300 };
 
-        public static Bitmap genPreview(string cwd, string full, string preview, string filepath) {
 
+        /*
+         * Creates preview image and places it in preview folder
+         */
+        public static Bitmap genPreview(string cwd, string full, string preview, string filepath) {
             if (!File.Exists(cwd + preview + filepath)) {
                 string complete = cwd + full + filepath;
                 if (!File.Exists(complete)) {
@@ -39,9 +42,7 @@ namespace PhotoManager {
                 bmp2.Save(cwd + preview + filepath);
                 return bmp;
             } else {
-
                 return new Bitmap(cwd + preview + filepath);
-
             }
         }
 
