@@ -18,9 +18,8 @@ namespace PhotoManager {
 
         public DBHandler(string workingdirectory) {
             currentworkingdirectory = workingdirectory;
-            connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename=C:\Users\Henk\Source\Repos\indexmyphotos\PhotoManager\PhotoManager\Database.mdf;Integrated Security=True";
+            connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename="+currentworkingdirectory +@"\DatabaseLogic\Database.mdf;Integrated Security=True";
             createTable();
-            removeUnusedTags();
             entryCount = countEntrys();
         }
 
@@ -31,7 +30,7 @@ namespace PhotoManager {
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
                 try {
-                    using (SqlCommand command = new SqlCommand("CREATE TABLE Foto(id UNIQUEIDENTIFIER PRIMARY KEY,hash VARCHAR(MAX), filetype VARCHAR(MAX),location VARCHAR(MAX),date datetime,description VARCHAR(MAX));", con)) {
+                    using (SqlCommand command = new SqlCommand("CREATE TABLE Foto(id UNIQUEIDENTIFIER PRIMARY KEY,hash VARCHAR(MAX), filetype VARCHAR(MAX),loclat DECIMAL(9,6),loclng DECIMAL(9,6),date datetime,description VARCHAR(MAX));", con)) {
                         command.ExecuteNonQuery();
                         Debug.WriteLine("Table created.");
                     }
@@ -104,8 +103,8 @@ namespace PhotoManager {
                     Debug.WriteLine("Error: addEntry()");
                 }
             }
-            updateEntry(g.ToString(), "date", Sorting.YEAR_STD);
-            updateEntry(g.ToString(), "location", "");
+            updateEntry(g.ToString(), "date", Utils.YEAR_STD);
+            updateEntry(g.ToString(), new double[] { 0, 0 });
             updateEntry(g.ToString(), "description", "");
             entryCount = countEntrys();
             return f;
@@ -176,10 +175,59 @@ namespace PhotoManager {
                         command.Parameters.AddWithValue("@value", value);
                         command.Parameters.AddWithValue("@id", id);
                         command.ExecuteNonQuery();
-                        Debug.WriteLine("Updated!");
                     }
                 } catch {
-                    MessageBox.Show("Error updating " + id);
+                    MessageBox.Show("Error updating " + id + "r\n" + "UPDATE Foto SET " + type + "= " + value + " WHERE id LIKE " + id);
+                }
+            }
+        }
+
+        public Image getImage(string id) {
+            Image ret = null;
+                
+            using (SqlConnection con = new SqlConnection(connection)) {
+                con.Open();
+                try {
+                    using (SqlCommand command = new SqlCommand("SELECT f.id, f.filetype, f.loclat, f.loclng, f.date, f.description FROM Foto f WHERE f.id = @value", con)) {
+                        command.Parameters.AddWithValue("@value", id);
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read()) {
+                            Image img = new Image(reader.GetGuid(0).ToString(), reader[1] as string);
+                            double[] location = new double[] { (double)(reader.GetDecimal(2)), (double)reader.GetDecimal(3) };
+                            string[] date = reader[4].ToString().Split('.');
+                            string dateinput = (date.Count() >= 3) ? date[2].Substring(0, 4) + date[1] + date[0] : Utils.YEAR_STD;
+                            string description = reader[5] as string;
+                            img.setTags(dateinput, location, description, "");
+                            ret = img;
+                            break;
+                        }
+                    }
+                } catch {
+                }
+            }
+            return ret;
+        }
+
+        public void updateEntry(string id, double[] loc) {
+            using (SqlConnection con = new SqlConnection(connection)) {
+                con.Open();
+                try {
+                    using (SqlCommand command = new SqlCommand("UPDATE Foto SET loclat= @value WHERE id LIKE @id", con)) {
+                        command.Parameters.AddWithValue("@value", loc[0]);
+                        command.Parameters.AddWithValue("@id", id);
+                        command.ExecuteNonQuery();
+                    }
+                } catch {
+                    MessageBox.Show("Error updating lat " + id);
+                }
+                try {
+                    using (SqlCommand command = new SqlCommand("UPDATE Foto SET loclng= @value WHERE id LIKE @id", con)) {
+                        command.Parameters.AddWithValue("@value", loc[1]);
+                        command.Parameters.AddWithValue("@id", id);
+                        command.ExecuteNonQuery();
+                    }
+                } catch {
+                    MessageBox.Show("Error updating lng " + id);
                 }
             }
         }
@@ -221,7 +269,7 @@ namespace PhotoManager {
                 }
             }
         }
-            private void removeUnusedTags() {
+        public void removeUnusedTags() {
             using (SqlConnection con = new SqlConnection(connection)) {
                 con.Open();
                 try {
@@ -238,13 +286,18 @@ namespace PhotoManager {
          * Loads images matching the SearchQuery
          */
         public List<Image> loadEntries(SearchQuery sq) {
-            string comm = "SELECT DISTINCT f.id, f.filetype, f.location, f.date, f.description FROM Foto f";
-
+            string comm = "SELECT DISTINCT f.id, f.filetype, f.loclat, f.loclng, f.date, f.description FROM Foto f";
             if (sq == null || sq.isEmpty()) {
                 comm += ";";
             } else {
                 comm += " LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE";
-                comm += sq.getQuery();
+
+                string query = sq.getQuery();
+                if (query.StartsWith("/")) {
+                    comm = comm.Replace("WHERE", "");
+                    query = query.Substring(1);
+                }
+                comm += query;
                 comm += ";";
             }
             Debug.WriteLine("Anfrage: " + comm);
@@ -256,11 +309,10 @@ namespace PhotoManager {
                         SqlDataReader reader = command.ExecuteReader();
                         while (reader.Read()) {
                             Image img = new Image(reader.GetGuid(0).ToString(), reader[1] as string);
-                            string location = reader[2] as string;
-                            string[] date = reader[3].ToString().Split('.');
-                            string dateinput = (date.Count() >= 3) ? date[2].Substring(0, 4) + date[1] + date[0] : Sorting.YEAR_STD;
-                            string description = reader[4] as string;
-                            Debug.WriteLine(description + "");
+                            double[] location = new double[] { (double)(reader.GetDecimal(2)), (double)reader.GetDecimal(3) };
+                            string[] date = reader[4].ToString().Split('.');
+                            string dateinput = (date.Count() >= 3) ? date[2].Substring(0, 4) + date[1] + date[0] : Utils.YEAR_STD;
+                            string description = reader[5] as string;
                             img.setTags(dateinput, location, description, "");
                             loadinglist.Add(img);
                         }
@@ -286,14 +338,14 @@ namespace PhotoManager {
                         command.Parameters.AddWithValue("@id", id);
                         SqlDataReader reader = command.ExecuteReader();
                         while (reader.Read()) {
-                            ret += reader[0] as string + ", ";
+                            ret += reader[0] as string + ",";
                         }
                     }
                 } catch {
                     Debug.WriteLine("Reading tags error");
                 }
             }
-            ret = ret.Equals("") ? ret : ret.Substring(0, ret.Count() - 2);
+            ret = ret.Equals("") ? ret : ret.Substring(0, ret.Count() - 1);
             return ret;
         }
 
