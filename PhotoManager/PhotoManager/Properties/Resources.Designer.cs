@@ -59,25 +59,5 @@ namespace PhotoManager.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
-        internal static byte[] pin {
-            get {
-                object obj = ResourceManager.GetObject("pin", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
-        internal static byte[] pin2 {
-            get {
-                object obj = ResourceManager.GetObject("pin2", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }

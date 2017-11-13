@@ -66,41 +66,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ComboBoxItem.cs">
+    <Compile Include="CustomControls\ComboBoxItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="DBHandler.cs" />
+    <Compile Include="DatabaseLogic\DBHandler.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="GmapInstance.cs">
+    <Compile Include="ImageLogic\GmapInstance.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Image.cs">
+    <Compile Include="CustomControls\GMarkerElement.cs" />
+    <Compile Include="ImageLogic\Image.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ImageGenerator.cs" />
-    <Compile Include="MenuItemImage.cs">
+    <Compile Include="ImageLogic\ImageGenerator.cs" />
+    <Compile Include="CustomControls\MenuItemImage.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="DatabaseLogic\OrderElement.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchQuery.cs" />
-    <Compile Include="Sorting.cs" />
-    <Compile Include="TagAlert.cs">
+    <Compile Include="DatabaseLogic\SearchQuery.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="CustomControls\TagAlert.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TagAlert.Designer.cs">
+    <Compile Include="CustomControls\TagAlert.Designer.cs">
       <DependentUpon>TagAlert.cs</DependentUpon>
     </Compile>
-    <Compile Include="UpdateParameters.cs" />
+    <Compile Include="CustomControls\TrackBarControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TrackBarSettings.cs" />
+    <Compile Include="DatabaseLogic\UpdateParameter.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GmapInstance.resx">
+    <EmbeddedResource Include="ImageLogic\GmapInstance.resx">
       <DependentUpon>GmapInstance.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -113,7 +119,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="TagAlert.resx">
+    <EmbeddedResource Include="CustomControls\TagAlert.resx">
       <DependentUpon>TagAlert.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -130,12 +136,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\pin.cur" />
+    <EmbeddedResource Include="Resources\pin2.cur" />
     <None Include="bin\Debug\pin.cur" />
     <None Include="bin\Debug\pin2.cur" />
-    <Content Include="Database.mdf">
+    <Content Include="DatabaseLogic\Database.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Database_log.ldf">
+    <Content Include="DatabaseLogic\Database_log.ldf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>Database.mdf</DependentUpon>
     </Content>

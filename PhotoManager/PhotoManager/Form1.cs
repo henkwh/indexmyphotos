@@ -11,7 +11,6 @@ using System.Windows.Forms;
 namespace PhotoManager {
     public partial class Form1 : Form {
 
-
         private bool newWorkerRequested = false, ThreadRunning = false;
         private string currentworkingdirectory = "";
         public static string dir_preview = @"\preview\";
@@ -27,21 +26,32 @@ namespace PhotoManager {
 
         private int imagescale;
 
+        private OrderElement selectedorder;
+
         public Form1() {
             currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
             InitializeComponent();
+            worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.WorkerSupportsCancellation = true;
+            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_finished);
             db = new DBHandler(currentworkingdirectory);
             this.AllowDrop = true;
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
-            map = new GMapInstance(this, currentworkingdirectory);
+            map = new GMapInstance(this, currentworkingdirectory, Utils.SCALE_MAP_DEF);
             tabPage_Map.Controls.Add(map);
-
-            trackBar1.Maximum = Sorting.SCALE_TICKS;
-            trackBar1.Minimum = 0;
-            trackBar1.Value = (int)((Sorting.SCALE_DEF - Sorting.SCALE_MIN) * (1.0 * Sorting.SCALE_TICKS / (1.0 * Sorting.SCALE_MAX - Sorting.SCALE_MIN)));
-            trackBar1_Scroll(trackBar1, EventArgs.Empty);
-
+            trackBar1.updateTabPage(TrackBarControl.tabPage.MAIN, 0);
+            imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
+            combobox_sorting.Items.Add(new OrderElement("Date ascending", " ORDER BY f.date ASC"));
+            combobox_sorting.Items.Add(new OrderElement("Date descending", " ORDER BY f.date DESC"));
+            combobox_sorting.Items.Add(new OrderElement("Location N to S", " ORDER BY f.loclat DESC"));
+            combobox_sorting.Items.Add(new OrderElement("Location S to N", " ORDER BY f.loclat ASC"));
+            combobox_sorting.Items.Add(new OrderElement("Location W to E", " ORDER BY f.loclng ASC"));
+            combobox_sorting.Items.Add(new OrderElement("Location E to W", " ORDER BY f.loclng DESC"));
+            combobox_sorting.Items.Add(new OrderElement("Filetype", " ORDER BY f.filetype ASC"));
+            combobox_sorting.SelectedIndex = 1;
             if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
                 System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
             }
@@ -80,7 +90,6 @@ namespace PhotoManager {
             MessageBox.Show(counter + " of " + (files.Length) + " Files added.");
             newWorker();
         }
-
         /*
           * Checks if Dag-Dropped file is valid
          *@path Path to File or Directory
@@ -88,7 +97,7 @@ namespace PhotoManager {
         private bool loadFile(string path) {
             string filetype = System.IO.Path.GetExtension(path).ToLower();
             if (filetype.Equals(".png") || filetype.Equals(".jpg") || filetype.Equals(".jpeg")) {
-                string hash = Sorting.getHash(path);
+                string hash = Utils.getHash(path);
                 if (db.ImageExists(hash)) {
                     MessageBox.Show("File " + path + " already exists. Skipping...");
                     return false;
@@ -121,28 +130,16 @@ namespace PhotoManager {
                 worker.CancelAsync();
                 return;
             }
-            for (int i = 0; i < tabPage_main.Controls.Count; i++) {
-                tabPage_main.Controls.RemoveAt(i);
-            }
-            panel_overview = new FlowLayoutPanel();
-            panel_overview.Dock = DockStyle.Fill;
-            panel_overview.AutoScroll = true;
-            panel_overview.Visible = true;
-            panel_overview.WrapContents = true;
-            tabPage_main.Controls.Add(panel_overview);
+            panel_overview.SuspendLayout();
+            panel_overview.Controls.Clear();
             ThreadRunning = true;
-            worker = null;
-            worker = new BackgroundWorker();
-            worker.WorkerReportsProgress = true;
-            worker.WorkerSupportsCancellation = true;
-            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_finished);
             worker.RunWorkerAsync();
         }
         /*
          * called if worker is finished
          */
         private void worker_finished(object sender, RunWorkerCompletedEventArgs e) {
+            panel_overview.ResumeLayout();
             ThreadRunning = false;
             if (newWorkerRequested == true) {
                 newWorkerRequested = false;
@@ -153,9 +150,8 @@ namespace PhotoManager {
 
         private void worker_DoWork(object sender, DoWorkEventArgs e) {
             //Get images matching the input string
-            SearchQuery sq = new SearchQuery(tb_search.Text);
+            SearchQuery sq = new SearchQuery(tb_search.Text, selectedorder.Query);
             shown = db.loadEntries(sq);
-
             if (InvokeRequired) {
                 panel_overview.BeginInvoke((MethodInvoker)delegate {
                     map.removeMarkers();
@@ -166,8 +162,9 @@ namespace PhotoManager {
             }
             ToolTip toolTip = new ToolTip();
             int i = 0;
+            int c = i;
             while (i < shown.Count) {
-                for (int j = 0; j < Sorting.WORKER_FILL_INTERVAL; j++) {
+                for (int j = 0; j < Utils.WORKER_FILL_INTERVAL; j++) {
                     if (i + j >= shown.Count()) {
                         break;
                     }
@@ -176,30 +173,30 @@ namespace PhotoManager {
                     addMenuItems(img);
                     Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
                     img.setPreview(bmp);
-                    img.Image = bmp;
-                    if (!img.getLocation().Equals("")) {          //No Location set -> No marker
+                    img.setImage(bmp);
+                    toolTip.SetToolTip(shown[i + j], Utils.getToolTipTextForImage(shown[i + j]));
+                    shown[i + j].setSize(imagescale);
+                    if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {          //No Location set -> No marker
                         map.addMarker(img.getLocation(), img.getPreview());
                     }
                 }
+                int range = (i + Utils.WORKER_FILL_INTERVAL > shown.Count()) ? shown.Count() - i : Utils.WORKER_FILL_INTERVAL;
+                Image[] addThis = shown.GetRange(i, range).ToArray();
                 bool wait = true;
                 BeginInvoke((MethodInvoker)delegate {
-                    for (int j = 0; j < Sorting.WORKER_FILL_INTERVAL; j++) {
-                        if (i + j >= shown.Count() || e.Cancel || worker.CancellationPending) {
-                            break;
-                        }
-                        toolTip.SetToolTip(shown[i + j], Sorting.getToolTipTextForImage(shown[i + j]));
-                        shown[i + j].setSize(imagescale);
-                        panel_overview.Controls.Add(shown[i + j]);
-                        tsprogressbar.Value++;
-                    }
+                    panel_overview.Controls.AddRange(addThis);
+                    try {
+                        tsprogressbar.Value += range;
+                    } catch { }
                     panel_overview.Update();
+                    panel_overview.ResumeLayout();
                     map.Update();
                     wait = false;
                 });
                 while (wait) {
-                    Thread.Sleep(Sorting.WORKER_SLEEP_TIME);
+                    Thread.Sleep(Utils.WORKER_SLEEP_TIME);
                 }
-                i += Sorting.WORKER_FILL_INTERVAL;
+                i += Utils.WORKER_FILL_INTERVAL;
                 if (e.Cancel || worker.CancellationPending) {   //Abort Worker
                     break;
                 }
@@ -212,7 +209,6 @@ namespace PhotoManager {
         private void setHandler(Image i) {
             i.MouseClick += new MouseEventHandler((o, a) => {
                 if (a.Button == MouseButtons.Right) {
-
                 } else if (a.Button == MouseButtons.Left) {
                     if (ModifierKeys == Keys.Control) {
                         if (multiedit.Contains(i)) {
@@ -237,22 +233,26 @@ namespace PhotoManager {
          */
         private void addMenuItems(Image image) {
             ContextMenu cm = new ContextMenu();
-            MenuItemImage menuItem = new MenuItemImage("Delete");
-            MenuItemImage menuItem2 = new MenuItemImage("Edit tags");
-            MenuItemImage menuItem3 = new MenuItemImage("Select all");
-            menuItem.Click += Delete_Click;
-            menuItem2.Click += TagEdit_Click;
-            menuItem3.Click += SelectAll_Click;
-            menuItem.setParentPictureBox(image);
-            menuItem2.setParentPictureBox(image);
-            menuItem3.setParentPictureBox(image);
-            menuItem.Tag = image;
-            menuItem2.Tag = image;
-            menuItem3.Tag = image;
+            string[] name = new string[] { "Delete", "Edit Tags", "Select all" };
             cm.Popup += Popup_Preview;
-            cm.MenuItems.Add(menuItem);
-            cm.MenuItems.Add(menuItem2);
-            cm.MenuItems.Add(menuItem3);
+            for (int i = 0; i < 3; i++) {
+                MenuItemImage menuItem = new MenuItemImage(name[i]);
+                switch (i) {
+                    case 1:
+                        menuItem.Click += Delete_Click;
+                        break;
+                    case 2:
+                        menuItem.Click += TagEdit_Click;
+                        break;
+                    case 3:
+                        menuItem.Click += SelectAll_Click;
+                        break;
+                }
+                menuItem.Click += Delete_Click;
+                menuItem.setParentPictureBox(image);
+                menuItem.Tag = image;
+                cm.MenuItems.Add(menuItem);
+            }
             image.ContextMenu = cm;
         }
 
@@ -281,6 +281,11 @@ namespace PhotoManager {
         */
         private void TagEdit_Click(object sender, EventArgs e) {
             tabControl1.SelectedTab = tabPage_tags;
+            addImagestoTabPage();
+        }
+
+        private void addImagestoTabPage() {
+            panel_tagedit.Controls.Clear();
             foreach (Image i in multiedit) {
                 PictureBox tageditbox = new PictureBox();
                 tageditbox.Image = i.getPreview();
@@ -387,9 +392,6 @@ namespace PhotoManager {
                         newWorker();
                     }
                     break;
-                case Keys.Space:
-                    //newWorker();
-                    break;
                 case Keys.Escape:
                     resetMultiedit();
                     break;
@@ -400,7 +402,6 @@ namespace PhotoManager {
 
         private void resetMultiedit() {
             foreach (Image i in multiedit) {
-                //i.BorderStyle = BorderStyle.None;
                 i.hideBorder();
                 panel_tagedit.Controls.Clear();
             }
@@ -410,44 +411,47 @@ namespace PhotoManager {
         }
 
         private void btn_applytag_Click(object sender, EventArgs e) {
-            bool exited = false;
-            string desc = (tb_description.Text);
-            string tags = (Sorting.TagsIn(tb_tags.Text));
-            string location = (Sorting.LocationIn(tb_location.Text));
-
             tsprogressbar.Maximum = multiedit.Count();
             tsprogressbar.Value = 0;
 
+            string desc = tb_description.Text;
+            string tags = tb_tags.Text.Equals(" ") ? " " : tb_tags.Text.Replace(" ", "").Replace("\r\n", "");
+            string location = tb_location.Text;
             string dtin = tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text;
-            dtin = dtin == null || dtin == "" ? Sorting.YEAR_STD : dtin;
-            foreach (Image i in multiedit) {
 
-                UpdateParemeters up = Sorting.checkInputTags(i, location, tags, desc, dtin);
-                if (up.tagbool) {
-                    db.removeTags(i.getName());
-                    string[] st = up.getTags();
-                    foreach (String s in st) {
-                        if (!s.Equals("")) {
-                            db.connectTag(i.getName(), s);
+            TagAlert ta = new TagAlert();
+
+            foreach (Image i in multiedit) {
+                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, db.getConnectedTags(i.getName()), desc, dtin, ta);
+                string[] dbstring = { "location", "tags", "description", "date" };
+                bool set = false;
+                for (int j = 0; j < list.Count(); j++) {
+                    UpdateParameter p = list[j];
+                    if (p.isreturnValueSet()) {
+                        set = true;
+                        if (j == 0) {
+                            db.updateEntry(i.getName(), Utils.parseLocation(p.getReturnValue()));
+                        } else if (j == 1) {
+                            string[] tagssplit = p.getReturnValue().Split(',');
+                            db.removeTags(i.getName());
+                            if (tagssplit.Count() == 1 && tagssplit[0].Replace(" ", "").Equals("")) {
+                            } else {
+                                foreach (string s in tagssplit) {
+                                    db.connectTag(i.getName(), s);
+                                }
+                            }
+                        } else {
+                            db.updateEntry(i.getName(), dbstring[j], p.getReturnValue());
                         }
                     }
-                    i.setTags(db.getConnectedTags(i.getName()));
-                    Debug.WriteLine(i.getTags());
                 }
-                if (up.locationbool) { db.updateEntry(i.getName(), "location", up.getLocation()); i.setLocation(up.getLocation()); }
-                if (up.descriptionbool) { db.updateEntry(i.getName(), "description", up.getDescription()); i.setDescription(up.getDescription()); }
-                if (up.dtbool) { db.updateEntry(i.getName(), "date", up.getDate()); i.setDate(up.getDate()); }
+                if (set) {
+                    Image i2 = db.getImage(i.getName());
+                    i.setTags(i2.getDate(), i2.getLocation(), i2.getDescription(), i2.getTags());
+                }
                 tsprogressbar.Value++;
             }
-            Sorting.JoinForAll = false;
-            Sorting.DisposeForAll = false;
-            if (exited == false) {
-                if (multiedit.Count > 0) {
-                    //MessageBox.Show("OK");
-                } else {
-                    MessageBox.Show("Error:\r\nList is empty!");
-                }
-            }
+            db.removeUnusedTags();
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
@@ -473,43 +477,36 @@ namespace PhotoManager {
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
             if (tabControl1.SelectedTab == tabPage_tags) {
-                tb_dateday.BackColor = Color.LightGray;
-                tb_datemonth.BackColor = Color.LightGray;
-                tb_dateyear.BackColor = Color.LightGray;
-                tb_location.BackColor = Color.LightGray;
-                tb_tags.BackColor = Color.LightGray;
-                tb_description.BackColor = Color.LightGray;
-                tb_dateday.Text = tb_datemonth.Text = tb_dateyear.Text = tb_location.Text = tb_description.Text = tb_tags.Text = "";
+                addImagestoTabPage();
+                foreach (TextBox tb in new TextBox[] { tb_dateday, tb_datemonth, tb_dateyear, tb_dateday, tb_tags, tb_description, tb_location }) {
+                    tb.BackColor = Color.LightGray;
+                    tb.Text = "";
+                }
                 if (multiedit.Count == 1) {
-                    tb_location.Text = multiedit[0].getLocation();
-                    Debug.WriteLine("TAG IS "+ db.getConnectedTags(multiedit[0].getName()));
+                    if (multiedit[0].getLocation()[0] != 0 && multiedit[0].getLocation()[1] != 0) {
+                        tb_location.Text = multiedit[0].getLocationString();
+                    }
                     tb_tags.Text = db.getConnectedTags(multiedit[0].getName());
                     tb_description.Text = multiedit[0].getDescription();
-                    if (!multiedit[0].getDate().Equals(Sorting.YEAR_STD)) {
+                    if (!multiedit[0].getDate().Equals(Utils.YEAR_STD)) {
                         tb_dateyear.Text = multiedit[0].getDate().Substring(0, 4);
-                        if (multiedit[0].getDate().Count() == Sorting.YEAR_STD.Count()) {
+                        if (multiedit[0].getDate().Count() == Utils.YEAR_STD.Count()) {
                             tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2);
                             tb_dateday.Text = multiedit[0].getDate().Substring(6, 2);
                         }
                     }
                 }
-
             } else if (tabControl1.SelectedTab == tabPage_Log) {
                 tb_log.Text = "";// "           Name                      Type |        Date         | Hash | Loc | Tags | Beschreibung\r\n\r\n";
-                List<Image> ListAll = db.loadEntries(new SearchQuery(""));
+                List<Image> ListAll = db.loadEntries(new SearchQuery("", ""));
                 foreach (Image i in ListAll) {
-                    tb_log.Text += i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Sorting.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocation() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n";
+                    tb_log.Text += i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Utils.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocationString() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n";
                 }
-
             } else if (tabControl1.SelectedTab == tabPage_main) {
-                if (multiedit.Count != 0) {
-                    DialogResult dialogResult = MessageBox.Show("Some Items are still checked - Uncheck selection?", "Selection", MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.Yes) {
-                        resetMultiedit();
-                    }
-                }
+                trackBar1.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
             } else if (tabControl1.SelectedTab == tabPage_Map) {
                 map.setEditMode(false);
+                trackBar1.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
             }
         }
 
@@ -525,7 +522,6 @@ namespace PhotoManager {
         public void setOnMapDone(string loc) {
             tabControl1.SelectedTab = tabPage_tags;
             tb_location.Text = loc;
-            tb_location.BackColor = Color.LightGreen;
         }
 
         private void btn_tagtodefault_Click(object sender, EventArgs e) {
@@ -536,18 +532,44 @@ namespace PhotoManager {
                 return;
             }
             foreach (Image i in multiedit) {
-                db.updateEntry(i.getName(), "location", "");
+                db.updateEntry(i.getName(), new double[] { 0, 0 });
                 db.updateEntry(i.getName(), "description", "");
-                db.updateEntry(i.getName(), "date", Sorting.YEAR_STD);
+                db.updateEntry(i.getName(), "date", Utils.YEAR_STD);
                 db.removeTags(i.getName());
-                i.setTags(Sorting.YEAR_STD, "", "", "");
+                i.setTags(Utils.YEAR_STD, null, "", "");
                 tsprogressbar.Value++;
+                tabControl1_SelectedIndexChanged(multiedit[0], null);
             }
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e) {
-            imagescale = (int)(1.0 * Sorting.SCALE_MIN + trackBar1.Value * (1.0 * (Sorting.SCALE_MAX - Sorting.SCALE_MIN) / Sorting.SCALE_TICKS));
-            newWorker();
+            if (tabControl1.SelectedTab == tabPage_main) {
+                imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
+                panel_overview.SuspendLayout();
+                int c = 0;
+                foreach (Image i in shown) {
+                    i.setSize(imagescale);
+                    if (c == 5) {
+                        panel_overview.ResumeLayout();
+                        c = 0;
+                        panel_overview.SuspendLayout();
+                    }
+                    c++;
+                }
+                panel_overview.ResumeLayout();
+            } else if (tabControl1.SelectedTab == tabPage_Map) {
+                map.setPinScale(trackBar1.scrollEvent(TrackBarControl.tabPage.MAP));
+            }
+        }
+
+        private void combobox_sorting_TextChanged(object sender, EventArgs e) {
+
+            foreach (OrderElement oe in combobox_sorting.Items) {
+                if (oe.Text.Equals(combobox_sorting.Text)) {
+                    selectedorder = oe;
+                    break;
+                }
+            }
         }
 
         public void ClickedMap(string location) {

@@ -23,7 +23,6 @@
         /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
         private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tb_search = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_main = new System.Windows.Forms.TabPage();
@@ -59,10 +58,10 @@
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.tslabel_picturesof = new System.Windows.Forms.Label();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.combobox_sorting = new System.Windows.Forms.ComboBox();
+            this.trackBar1 = new PhotoManager.TrackBarControl();
             this.lb_Size = new System.Windows.Forms.Label();
-            this.lb_Info = new System.Windows.Forms.Label();
+            this.checkBox_Exclude = new System.Windows.Forms.CheckBox();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
@@ -84,7 +83,6 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -112,7 +110,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(796, 328);
+            this.tabControl1.Size = new System.Drawing.Size(796, 326);
             this.tabControl1.TabIndex = 2;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             this.tabControl1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
@@ -123,7 +121,7 @@
             this.tabPage_main.Location = new System.Drawing.Point(4, 22);
             this.tabPage_main.Name = "tabPage_main";
             this.tabPage_main.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_main.Size = new System.Drawing.Size(788, 302);
+            this.tabPage_main.Size = new System.Drawing.Size(788, 300);
             this.tabPage_main.TabIndex = 0;
             this.tabPage_main.Text = "Main";
             this.tabPage_main.UseVisualStyleBackColor = true;
@@ -134,7 +132,7 @@
             this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_overview.Location = new System.Drawing.Point(3, 3);
             this.panel_overview.Name = "panel_overview";
-            this.panel_overview.Size = new System.Drawing.Size(782, 296);
+            this.panel_overview.Size = new System.Drawing.Size(782, 294);
             this.panel_overview.TabIndex = 0;
             this.panel_overview.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             // 
@@ -144,7 +142,7 @@
             this.tabPage_viewer.Location = new System.Drawing.Point(4, 22);
             this.tabPage_viewer.Name = "tabPage_viewer";
             this.tabPage_viewer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_viewer.Size = new System.Drawing.Size(788, 302);
+            this.tabPage_viewer.Size = new System.Drawing.Size(788, 300);
             this.tabPage_viewer.TabIndex = 5;
             this.tabPage_viewer.Text = "View";
             // 
@@ -153,7 +151,7 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(782, 296);
+            this.pictureBox1.Size = new System.Drawing.Size(782, 294);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -163,7 +161,7 @@
             this.tabPage_Log.Controls.Add(this.tb_log);
             this.tabPage_Log.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Log.Name = "tabPage_Log";
-            this.tabPage_Log.Size = new System.Drawing.Size(788, 302);
+            this.tabPage_Log.Size = new System.Drawing.Size(788, 300);
             this.tabPage_Log.TabIndex = 2;
             this.tabPage_Log.Text = "Overview";
             this.tabPage_Log.UseVisualStyleBackColor = true;
@@ -177,7 +175,7 @@
             this.tb_log.Name = "tb_log";
             this.tb_log.ReadOnly = true;
             this.tb_log.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tb_log.Size = new System.Drawing.Size(788, 302);
+            this.tb_log.Size = new System.Drawing.Size(788, 300);
             this.tb_log.TabIndex = 0;
             // 
             // tabPage_tags
@@ -186,7 +184,7 @@
             this.tabPage_tags.Location = new System.Drawing.Point(4, 22);
             this.tabPage_tags.Name = "tabPage_tags";
             this.tabPage_tags.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_tags.Size = new System.Drawing.Size(788, 302);
+            this.tabPage_tags.Size = new System.Drawing.Size(788, 300);
             this.tabPage_tags.TabIndex = 1;
             this.tabPage_tags.Text = "Tag Editor";
             this.tabPage_tags.UseVisualStyleBackColor = true;
@@ -205,7 +203,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.btn_clearlist);
             this.splitContainer2.Panel2.Controls.Add(this.panel_tagedit);
-            this.splitContainer2.Size = new System.Drawing.Size(782, 296);
+            this.splitContainer2.Size = new System.Drawing.Size(782, 294);
             this.splitContainer2.SplitterDistance = 327;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -234,7 +232,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(327, 296);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(327, 294);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // tableLayoutPanel3
@@ -314,7 +312,7 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Location = new System.Drawing.Point(3, 110);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 75);
+            this.label3.Size = new System.Drawing.Size(77, 74);
             this.label3.TabIndex = 1;
             this.label3.Text = "Tags";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -323,9 +321,9 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Location = new System.Drawing.Point(3, 185);
+            this.label4.Location = new System.Drawing.Point(3, 184);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(77, 75);
+            this.label4.Size = new System.Drawing.Size(77, 74);
             this.label4.TabIndex = 1;
             this.label4.Text = "Description";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -337,7 +335,7 @@
             this.tb_tags.Location = new System.Drawing.Point(86, 113);
             this.tb_tags.Multiline = true;
             this.tb_tags.Name = "tb_tags";
-            this.tb_tags.Size = new System.Drawing.Size(238, 69);
+            this.tb_tags.Size = new System.Drawing.Size(238, 68);
             this.tb_tags.TabIndex = 0;
             this.tb_tags.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
@@ -345,17 +343,17 @@
             // 
             this.tb_description.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tb_description.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_description.Location = new System.Drawing.Point(86, 188);
+            this.tb_description.Location = new System.Drawing.Point(86, 187);
             this.tb_description.Multiline = true;
             this.tb_description.Name = "tb_description";
-            this.tb_description.Size = new System.Drawing.Size(238, 69);
+            this.tb_description.Size = new System.Drawing.Size(238, 68);
             this.tb_description.TabIndex = 2;
             this.tb_description.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // btn_applytag
             // 
             this.btn_applytag.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_applytag.Location = new System.Drawing.Point(86, 263);
+            this.btn_applytag.Location = new System.Drawing.Point(86, 261);
             this.btn_applytag.Name = "btn_applytag";
             this.btn_applytag.Size = new System.Drawing.Size(238, 30);
             this.btn_applytag.TabIndex = 3;
@@ -405,7 +403,7 @@
             // btn_tagtodefault
             // 
             this.btn_tagtodefault.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_tagtodefault.Location = new System.Drawing.Point(3, 263);
+            this.btn_tagtodefault.Location = new System.Drawing.Point(3, 261);
             this.btn_tagtodefault.Name = "btn_tagtodefault";
             this.btn_tagtodefault.Size = new System.Drawing.Size(77, 30);
             this.btn_tagtodefault.TabIndex = 5;
@@ -416,7 +414,7 @@
             // btn_clearlist
             // 
             this.btn_clearlist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_clearlist.Location = new System.Drawing.Point(371, 259);
+            this.btn_clearlist.Location = new System.Drawing.Point(371, 257);
             this.btn_clearlist.Name = "btn_clearlist";
             this.btn_clearlist.Size = new System.Drawing.Size(77, 34);
             this.btn_clearlist.TabIndex = 4;
@@ -430,7 +428,7 @@
             this.panel_tagedit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_tagedit.Location = new System.Drawing.Point(0, 0);
             this.panel_tagedit.Name = "panel_tagedit";
-            this.panel_tagedit.Size = new System.Drawing.Size(451, 296);
+            this.panel_tagedit.Size = new System.Drawing.Size(451, 294);
             this.panel_tagedit.TabIndex = 0;
             // 
             // tabPage_Map
@@ -438,7 +436,7 @@
             this.tabPage_Map.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Map.Name = "tabPage_Map";
             this.tabPage_Map.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_Map.Size = new System.Drawing.Size(788, 302);
+            this.tabPage_Map.Size = new System.Drawing.Size(788, 300);
             this.tabPage_Map.TabIndex = 3;
             this.tabPage_Map.Text = "Map";
             this.tabPage_Map.UseVisualStyleBackColor = true;
@@ -449,7 +447,7 @@
             this.tabPage_history.Location = new System.Drawing.Point(4, 22);
             this.tabPage_history.Name = "tabPage_history";
             this.tabPage_history.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_history.Size = new System.Drawing.Size(788, 302);
+            this.tabPage_history.Size = new System.Drawing.Size(788, 300);
             this.tabPage_history.TabIndex = 4;
             this.tabPage_history.Text = "History";
             this.tabPage_history.UseVisualStyleBackColor = true;
@@ -461,7 +459,7 @@
             this.tb_history.Multiline = true;
             this.tb_history.Name = "tb_history";
             this.tb_history.ReadOnly = true;
-            this.tb_history.Size = new System.Drawing.Size(782, 296);
+            this.tb_history.Size = new System.Drawing.Size(782, 294);
             this.tb_history.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -477,7 +475,7 @@
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(802, 405);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
@@ -486,23 +484,23 @@
             this.tableLayoutPanel4.ColumnCount = 6;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.98167F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.01833F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 152F));
             this.tableLayoutPanel4.Controls.Add(this.tsprogressbar, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.tslabel_picturesof, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.trackBar1, 4, 0);
-            this.tableLayoutPanel4.Controls.Add(this.pictureBox2, 5, 0);
-            this.tableLayoutPanel4.Controls.Add(this.lb_Size, 3, 0);
-            this.tableLayoutPanel4.Controls.Add(this.lb_Info, 2, 0);
+            this.tableLayoutPanel4.Controls.Add(this.combobox_sorting, 2, 0);
+            this.tableLayoutPanel4.Controls.Add(this.trackBar1, 5, 0);
+            this.tableLayoutPanel4.Controls.Add(this.lb_Size, 4, 0);
+            this.tableLayoutPanel4.Controls.Add(this.checkBox_Exclude, 3, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 384);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 382);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(802, 21);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(802, 23);
             this.tableLayoutPanel4.TabIndex = 4;
             // 
             // tsprogressbar
@@ -510,7 +508,7 @@
             this.tsprogressbar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tsprogressbar.Location = new System.Drawing.Point(78, 3);
             this.tsprogressbar.Name = "tsprogressbar";
-            this.tsprogressbar.Size = new System.Drawing.Size(144, 15);
+            this.tsprogressbar.Size = new System.Drawing.Size(144, 17);
             this.tsprogressbar.TabIndex = 1;
             // 
             // tslabel_picturesof
@@ -519,53 +517,57 @@
             this.tslabel_picturesof.Location = new System.Drawing.Point(3, 3);
             this.tslabel_picturesof.Margin = new System.Windows.Forms.Padding(3);
             this.tslabel_picturesof.Name = "tslabel_picturesof";
-            this.tslabel_picturesof.Size = new System.Drawing.Size(69, 15);
+            this.tslabel_picturesof.Size = new System.Drawing.Size(69, 17);
             this.tslabel_picturesof.TabIndex = 0;
             this.tslabel_picturesof.Text = "100/100";
             this.tslabel_picturesof.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // combobox_sorting
+            // 
+            this.combobox_sorting.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.combobox_sorting.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.combobox_sorting.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
+            this.combobox_sorting.FormattingEnabled = true;
+            this.combobox_sorting.IntegralHeight = false;
+            this.combobox_sorting.ItemHeight = 13;
+            this.combobox_sorting.Location = new System.Drawing.Point(225, 0);
+            this.combobox_sorting.Margin = new System.Windows.Forms.Padding(0);
+            this.combobox_sorting.Name = "combobox_sorting";
+            this.combobox_sorting.Size = new System.Drawing.Size(222, 21);
+            this.combobox_sorting.TabIndex = 5;
+            this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
             // trackBar1
             // 
             this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(635, 3);
+            this.trackBar1.Location = new System.Drawing.Point(652, 3);
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(144, 15);
+            this.trackBar1.Size = new System.Drawing.Size(147, 17);
             this.trackBar1.TabIndex = 2;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
-            // pictureBox2
-            // 
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(782, 0);
-            this.pictureBox2.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(20, 21);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox2.TabIndex = 3;
-            this.pictureBox2.TabStop = false;
-            this.pictureBox2.Visible = false;
-            // 
             // lb_Size
             // 
             this.lb_Size.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_Size.Location = new System.Drawing.Point(600, 0);
+            this.lb_Size.Location = new System.Drawing.Point(617, 0);
             this.lb_Size.Name = "lb_Size";
-            this.lb_Size.Size = new System.Drawing.Size(29, 21);
+            this.lb_Size.Size = new System.Drawing.Size(29, 23);
             this.lb_Size.TabIndex = 4;
             this.lb_Size.Text = "Size";
             this.lb_Size.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // lb_Info
+            // checkBox_Exclude
             // 
-            this.lb_Info.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_Info.Location = new System.Drawing.Point(235, 0);
-            this.lb_Info.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
-            this.lb_Info.Name = "lb_Info";
-            this.lb_Info.Size = new System.Drawing.Size(352, 21);
-            this.lb_Info.TabIndex = 5;
-            this.lb_Info.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox_Exclude.AutoSize = true;
+            this.checkBox_Exclude.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBox_Exclude.Location = new System.Drawing.Point(450, 3);
+            this.checkBox_Exclude.Name = "checkBox_Exclude";
+            this.checkBox_Exclude.Size = new System.Drawing.Size(161, 17);
+            this.checkBox_Exclude.TabIndex = 6;
+            this.checkBox_Exclude.Text = "Exclude Default Values";
+            this.checkBox_Exclude.UseVisualStyleBackColor = true;
             // 
             // panel_tabHolder
             // 
@@ -573,7 +575,7 @@
             this.panel_tabHolder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_tabHolder.Location = new System.Drawing.Point(3, 53);
             this.panel_tabHolder.Name = "panel_tabHolder";
-            this.panel_tabHolder.Size = new System.Drawing.Size(796, 328);
+            this.panel_tabHolder.Size = new System.Drawing.Size(796, 326);
             this.panel_tabHolder.TabIndex = 3;
             // 
             // Form1
@@ -614,7 +616,6 @@
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -656,11 +657,11 @@
         private System.Windows.Forms.Label tslabel_picturesof;
         private System.Windows.Forms.ProgressBar tsprogressbar;
         private System.Windows.Forms.Panel panel_tabHolder;
-        private System.Windows.Forms.TrackBar trackBar1;
-        private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.Label lb_Size;
-        private System.Windows.Forms.Label lb_Info;
+        private System.Windows.Forms.ComboBox combobox_sorting;
+        private TrackBarControl trackBar1;
+        private System.Windows.Forms.CheckBox checkBox_Exclude;
     }
 }
 
