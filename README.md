@@ -4,7 +4,7 @@ assigns tags, dates and location data to photos.
 ## Motivation
 
 My search for any offline-service that is capable of managing my photos and showing their location on a map was badly disappointing.
-And because I have got a lot of Fotos from family, travels, sport, etc by now, a program to manage my fotos was very needful.
+And because I've got tons of Fotos from family, travels, sport, etc. by now, a program to manage my fotos was very needful.
 
 ## Synopsis
 
@@ -25,14 +25,15 @@ Software required:
 - MS Visual Studio
 - MS SQL Server
 
+Create Database "Database.mdf" in ../DatabaseLogic Folder
+
 ## Installation Issues
 
 -SQl Server not found:
 Change version number in Database connection string or create an instance of LocalDB to match the version number:
+```
 SqlLocalDB create "v13.0" -s
-## API Reference
-
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+```
 
 ## Authors
 
