@@ -16,7 +16,7 @@ The GMap tab uses a GMap to mark (selected) Fotos on a worldmap (flagged with a 
 The tab to edit tags has textfields to set the location (as Coordinates lat/lng), the date (day, month, year), tags and a description. You can also select the location from the map.
 A new file can be load to the program by dragging them onto the Form. Two local copies are created. The first 1:1-copy in the "full" folder is done because the program manages itself. Theres also a smaller, comprimated preview of the foto in the "preview" folder. The filename is changed to a Globally Unique Identifier.
 By adding a new foto to the program, an entry in the local database "Database.mdf" is created. Every entry's ID is a Globally Unique Identifier.
-Database: GUID (filename), filetype, location, date, tags, description
+Database: GUID (filename), filetype, loclat, loclng, date, tags, description
 
 ## Prerequisites
 
@@ -25,7 +25,7 @@ Software required:
 - MS Visual Studio
 - MS SQL Server
 
-Create Database "Database.mdf" in ../DatabaseLogic Folder
+Create Database "Database.mdf" in Project Folder
 
 ## Installation Issues
 
