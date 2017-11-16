@@ -18,7 +18,7 @@ namespace PhotoManager {
 
         public DBHandler(string workingdirectory) {
             currentworkingdirectory = workingdirectory;
-            connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename="+currentworkingdirectory +@"\DatabaseLogic\Database.mdf;Integrated Security=True";
+            connection = @"Data Source=(LocalDB)\v13.0;AttachDbFilename="+currentworkingdirectory +@"\Database.mdf;Integrated Security=True";
             createTable();
             entryCount = countEntrys();
         }

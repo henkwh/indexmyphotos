@@ -58,9 +58,9 @@ namespace PhotoManager {
             if (!System.IO.Directory.Exists(currentworkingdirectory + dir_preview)) {
                 System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_preview);
             }
+            Utils.deleteImagesNotInDB(currentworkingdirectory, dir_full, dir_preview, db.loadEntries(null));
             newWorker();
         }
-
 
         /*
          * Handles Drag-and-Drop of Files
@@ -68,6 +68,8 @@ namespace PhotoManager {
         void Form1_DragDrop(object sender, DragEventArgs e) {
             int counter = 0;
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            tsprogressbar.Maximum = files.Count();
+            tsprogressbar.Value = 0;
             foreach (string file in files) {
                 Console.WriteLine(file);
                 FileAttributes attr = File.GetAttributes(file);
@@ -80,10 +82,10 @@ namespace PhotoManager {
                         tsprogressbar.Value++;
                     }
                 } else {
-                    tsprogressbar.Maximum = 1;
-                    tsprogressbar.Value = 0;
                     counter = loadFile(file) ? counter + 1 : counter;
-                    tsprogressbar.Value++;
+                    try {
+                        tsprogressbar.Value++;
+                    } catch { }
                 }
 
             }
@@ -219,8 +221,9 @@ namespace PhotoManager {
                             i.showBorder();
                         }
                     } else {
+                        pictureBox_viewer.ShownImage = i;
                         tabControl1.SelectedTab = tabPage_viewer;
-                        pictureBox1.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
+                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
                     }
                 }
             }
@@ -238,17 +241,16 @@ namespace PhotoManager {
             for (int i = 0; i < 3; i++) {
                 MenuItemImage menuItem = new MenuItemImage(name[i]);
                 switch (i) {
-                    case 1:
+                    case 0:
                         menuItem.Click += Delete_Click;
                         break;
-                    case 2:
+                    case 1:
                         menuItem.Click += TagEdit_Click;
                         break;
-                    case 3:
+                    case 2:
                         menuItem.Click += SelectAll_Click;
                         break;
                 }
-                menuItem.Click += Delete_Click;
                 menuItem.setParentPictureBox(image);
                 menuItem.Tag = image;
                 cm.MenuItems.Add(menuItem);
@@ -327,21 +329,23 @@ namespace PhotoManager {
             while (multiedit.Count != 0) {
                 Debug.WriteLine("Deleting: " + multiedit[0].getName());
                 db.deleteEntry(multiedit[0].getName());
+                map.removeMarkers();
+                if (multiedit[0] == pictureBox_viewer.ShownImage) {
+                    pictureBox_viewer.ShownImage.Dispose();
+                    pictureBox_viewer.Image.Dispose();
+                }
                 string name = multiedit[0].getName();
                 string type = multiedit[0].getFileType();
                 multiedit[0].setPreview(null);      //Dispose to avoid deleting while file in use
                 if (multiedit[0].Image != null) {
                     multiedit[0].Image.Dispose();
-                    multiedit[0].Image = null;
                 }
                 multiedit[0].Dispose();
-                multiedit[0] = null;
                 multiedit.RemoveAt(0);
-
+                Thread.Sleep(100);
                 try {
                     File.Delete(currentworkingdirectory + dir_full + name + type);
                     File.Delete(currentworkingdirectory + dir_preview + name + type);
-
                 } catch {
                     MessageBox.Show("Error deleting File");
                 }
@@ -368,32 +372,29 @@ namespace PhotoManager {
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
             switch (e.KeyCode) {
-                case Keys.Down:
-                    if (ImageGenerator.SIZE >= ImageGenerator.MINMAXSIZE[0]) {
-                        ImageGenerator.SIZE -= 50;
-                        newWorker();
-                    }
-                    break;
-                case Keys.PageDown:
-                    if (ImageGenerator.SIZE >= ImageGenerator.MINMAXSIZE[0]) {
-                        ImageGenerator.SIZE -= 100;
-                        newWorker();
-                    }
-                    break;
-                case Keys.PageUp:
-                    if (ImageGenerator.SIZE <= ImageGenerator.MINMAXSIZE[1]) {
-                        ImageGenerator.SIZE += 100;
-                        newWorker();
-                    }
-                    break;
-                case Keys.Up:
-                    if (ImageGenerator.SIZE <= ImageGenerator.MINMAXSIZE[1]) {
-                        ImageGenerator.SIZE += 50;
-                        newWorker();
-                    }
-                    break;
                 case Keys.Escape:
                     resetMultiedit();
+                    break;
+                case Keys.Left:
+                    if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
+                        int index = shown.IndexOf(pictureBox_viewer.ShownImage);
+                        if (index > 0) {
+                            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + shown[index - 1].getName() + shown[index - 1].getFileType());
+                            pictureBox_viewer.ShownImage = shown[index - 1];
+                            tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
+                        }
+                    }
+                    break;
+                case Keys.Right:
+                    if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
+                        int index = shown.IndexOf(pictureBox_viewer.ShownImage);
+                        if (index < shown.Count - 1) {
+                            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory
+                                + dir_full + shown[index + 1].getName() + shown[index + 1].getFileType());
+                            pictureBox_viewer.ShownImage = shown[index + 1];
+                            tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
+                        }
+                    }
                     break;
             }
 
@@ -461,7 +462,6 @@ namespace PhotoManager {
             if (e.KeyCode == Keys.Return) {
                 newWorker();
                 multiedit.Clear();
-                tb_history.Text += DateTime.Now.ToString("h:mm") + " | " + tb_search.Text + "\r\n";
             }
         }
 
@@ -497,16 +497,24 @@ namespace PhotoManager {
                     }
                 }
             } else if (tabControl1.SelectedTab == tabPage_Log) {
-                tb_log.Text = "";// "           Name                      Type |        Date         | Hash | Loc | Tags | Beschreibung\r\n\r\n";
-                List<Image> ListAll = db.loadEntries(new SearchQuery("", ""));
-                foreach (Image i in ListAll) {
-                    tb_log.Text += i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Utils.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocationString() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n";
+                if (tb_log.Text.Equals("")) {
+                    tb_log.Text = "";// "           Name                      Type |        Date         | Hash | Loc | Tags | Beschreibung\r\n\r\n";
+                    List<Image> ListAll = db.loadEntries(new SearchQuery("", ""));
+                    foreach (Image i in ListAll) {
+                        tb_log.Text += i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Utils.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocationString() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n";
+                    }
                 }
             } else if (tabControl1.SelectedTab == tabPage_main) {
                 trackBar1.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
+                tslabel_picturesof.Text = shown.Count() + "/" + db.getEntryCount();
             } else if (tabControl1.SelectedTab == tabPage_Map) {
+                tslabel_picturesof.Text = map.getPinCount() + "/" + shown.Count() + "/" + db.getEntryCount();
                 map.setEditMode(false);
                 trackBar1.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
+            } else if (tabControl1.SelectedTab == tabPage_viewer) {
+                if (pictureBox_viewer.ShownImage != null) {
+                    tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
+                }
             }
         }
 

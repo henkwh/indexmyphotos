@@ -136,5 +136,45 @@ namespace PhotoManager {
         public static string getSQLLocation(double lat, double lng) {
             return lat.ToString().Replace(".", ",") + "," + lng.ToString().Replace(".", ",");
         }
+
+        public static int deleteImagesNotInDB(string cwd, string dir_full, string dir_preview, List<Image> list) {
+            int counter = 0;
+            string[] folderfiles = Directory.GetFiles(cwd + dir_full);
+            foreach (string s in folderfiles) {
+                string t = Path.GetFileNameWithoutExtension(s);
+                bool delete = true;
+                foreach (Image i in list) {
+                    Debug.WriteLine(i.getName() + " : " + t);
+                    if (i.getName().Equals(t)) {
+                        delete = false;
+                    }
+                }
+                if (delete) {
+                    try {
+                        File.Delete(s);
+                    } catch { }
+                    counter++;
+                }
+            }
+
+            string[] folderfiles2 = Directory.GetFiles(cwd + dir_preview);
+            foreach (string s in folderfiles2) {
+                string t = Path.GetFileNameWithoutExtension(s);
+                bool delete = true;
+                foreach (Image i in list) {
+                    if (i.getName().Equals(t)) {
+                        delete = false;
+                    }
+                }
+                if (delete) {
+                    try {
+                        File.Delete(s);
+                    } catch { }
+                    counter++;
+                }
+
+            }
+            return counter;
+        }
     }
 }

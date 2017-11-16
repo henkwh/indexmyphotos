@@ -82,10 +82,6 @@ namespace PhotoManager {
 
         public void removeMarkers() {
             Overlays.Remove(overlay);
-            Debug.WriteLine(overlay.Markers.Count());
-            if (overlay.Markers.Count() > 0) {
-                Debug.WriteLine(overlay.Markers[0] == null);
-            }
             overlay.Markers.Clear();
             Overlays.Add(overlay);
         }
@@ -167,6 +163,14 @@ namespace PhotoManager {
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.GMapInstance_MouseClick);
             this.ResumeLayout(false);
 
+        }
+
+        public int getPinCount() {
+            int sum = 0;
+            foreach(GMarkerElement marker in overlay.Markers) {
+                sum += marker.getToolTipCounter();
+            }
+            return sum;
         }
 
         private void GMapInstance_MouseClick(object sender, MouseEventArgs e) {

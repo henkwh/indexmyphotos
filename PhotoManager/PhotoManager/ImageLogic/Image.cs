@@ -52,7 +52,7 @@ namespace PhotoManager {
         }
 
         public void setPreview(Bitmap bmp) {
-            if (bmp == null) {
+            if (bmp == null && preview != null) {
                 preview.Dispose();
             }
             if (preview == null) {
