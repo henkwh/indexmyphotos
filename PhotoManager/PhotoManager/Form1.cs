@@ -288,6 +288,7 @@ namespace PhotoManager {
 
         private void addImagestoTabPage() {
             panel_tagedit.Controls.Clear();
+            List<PictureBox> totaglist = new List<PictureBox>();
             foreach (Image i in multiedit) {
                 PictureBox tageditbox = new PictureBox();
                 tageditbox.Image = i.getPreview();
@@ -298,8 +299,9 @@ namespace PhotoManager {
                 menuItem.Click += TagRemove_Click;
                 cm.MenuItems.Add(menuItem);
                 tageditbox.ContextMenu = cm;
-                panel_tagedit.Controls.Add(tageditbox);
+                totaglist.Add(tageditbox);
             }
+            panel_tagedit.Controls.AddRange(totaglist.ToArray());
         }
 
 
