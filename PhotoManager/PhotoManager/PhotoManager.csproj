@@ -69,6 +69,9 @@
     <Compile Include="CustomControls\ComboBoxItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\FlowLayoutOverview.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\PictureBoxViewer.cs">
       <SubType>Component</SubType>
     </Compile>

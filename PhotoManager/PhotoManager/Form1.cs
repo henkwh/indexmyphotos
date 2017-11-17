@@ -58,9 +58,55 @@ namespace PhotoManager {
             if (!System.IO.Directory.Exists(currentworkingdirectory + dir_preview)) {
                 System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_preview);
             }
-            Utils.deleteImagesNotInDB(currentworkingdirectory, dir_full, dir_preview, db.loadEntries(null));
+
+
+
+            panel_overview.Paint += Panel_overview_Paint;
+            panel_overview.Scroll += Panel_overview_Scroll;
+            setHandler();
+            panel_overview.ContextMenu = addMenuItems();
+            //Utils.deleteImagesNotInDB(currentworkingdirectory, dir_full, dir_preview, db.loadEntries(null));
             newWorker();
         }
+
+        private void Panel_overview_Scroll(object sender, ScrollEventArgs e) {
+            panel_overview.Refresh();
+        }
+
+        private void Panel_overview_Paint(object sender, PaintEventArgs e) {
+            Graphics g = panel_overview.CreateGraphics();
+            g.TranslateTransform(0, panel_overview.AutoScrollPosition.Y);
+            panel_overview.BackColor = Color.Wheat;
+            int panelwidth = panel_overview.VerticalScroll.Visible ? panel_overview.Width - SystemInformation.VerticalScrollBarWidth : panel_overview.Width;
+            int[] tmp = ImageGenerator.calculateGap(Utils.GAP, imagescale, panelwidth);
+            int gap = tmp[0];
+            int rtrn = tmp[1];
+            int x = gap;
+            int y = Utils.GAP;
+            int max = panel_overview.Width - gap - imagescale;
+            int c = 0;
+            foreach (Image i in shown) {
+                Size s;
+                try {
+                    s = ImageGenerator.genSize(imagescale, i.Image.Width, i.Image.Height);
+                } catch {
+                    break;
+                }
+                g.DrawImage(i.Image, x + (imagescale - s.Width) / 2, y + (imagescale - s.Height) / 2, s.Width, s.Height);
+                i.XPos = x;
+                i.YPos = y;
+                x += gap + imagescale;
+                c++;
+                if (c == rtrn - 2) {
+                    y += gap + imagescale;
+                    x = gap;
+                    c = 0;
+                }
+            }
+            panel_overview.AutoScrollMinSize = new Size(panel_overview.AutoScrollMinSize.Width, y + imagescale + 2 * Utils.GAP);
+        }
+
+
 
         /*
          * Handles Drag-and-Drop of Files
@@ -106,7 +152,7 @@ namespace PhotoManager {
                 }
                 Image img = db.addImage(path, hash, filetype);
                 System.IO.File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, false);
-                ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
+                ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
                 return true;
             } else {
                 MessageBox.Show("File " + path + " is not a supported Image File. Skipping...");
@@ -132,8 +178,6 @@ namespace PhotoManager {
                 worker.CancelAsync();
                 return;
             }
-            panel_overview.SuspendLayout();
-            panel_overview.Controls.Clear();
             ThreadRunning = true;
             worker.RunWorkerAsync();
         }
@@ -141,7 +185,8 @@ namespace PhotoManager {
          * called if worker is finished
          */
         private void worker_finished(object sender, RunWorkerCompletedEventArgs e) {
-            panel_overview.ResumeLayout();
+            tsprogressbar.Value = shown.Count();
+            panel_overview.Refresh();
             ThreadRunning = false;
             if (newWorkerRequested == true) {
                 newWorkerRequested = false;
@@ -157,73 +202,74 @@ namespace PhotoManager {
             if (InvokeRequired) {
                 panel_overview.BeginInvoke((MethodInvoker)delegate {
                     map.removeMarkers();
-                    tsprogressbar.Maximum = shown.Count;
+                    tsprogressbar.Maximum = shown.Count();
                     tsprogressbar.Value = 0;
                     tslabel_picturesof.Text = shown.Count + "/" + db.getEntryCount();
                 });
             }
             ToolTip toolTip = new ToolTip();
-            int i = 0;
-            int c = i;
-            while (i < shown.Count) {
-                for (int j = 0; j < Utils.WORKER_FILL_INTERVAL; j++) {
-                    if (i + j >= shown.Count()) {
-                        break;
-                    }
-                    Image img = shown[i + j];
-                    setHandler(img);
-                    addMenuItems(img);
-                    Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
-                    img.setPreview(bmp);
-                    img.setImage(bmp);
-                    toolTip.SetToolTip(shown[i + j], Utils.getToolTipTextForImage(shown[i + j]));
-                    shown[i + j].setSize(imagescale);
-                    if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {          //No Location set -> No marker
-                        map.addMarker(img.getLocation(), img.getPreview());
-                    }
+            int ticks = Environment.TickCount + 700;
+            foreach (Image img in shown) {
+                //setHandler(img);
+                //addMenuItems(img);
+                Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
+                //bmp.Size = ImageGenerator.genSize(imagescale, bmp.Width, bmp.Height);
+                img.setPreview(bmp);
+                img.setImage(bmp);
+                toolTip.SetToolTip(img, Utils.getToolTipTextForImage(img));
+                img.setSize(imagescale);
+                if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {          //No Location set -> No marker
+                    map.addMarker(img.getLocation(), img.getPreview());
                 }
-                int range = (i + Utils.WORKER_FILL_INTERVAL > shown.Count()) ? shown.Count() - i : Utils.WORKER_FILL_INTERVAL;
-                Image[] addThis = shown.GetRange(i, range).ToArray();
-                bool wait = true;
-                BeginInvoke((MethodInvoker)delegate {
-                    panel_overview.Controls.AddRange(addThis);
-                    try {
-                        tsprogressbar.Value += range;
-                    } catch { }
-                    panel_overview.Update();
-                    panel_overview.ResumeLayout();
-                    map.Update();
-                    wait = false;
-                });
-                while (wait) {
-                    Thread.Sleep(Utils.WORKER_SLEEP_TIME);
+                if (Environment.TickCount - ticks > 1000) {
+                    panel_overview.BeginInvoke((MethodInvoker)delegate {
+                        tsprogressbar.Value = shown.IndexOf(img);
+                        panel_overview.Refresh();
+                        ticks = Environment.TickCount;
+                    });
                 }
-                i += Utils.WORKER_FILL_INTERVAL;
                 if (e.Cancel || worker.CancellationPending) {   //Abort Worker
                     break;
                 }
             }
         }
 
+        private Image getClickedImage(Point cursorposition) {
+            Point p = panel_overview.PointToClient(cursorposition);
+            p.Y -= panel_overview.AutoScrollPosition.Y;
+            foreach (Image i in shown) {
+                if (p.X >= i.XPos && p.X <= i.XPos + imagescale) {
+                    if (p.Y > i.YPos && p.Y < i.YPos + imagescale) {
+                        return i;
+                    }
+                }
+            }
+            return null;
+        }
+
         /*
          * Adds MouseEventHandler to  the preview Image in main panel
          */
-        private void setHandler(Image i) {
-            i.MouseClick += new MouseEventHandler((o, a) => {
-                if (a.Button == MouseButtons.Right) {
-                } else if (a.Button == MouseButtons.Left) {
-                    if (ModifierKeys == Keys.Control) {
-                        if (multiedit.Contains(i)) {
-                            multiedit.Remove(i);
-                            i.hideBorder();
+        private void setHandler() {
+            panel_overview.MouseClick += new MouseEventHandler((o, a) => {
+                Image i = getClickedImage(Cursor.Position);
+                if (i != null) {
+                    if (a.Button == MouseButtons.Right) {
+                    } else if (a.Button == MouseButtons.Left) {
+                        if (ModifierKeys == Keys.Control) {
+                            if (multiedit.Contains(i)) {
+                                multiedit.Remove(i);
+                                i.hideBorder();
+                            } else {
+                                multiedit.Add(i);
+                                i.showBorder();
+                            }
+                            panel_overview.Refresh();
                         } else {
-                            multiedit.Add(i);
-                            i.showBorder();
+                            pictureBox_viewer.ShownImage = i;
+                            tabControl1.SelectedTab = tabPage_viewer;
+                            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
                         }
-                    } else {
-                        pictureBox_viewer.ShownImage = i;
-                        tabControl1.SelectedTab = tabPage_viewer;
-                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
                     }
                 }
             }
@@ -234,10 +280,10 @@ namespace PhotoManager {
         /*
          * Adds a ContextMenu to the preview image
          */
-        private void addMenuItems(Image image) {
+        private ContextMenu addMenuItems() {
             ContextMenu cm = new ContextMenu();
+            cm.Popup += Cm_Popup;
             string[] name = new string[] { "Delete", "Edit Tags", "Select all" };
-            cm.Popup += Popup_Preview;
             for (int i = 0; i < 3; i++) {
                 MenuItemImage menuItem = new MenuItemImage(name[i]);
                 switch (i) {
@@ -251,11 +297,22 @@ namespace PhotoManager {
                         menuItem.Click += SelectAll_Click;
                         break;
                 }
-                menuItem.setParentPictureBox(image);
-                menuItem.Tag = image;
+                //menuItem.setParentPictureBox(image);
+                //menuItem.Tag = image;
                 cm.MenuItems.Add(menuItem);
             }
-            image.ContextMenu = cm;
+            return cm;
+        }
+
+        private void Cm_Popup(object sender, EventArgs e) {
+            Image i = getClickedImage(Cursor.Position);
+            if (i != null) {
+                if (!multiedit.Contains(i)) {
+                    multiedit.Add(i);
+                    i.showBorder();
+                }
+                panel_overview.Refresh();
+            }
         }
 
         private void SelectAll_Click(object sender, EventArgs e) {
@@ -263,20 +320,8 @@ namespace PhotoManager {
                 multiedit.Add(i);
                 i.showBorder();
             }
+            panel_overview.Refresh();
         }
-
-        /*
-        * Adds border to selected preview images in main panel
-        */
-        private void Popup_Preview(object sender, EventArgs e) {
-            ContextMenu sndr = (ContextMenu)sender;
-            Image i = ((MenuItemImage)sndr.MenuItems[0]).getParentPictureBox();
-            if (!multiedit.Contains(i)) {
-                multiedit.Add(i);
-            }
-            i.showBorder();
-        }
-
 
         /*
         * Adds a ContextMenu to the preview image in tag view
@@ -318,6 +363,7 @@ namespace PhotoManager {
             multiedit.Remove(i);
             i.hideBorder();
             panel_tagedit.Update();
+            panel_overview.Refresh();
             if (multiedit.Count == 1) {
                 tabControl1_SelectedIndexChanged(multiedit[0], null);
             }
@@ -344,12 +390,11 @@ namespace PhotoManager {
                 }
                 multiedit[0].Dispose();
                 multiedit.RemoveAt(0);
-                Thread.Sleep(100);
                 try {
                     File.Delete(currentworkingdirectory + dir_full + name + type);
                     File.Delete(currentworkingdirectory + dir_preview + name + type);
                 } catch {
-                    MessageBox.Show("Error deleting File");
+                    //MessageBox.Show("Error deleting File");
                 }
             }
             multiedit.Clear();
@@ -376,6 +421,7 @@ namespace PhotoManager {
             switch (e.KeyCode) {
                 case Keys.Escape:
                     resetMultiedit();
+                    panel_overview.Refresh();
                     break;
                 case Keys.Left:
                     if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
@@ -411,6 +457,7 @@ namespace PhotoManager {
             multiedit.Clear();
             panel_overview.Update();
             panel_tagedit.Update();
+            panel_overview.Refresh();
         }
 
         private void btn_applytag_Click(object sender, EventArgs e) {
@@ -555,18 +602,8 @@ namespace PhotoManager {
         private void trackBar1_Scroll(object sender, EventArgs e) {
             if (tabControl1.SelectedTab == tabPage_main) {
                 imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
-                panel_overview.SuspendLayout();
-                int c = 0;
-                foreach (Image i in shown) {
-                    i.setSize(imagescale);
-                    if (c == 5) {
-                        panel_overview.ResumeLayout();
-                        c = 0;
-                        panel_overview.SuspendLayout();
-                    }
-                    c++;
-                }
-                panel_overview.ResumeLayout();
+                panel_overview.Refresh();
+
             } else if (tabControl1.SelectedTab == tabPage_Map) {
                 map.setPinScale(trackBar1.scrollEvent(TrackBarControl.tabPage.MAP));
             }

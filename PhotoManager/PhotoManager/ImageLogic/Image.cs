@@ -26,6 +26,7 @@ namespace PhotoManager {
             this.date = Utils.YEAR_STD;
             this.borderShown = false;
             SizeMode = mode;
+            DoubleBuffered = false;
         }
 
         public void setTags(string date, double[] loc, string desc, string tags) {
@@ -43,6 +44,10 @@ namespace PhotoManager {
             location = l;
         }
 
+        public int XPos { get; set; }
+
+        public int YPos { get; set; }
+
         public void setDescription(string d) {
             description = d;
         }
@@ -58,6 +63,7 @@ namespace PhotoManager {
             if (preview == null) {
                 preview = bmp;
             }
+            Image = preview;
         }
 
         public void setImage(Bitmap b) {

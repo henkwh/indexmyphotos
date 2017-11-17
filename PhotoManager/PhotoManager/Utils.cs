@@ -27,6 +27,8 @@ namespace PhotoManager {
 
         public const int SCALE_MAP_DEF = 75;
 
+        public const int GAP = 10;
+
         /*
          * Creates Hash value from file
          */

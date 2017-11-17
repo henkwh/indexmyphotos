@@ -26,7 +26,6 @@
             this.tb_search = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_main = new System.Windows.Forms.TabPage();
-            this.panel_overview = new System.Windows.Forms.FlowLayoutPanel();
             this.tabPage_viewer = new System.Windows.Forms.TabPage();
             this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabPage_Log = new System.Windows.Forms.TabPage();
@@ -59,8 +58,8 @@
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
             this.trackBar1 = new PhotoManager.TrackBarControl();
             this.lb_Size = new System.Windows.Forms.Label();
-            this.checkBox_Exclude = new System.Windows.Forms.CheckBox();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
+            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
@@ -121,16 +120,6 @@
             this.tabPage_main.TabIndex = 0;
             this.tabPage_main.Text = "Main";
             this.tabPage_main.UseVisualStyleBackColor = true;
-            // 
-            // panel_overview
-            // 
-            this.panel_overview.AutoScroll = true;
-            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_overview.Location = new System.Drawing.Point(3, 3);
-            this.panel_overview.Name = "panel_overview";
-            this.panel_overview.Size = new System.Drawing.Size(782, 294);
-            this.panel_overview.TabIndex = 0;
-            this.panel_overview.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             // 
             // tabPage_viewer
             // 
@@ -463,13 +452,12 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.98167F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.01833F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 161F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 162F));
             this.tableLayoutPanel4.Controls.Add(this.tsprogressbar, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.tslabel_picturesof, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.combobox_sorting, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.trackBar1, 5, 0);
             this.tableLayoutPanel4.Controls.Add(this.lb_Size, 4, 0);
-            this.tableLayoutPanel4.Controls.Add(this.checkBox_Exclude, 3, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 382);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -509,7 +497,7 @@
             this.combobox_sorting.Location = new System.Drawing.Point(225, 0);
             this.combobox_sorting.Margin = new System.Windows.Forms.Padding(0);
             this.combobox_sorting.Name = "combobox_sorting";
-            this.combobox_sorting.Size = new System.Drawing.Size(217, 21);
+            this.combobox_sorting.Size = new System.Drawing.Size(216, 21);
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
@@ -517,9 +505,9 @@
             // 
             this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(643, 3);
+            this.trackBar1.Location = new System.Drawing.Point(642, 3);
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(156, 17);
+            this.trackBar1.Size = new System.Drawing.Size(157, 17);
             this.trackBar1.TabIndex = 2;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
@@ -527,23 +515,12 @@
             // lb_Size
             // 
             this.lb_Size.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_Size.Location = new System.Drawing.Point(608, 0);
+            this.lb_Size.Location = new System.Drawing.Point(607, 0);
             this.lb_Size.Name = "lb_Size";
             this.lb_Size.Size = new System.Drawing.Size(29, 23);
             this.lb_Size.TabIndex = 4;
             this.lb_Size.Text = "Size";
             this.lb_Size.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // checkBox_Exclude
-            // 
-            this.checkBox_Exclude.AutoSize = true;
-            this.checkBox_Exclude.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBox_Exclude.Location = new System.Drawing.Point(445, 3);
-            this.checkBox_Exclude.Name = "checkBox_Exclude";
-            this.checkBox_Exclude.Size = new System.Drawing.Size(157, 17);
-            this.checkBox_Exclude.TabIndex = 6;
-            this.checkBox_Exclude.Text = "Exclude Default Values";
-            this.checkBox_Exclude.UseVisualStyleBackColor = true;
             // 
             // panel_tabHolder
             // 
@@ -553,6 +530,15 @@
             this.panel_tabHolder.Name = "panel_tabHolder";
             this.panel_tabHolder.Size = new System.Drawing.Size(796, 326);
             this.panel_tabHolder.TabIndex = 3;
+            // 
+            // panel_overview
+            // 
+            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_overview.Location = new System.Drawing.Point(3, 3);
+            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_overview.Name = "panel_overview";
+            this.panel_overview.Size = new System.Drawing.Size(782, 294);
+            this.panel_overview.TabIndex = 0;
             // 
             // Form1
             // 
@@ -599,7 +585,6 @@
         private System.Windows.Forms.TextBox tb_search;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage_main;
-        private System.Windows.Forms.FlowLayoutPanel panel_overview;
         private System.Windows.Forms.TabPage tabPage_tags;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
@@ -632,8 +617,8 @@
         private System.Windows.Forms.Label lb_Size;
         private System.Windows.Forms.ComboBox combobox_sorting;
         private TrackBarControl trackBar1;
-        private System.Windows.Forms.CheckBox checkBox_Exclude;
         private CustomControls.PictureBoxViewer pictureBox_viewer;
+        private CustomControls.FlowLayoutOverview panel_overview;
     }
 }
 

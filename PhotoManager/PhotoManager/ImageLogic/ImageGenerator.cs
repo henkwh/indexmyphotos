@@ -23,20 +23,20 @@ namespace PhotoManager {
         /*
          * Creates preview image and places it in preview folder
          */
-        public static Bitmap genPreview(string cwd, string full, string preview, string filepath) {
+        public static Bitmap genPreview(string cwd, string full, string preview, string filepath, int scale) {
             if (!File.Exists(cwd + preview + filepath)) {
                 string complete = cwd + full + filepath;
                 if (!File.Exists(complete)) {
                     return null;
                 }
                 Bitmap tempBmp = new Bitmap(complete);
-                Size ret = new Size(MAXSIZE, MAXSIZE);
+                Size ret = new Size(scale, scale);
                 if (tempBmp.Height > tempBmp.Width) {
-                    ret.Height = MAXSIZE;
-                    ret.Width = MAXSIZE * tempBmp.Width / tempBmp.Height;
+                    ret.Height = scale;
+                    ret.Width = scale * tempBmp.Width / tempBmp.Height;
                 } else {
-                    ret.Width = MAXSIZE;
-                    ret.Height = MAXSIZE * tempBmp.Height / tempBmp.Width;
+                    ret.Width = scale;
+                    ret.Height = scale * tempBmp.Height / tempBmp.Width;
                 }
                 Bitmap bmp = new Bitmap(tempBmp, ret);
                 Bitmap bmp2 = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), PixelFormat.Format16bppArgb1555);
@@ -88,5 +88,19 @@ namespace PhotoManager {
             }
         }
 
+        public static int[] calculateGap(int gap, int imagescale, int panelwidth) {
+
+            int one = gap + imagescale;
+            int c = 2;
+            while (one <= panelwidth) {
+                c++;
+                one += (gap + imagescale);
+            }
+            one -= (gap + imagescale);
+            System.Diagnostics.Debug.WriteLine(c+" "+one+"");
+            return new int[] { gap + ((panelwidth - one) / c) , c};
+
+
+        }
     }
 }
