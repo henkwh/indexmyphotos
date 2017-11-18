@@ -72,6 +72,16 @@ namespace PhotoManager {
             }
             checkBox_JoinTags.Checked = Properties.Settings.Default.JOIN;
 
+
+            string[] favs = db.getFavs();
+            foreach (string s in favs) {
+                FavouriteElement fe = new FavouriteElement(s);
+                fe.resize(panel_favs.Width- SystemInformation.VerticalScrollBarWidth);
+                fe.delButton().Click += favDel_Click;
+                fe.copyButton().Click += favCpy_Click;
+                panel_favs.Controls.Add(fe);
+            }
+
             Properties.Settings.Default.Upgrade();
             checkBox_autoScale.Checked = Properties.Settings.Default.AUTOSCALE;
 
@@ -687,6 +697,41 @@ namespace PhotoManager {
 
         private void checkBox_JoinTags_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.JOIN = checkBox_JoinTags.Checked;
+        }
+
+        private void btn_fav_Click(object sender, EventArgs e) {
+            btn_fav.Text = "★";
+            bool b = db.addFav(tb_search.Text);
+            if (b) {
+                FavouriteElement fe = new FavouriteElement(tb_search.Text);
+                fe.resize(panel_favs.Width - SystemInformation.VerticalScrollBarWidth);
+                fe.delButton().Click += favDel_Click;
+                fe.copyButton().Click += favCpy_Click;
+                panel_favs.Controls.Add(fe);
+            }
+
+
+        }
+
+        private void favCpy_Click(object sender, EventArgs e) {
+            FavouriteElement fe = (FavouriteElement)(((Button)sender).Parent).Parent;
+            tb_search.Text = fe.getText();
+        }
+
+        private void favDel_Click(object sender, EventArgs e) {
+            FavouriteElement fe = (FavouriteElement)(((Button)sender).Parent).Parent;
+            panel_favs.Controls.Remove(fe);
+            db.removeFav(fe.getText());
+        }
+
+        private void panel_favs_Resize(object sender, EventArgs e) {
+            foreach (FavouriteElement fe in panel_favs.Controls) {
+                fe.resize(panel_favs.Width - SystemInformation.VerticalScrollBarWidth);
+            }
+        }
+
+        private void tb_search_TextChanged(object sender, EventArgs e) {
+            btn_fav.Text = "☆";
         }
 
         public void ClickedMap(string location) {

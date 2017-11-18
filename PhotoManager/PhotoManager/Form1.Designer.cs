@@ -70,6 +70,10 @@
             this.trackBar1 = new PhotoManager.TrackBarControl();
             this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
+            this.btn_fav = new System.Windows.Forms.Button();
+            this.tabPage_favs = new System.Windows.Forms.TabPage();
+            this.panel_favs = new System.Windows.Forms.FlowLayoutPanel();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
@@ -95,17 +99,23 @@
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
+            this.tabPage_favs.SuspendLayout();
             this.SuspendLayout();
             // 
             // tb_search
             // 
             this.tb_search.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tb_search.Font = new System.Drawing.Font("Tahoma", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_search.Location = new System.Drawing.Point(10, 10);
-            this.tb_search.Margin = new System.Windows.Forms.Padding(10);
+            this.tb_search.Location = new System.Drawing.Point(0, 0);
+            this.tb_search.Margin = new System.Windows.Forms.Padding(0);
             this.tb_search.Name = "tb_search";
-            this.tb_search.Size = new System.Drawing.Size(782, 30);
+            this.tb_search.Size = new System.Drawing.Size(738, 30);
             this.tb_search.TabIndex = 0;
+            this.tb_search.TextChanged += new System.EventHandler(this.tb_search_TextChanged);
             this.tb_search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_search_KeyDown);
             this.tb_search.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             // 
@@ -116,6 +126,7 @@
             this.tabControl1.Controls.Add(this.tabPage_tags);
             this.tabControl1.Controls.Add(this.tabPage_Map);
             this.tabControl1.Controls.Add(this.tabPage_Settings);
+            this.tabControl1.Controls.Add(this.tabPage_favs);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -563,8 +574,8 @@
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.tb_search, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel_tabHolder, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.splitContainer4, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -683,6 +694,62 @@
             this.pictureBox_viewer.TabIndex = 0;
             this.pictureBox_viewer.TabStop = false;
             // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer4.Location = new System.Drawing.Point(10, 10);
+            this.splitContainer4.Margin = new System.Windows.Forms.Padding(10);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.tb_search);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.btn_fav);
+            this.splitContainer4.Size = new System.Drawing.Size(782, 30);
+            this.splitContainer4.SplitterDistance = 738;
+            this.splitContainer4.TabIndex = 5;
+            // 
+            // btn_fav
+            // 
+            this.btn_fav.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_fav.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btn_fav.Font = new System.Drawing.Font("Wide Latin", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_fav.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btn_fav.Location = new System.Drawing.Point(0, 0);
+            this.btn_fav.Name = "btn_fav";
+            this.btn_fav.Size = new System.Drawing.Size(40, 30);
+            this.btn_fav.TabIndex = 0;
+            this.btn_fav.Text = "☆";
+            this.btn_fav.UseVisualStyleBackColor = true;
+            this.btn_fav.Click += new System.EventHandler(this.btn_fav_Click);
+            // 
+            // tabPage_favs
+            // 
+            this.tabPage_favs.Controls.Add(this.panel_favs);
+            this.tabPage_favs.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_favs.Name = "tabPage_favs";
+            this.tabPage_favs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_favs.Size = new System.Drawing.Size(788, 300);
+            this.tabPage_favs.TabIndex = 7;
+            this.tabPage_favs.Text = "★";
+            this.tabPage_favs.UseVisualStyleBackColor = true;
+            // 
+            // panel_favs
+            // 
+            this.panel_favs.AutoScroll = true;
+            this.panel_favs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_favs.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.panel_favs.Location = new System.Drawing.Point(3, 3);
+            this.panel_favs.Name = "panel_favs";
+            this.panel_favs.Size = new System.Drawing.Size(782, 294);
+            this.panel_favs.TabIndex = 0;
+            this.panel_favs.WrapContents = false;
+            this.panel_favs.Resize += new System.EventHandler(this.panel_favs_Resize);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -719,12 +786,17 @@
             this.tabPage_Settings.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.panel_tabHolder.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel1.PerformLayout();
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+            this.splitContainer4.ResumeLayout(false);
+            this.tabPage_favs.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -777,6 +849,10 @@
         private System.Windows.Forms.Button btn_printAllEntries;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox checkBox_autoScale;
+        private System.Windows.Forms.SplitContainer splitContainer4;
+        private System.Windows.Forms.TabPage tabPage_favs;
+        private System.Windows.Forms.FlowLayoutPanel panel_favs;
+        private System.Windows.Forms.Button btn_fav;
     }
 }
 

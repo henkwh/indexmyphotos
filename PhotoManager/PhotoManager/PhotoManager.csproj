@@ -70,6 +70,12 @@
     <Compile Include="CustomControls\ComboBoxItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\FavouriteElement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\FavouriteElement.Designer.cs">
+      <DependentUpon>FavouriteElement.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\FlowLayoutOverview.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -117,6 +123,9 @@
     </Compile>
     <Compile Include="CustomControls\TrackBarSettings.cs" />
     <Compile Include="DatabaseLogic\UpdateParameter.cs" />
+    <EmbeddedResource Include="CustomControls\FavouriteElement.resx">
+      <DependentUpon>FavouriteElement.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomControls\MessageBoxInfo.resx">
       <DependentUpon>MessageBoxInfo.cs</DependentUpon>
     </EmbeddedResource>

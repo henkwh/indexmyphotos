@@ -56,6 +56,15 @@ namespace PhotoManager {
                     Debug.WriteLine("Table Fototag not created.");
                 }
 
+                try {
+                    using (SqlCommand command = new SqlCommand("CREATE TABLE Favs(search VARCHAR(255) PRIMARY KEY);", con)) {
+                        command.ExecuteNonQuery();
+                        Debug.WriteLine("Table created.");
+                    }
+                } catch {
+                    Debug.WriteLine("Table Fototag not created.");
+                }
+
             }
         }
 
@@ -366,6 +375,57 @@ namespace PhotoManager {
             }
             return count;
         }
+
+
+        public string[] getFavs() {
+            List<string> list = new List<string>();
+
+            using (SqlConnection con = new SqlConnection(connection)) {
+                con.Open();
+                try {
+                    using (SqlCommand command = new SqlCommand("SELECT search FROM Favs;", con)) {
+                        SqlDataReader reader = command.ExecuteReader();
+                        while (reader.Read()) {
+                            list.Add(reader[0] as string);
+                        }
+                    }
+                } catch {
+                }
+            }
+            return list.ToArray();
+        }
+
+        public bool addFav(string f) {
+            bool ret = false;
+            using (SqlConnection con = new SqlConnection(connection)) {
+                con.Open();
+                try {
+                    using (SqlCommand command = new SqlCommand("INSERT INTO Favs (search) VALUES (@f)", con)) {
+                        command.Parameters.AddWithValue("@f", f);
+                        command.ExecuteNonQuery();
+                        ret = true;
+                    }
+                } catch {
+                    
+                }
+            }
+            return ret;
+        }
+
+        public void removeFav(string t) {
+            using (SqlConnection con = new SqlConnection(connection)) {
+                con.Open();
+                try {
+                    using (SqlCommand command = new SqlCommand("DELETE FROM Favs WHERE search = @t", con)) {
+                        command.Parameters.AddWithValue("@t", t);
+                        command.ExecuteNonQuery();
+                    }
+                } catch {
+                }
+            }
+        }
+
+
 
         /*
         * generates a new GUID
