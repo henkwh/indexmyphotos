@@ -21,6 +21,7 @@ namespace PhotoManager {
 
         public static Color selectionColor;
 
+        public static bool autoscale = true;
 
         /*
          * Creates preview image and places it in preview folder
@@ -91,17 +92,25 @@ namespace PhotoManager {
         }
 
         public static int[] calculateGap(int gap, int imagescale, int panelwidth) {
-
-            int one = gap + imagescale;
-            int c = 2;
-            while (one <= panelwidth) {
-                c++;
-                one += (gap + imagescale);
+            if (autoscale) {
+                int one = 0;
+                int c = 1;
+                while (one <= panelwidth) {
+                    c++;
+                    one += (gap + imagescale);
+                }
+                one -= (gap + imagescale);
+                System.Diagnostics.Debug.WriteLine(c + " " + one + "");
+                return new int[] { gap + ((panelwidth - one) / c), c };
+            } else {
+                int one = 0;
+                int c = 1;
+                while (one <= panelwidth) {
+                    c++;
+                    one += (gap + imagescale);
+                }
+                return new int[] { gap, c};
             }
-            one -= (gap + imagescale);
-            System.Diagnostics.Debug.WriteLine(c+" "+one+"");
-            return new int[] { gap + ((panelwidth - one) / c) , c};
-
 
         }
     }

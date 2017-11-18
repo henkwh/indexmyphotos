@@ -68,6 +68,8 @@
             this.trackBar1 = new PhotoManager.TrackBarControl();
             this.lb_Size = new System.Windows.Forms.Label();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.checkBox_autoScale = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
@@ -209,7 +211,6 @@
             this.tableLayoutPanel2.Controls.Add(this.splitContainer3, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.btn_tagtodefault, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.splitContainer1, 0, 2);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 5;
@@ -418,13 +419,12 @@
             // 
             // checkBox_JoinTags
             // 
-            this.checkBox_JoinTags.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBox_JoinTags.Location = new System.Drawing.Point(0, 0);
+            this.checkBox_JoinTags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox_JoinTags.Location = new System.Drawing.Point(16, 0);
             this.checkBox_JoinTags.Name = "checkBox_JoinTags";
-            this.checkBox_JoinTags.Size = new System.Drawing.Size(77, 25);
+            this.checkBox_JoinTags.Size = new System.Drawing.Size(61, 25);
             this.checkBox_JoinTags.TabIndex = 0;
             this.checkBox_JoinTags.Text = "Join";
-            this.checkBox_JoinTags.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBox_JoinTags.UseVisualStyleBackColor = true;
             // 
             // btn_clearlist
@@ -478,6 +478,8 @@
             this.tableLayoutPanel5.Controls.Add(this.label5, 0, 2);
             this.tableLayoutPanel5.Controls.Add(this.comboBox_selectionColor, 1, 2);
             this.tableLayoutPanel5.Controls.Add(this.btn_printAllEntries, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.label6, 0, 3);
+            this.tableLayoutPanel5.Controls.Add(this.checkBox_autoScale, 1, 3);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 44);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 4;
@@ -656,6 +658,29 @@
             this.panel_tabHolder.Size = new System.Drawing.Size(796, 326);
             this.panel_tabHolder.TabIndex = 3;
             // 
+            // label6
+            // 
+            this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label6.Location = new System.Drawing.Point(3, 125);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(202, 81);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Autoscale gaps between images";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // checkBox_autoScale
+            // 
+            this.checkBox_autoScale.Checked = true;
+            this.checkBox_autoScale.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_autoScale.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBox_autoScale.Location = new System.Drawing.Point(211, 128);
+            this.checkBox_autoScale.Name = "checkBox_autoScale";
+            this.checkBox_autoScale.Size = new System.Drawing.Size(202, 75);
+            this.checkBox_autoScale.TabIndex = 7;
+            this.checkBox_autoScale.Text = "Enbable Autoscale";
+            this.checkBox_autoScale.UseVisualStyleBackColor = true;
+            this.checkBox_autoScale.CheckedChanged += new System.EventHandler(this.checkBox_autoScale_CheckedChanged);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -747,6 +772,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox_selectionColor;
         private System.Windows.Forms.Button btn_printAllEntries;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox checkBox_autoScale;
     }
 }
 

@@ -661,6 +661,10 @@ namespace PhotoManager {
             }
         }
 
+        private void checkBox_autoScale_CheckedChanged(object sender, EventArgs e) {
+            ImageGenerator.autoscale = checkBox_autoScale.Checked;
+        }
+
         public void ClickedMap(string location) {
             tb_search.Text = "Location:" + location;
             tabControl1.SelectedTab = tabPage_main;
