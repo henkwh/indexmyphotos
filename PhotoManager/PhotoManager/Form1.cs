@@ -1,5 +1,4 @@
 ﻿using PhotoManager.CustomControls;
-using PhotoManager.Resources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,11 +60,20 @@ namespace PhotoManager {
             comboBox_bgColor.Items.Add(new ColorSetting("Red", Color.Red));
             comboBox_bgColor.Items.Add(new ColorSetting("Green", Color.Green));
             comboBox_bgColor.Items.Add(new ColorSetting("Blue", Color.Blue));
-            comboBox_bgColor.SelectedIndex = 0;
-
             comboBox_selectionColor.Items.AddRange(comboBox_bgColor.Items.Cast<ColorSetting>().ToArray());
-            comboBox_selectionColor.SelectedIndex = 3;
 
+            foreach (ColorSetting cs in comboBox_bgColor.Items) {
+                if (cs.Color == Properties.Settings.Default.BGCOLOR) {
+                    comboBox_bgColor.SelectedIndex = comboBox_bgColor.Items.IndexOf(cs);
+                }
+                if (cs.Color == Properties.Settings.Default.SELCOLOR) {
+                    comboBox_selectionColor.SelectedIndex = comboBox_selectionColor.Items.IndexOf(cs);
+                }
+            }
+            checkBox_JoinTags.Checked = Properties.Settings.Default.JOIN;
+
+            Properties.Settings.Default.Upgrade();
+            checkBox_autoScale.Checked = Properties.Settings.Default.AUTOSCALE;
 
             if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
                 System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
@@ -172,7 +180,7 @@ namespace PhotoManager {
                 Image img = db.addImage(path, hash, filetype);
                 File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, false);
                 ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
-                mbi.addText("Added "+img.getName());
+                mbi.addText("Added " + img.getName());
                 return img.getName();
             } else {
                 mbi.addText("File " + path + " is not a supported Image File. Skipping...");
@@ -235,7 +243,7 @@ namespace PhotoManager {
                 img.setPreview(bmp);
                 img.setImage(bmp);
 
-                if(justDragDropped != null && justDragDropped.Contains(img.getName())) { selectImage(img); }
+                if (justDragDropped != null && justDragDropped.Contains(img.getName())) { selectImage(img); }
 
                 //toolTip.SetToolTip(img, Utils.getToolTipTextForImage(img));
                 img.setSize(imagescale);
@@ -645,10 +653,12 @@ namespace PhotoManager {
 
         private void comboBox_bgColor_SelectedIndexChanged(object sender, EventArgs e) {
             panel_overview.BackColor = ((ColorSetting)comboBox_bgColor.Items[comboBox_bgColor.SelectedIndex]).Color;
+            Properties.Settings.Default.BGCOLOR = panel_overview.BackColor;
         }
 
         private void comboBox_selectionColor_SelectedIndexChanged(object sender, EventArgs e) {
             ImageGenerator.selectionColor = ((ColorSetting)comboBox_selectionColor.Items[comboBox_selectionColor.SelectedIndex]).Color;
+            Properties.Settings.Default.SELCOLOR = ImageGenerator.selectionColor;
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -663,6 +673,20 @@ namespace PhotoManager {
 
         private void checkBox_autoScale_CheckedChanged(object sender, EventArgs e) {
             ImageGenerator.autoscale = checkBox_autoScale.Checked;
+            Properties.Settings.Default.AUTOSCALE = checkBox_autoScale.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void panel_overview_Scroll_1(object sender, ScrollEventArgs e) {
+
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e) {
+            Properties.Settings.Default.Save();
+        }
+
+        private void checkBox_JoinTags_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.JOIN = checkBox_JoinTags.Checked;
         }
 
         public void ClickedMap(string location) {

@@ -82,7 +82,7 @@
             this.ClientSize = new System.Drawing.Size(456, 273);
             this.Controls.Add(this.splitContainer1);
             this.Name = "MessageBoxInfo";
-            this.Text = "MessageBoxInfo";
+            this.Text = "Info";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
