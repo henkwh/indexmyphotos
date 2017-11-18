@@ -66,11 +66,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\ColorSetting.cs" />
     <Compile Include="CustomControls\ComboBoxItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomControls\FlowLayoutOverview.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\MessageBoxInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomControls\MessageBoxInfo.Designer.cs">
+      <DependentUpon>MessageBoxInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="CustomControls\PictureBoxViewer.cs">
       <SubType>Component</SubType>
@@ -97,6 +104,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DatabaseLogic\SearchQuery.cs" />
+    <Compile Include="Resources\ResourceHandler.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="CustomControls\TagAlert.cs">
       <SubType>Form</SubType>
@@ -109,6 +117,9 @@
     </Compile>
     <Compile Include="CustomControls\TrackBarSettings.cs" />
     <Compile Include="DatabaseLogic\UpdateParameter.cs" />
+    <EmbeddedResource Include="CustomControls\MessageBoxInfo.resx">
+      <DependentUpon>MessageBoxInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

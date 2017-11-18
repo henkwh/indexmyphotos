@@ -38,7 +38,7 @@ namespace PhotoManager {
 
         }
 
-        public static UpdateParameter[] checkInputTags(Image i, string _location, string _tags, string _dbtags, string _description, string _datetime, TagAlert ta) {
+        public static UpdateParameter[] checkInputTags(Image i, string _location, string _tags, string _dbtags, string _description, string _datetime, TagAlert ta, bool joinTags) {
             UpdateParameter location = new UpdateParameter(_location, getWorkingLocation(new double[] { i.getLocation()[0], i.getLocation()[1] }));
             UpdateParameter tags = new UpdateParameter(_tags, _dbtags);
             UpdateParameter description = new UpdateParameter(_description, i.getDescription());
@@ -50,30 +50,15 @@ namespace PhotoManager {
                     if (p.isOldEntryEmpty()) {
                         p.setReturnValue(p.NewEntry);
                     } else if (!p.isEqual()) {
-                        /*TagAlert.uotnotification input;
-                        if (ta.alreadyChosen(p == tags) == TagAlert.uotnotification.NONE) {
-                            ta.showInfo(i.getPreview(), "Replace " + p.OldEntry + "\r\nwith\r\n" + p.NewEntry + " ? ", (p == tags));
-                            input = ta.ReturnValue;
+                        if (p == tags && joinTags) {
+                            p.setReturnValue(p.NewEntry + "," + p.OldEntry);
                         } else {
-                            input = ta.alreadyChosen(p == tags);
-                        }
-                        //Debug.WriteLine(p.NewEntry + ":" + p.OldEntry + ":" + input);
-                        */
-                        TagAlert.uotnotification input = TagAlert.uotnotification.OVERWRITE;
-                        switch (input) {
-                            case TagAlert.uotnotification.KEEP_OLD:
-                                p.setReturnValue(p.OldEntry);
-                                break;
-                            case TagAlert.uotnotification.JOIN:
-                                p.setReturnValue(p.OldEntry + "," + p.NewEntry);
-                                break;
-                            case TagAlert.uotnotification.OVERWRITE:
-                                p.setReturnValue(p.NewEntry);
-                                break;
+                            p.setReturnValue(p.NewEntry);
                         }
                     }
                 }
             }
+
             return list;
         }
 
@@ -139,23 +124,25 @@ namespace PhotoManager {
             return lat.ToString().Replace(".", ",") + "," + lng.ToString().Replace(".", ",");
         }
 
-        public static int deleteImagesNotInDB(string cwd, string dir_full, string dir_preview, List<Image> list) {
+        public static int deleteImagesNotInDB(string cwd, string dir_full, string dir_preview, List<Image> list, CustomControls.MessageBoxInfo mbinfo) {
             int counter = 0;
             string[] folderfiles = Directory.GetFiles(cwd + dir_full);
             foreach (string s in folderfiles) {
                 string t = Path.GetFileNameWithoutExtension(s);
                 bool delete = true;
                 foreach (Image i in list) {
-                    Debug.WriteLine(i.getName() + " : " + t);
                     if (i.getName().Equals(t)) {
                         delete = false;
                     }
                 }
                 if (delete) {
                     try {
+                        mbinfo.addText("Delete: " + dir_full + t);
                         File.Delete(s);
-                    } catch { }
-                    counter++;
+                        counter++;
+                    } catch {
+                        mbinfo.addText("      Error deleting: " + dir_full + t);
+                    }
                 }
             }
 
@@ -170,12 +157,16 @@ namespace PhotoManager {
                 }
                 if (delete) {
                     try {
+                        mbinfo.addText("Delete: " + dir_preview + t);
                         File.Delete(s);
-                    } catch { }
-                    counter++;
+                        counter++;
+                    } catch {
+                        mbinfo.addText("      Error deleting: " + dir_preview + t);
+                    }
                 }
 
             }
+            mbinfo.addText("Deleted: " + counter + " files!");
             return counter;
         }
     }

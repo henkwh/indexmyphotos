@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PhotoManager.CustomControls;
+using PhotoManager.Resources;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -20,6 +22,7 @@ namespace PhotoManager {
         private GMapInstance map;
 
         private List<Image> multiedit = new List<Image>();
+        private List<string> justDragDropped;
         private List<Image> shown = new List<Image>();
 
         private DBHandler db;
@@ -52,6 +55,18 @@ namespace PhotoManager {
             combobox_sorting.Items.Add(new OrderElement("Location E to W", " ORDER BY f.loclng DESC"));
             combobox_sorting.Items.Add(new OrderElement("Filetype", " ORDER BY f.filetype ASC"));
             combobox_sorting.SelectedIndex = 1;
+            comboBox_bgColor.Items.Add(new ColorSetting("Wheat", Color.Wheat));
+            comboBox_bgColor.Items.Add(new ColorSetting("White", Color.White));
+            comboBox_bgColor.Items.Add(new ColorSetting("Black", Color.Black));
+            comboBox_bgColor.Items.Add(new ColorSetting("Red", Color.Red));
+            comboBox_bgColor.Items.Add(new ColorSetting("Green", Color.Green));
+            comboBox_bgColor.Items.Add(new ColorSetting("Blue", Color.Blue));
+            comboBox_bgColor.SelectedIndex = 0;
+
+            comboBox_selectionColor.Items.AddRange(comboBox_bgColor.Items.Cast<ColorSetting>().ToArray());
+            comboBox_selectionColor.SelectedIndex = 3;
+
+
             if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
                 System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
             }
@@ -76,7 +91,6 @@ namespace PhotoManager {
         private void Panel_overview_Paint(object sender, PaintEventArgs e) {
             Graphics g = panel_overview.CreateGraphics();
             g.TranslateTransform(0, panel_overview.AutoScrollPosition.Y);
-            panel_overview.BackColor = Color.Wheat;
             int panelwidth = panel_overview.VerticalScroll.Visible ? panel_overview.Width - SystemInformation.VerticalScrollBarWidth : panel_overview.Width;
             int[] tmp = ImageGenerator.calculateGap(Utils.GAP, imagescale, panelwidth);
             int gap = tmp[0];
@@ -112,8 +126,11 @@ namespace PhotoManager {
          * Handles Drag-and-Drop of Files
          */
         void Form1_DragDrop(object sender, DragEventArgs e) {
+            justDragDropped = new List<string>();
             int counter = 0;
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
+            mbi.Show();
             tsprogressbar.Maximum = files.Count();
             tsprogressbar.Value = 0;
             foreach (string file in files) {
@@ -124,40 +141,43 @@ namespace PhotoManager {
                     tsprogressbar.Maximum = fileEntries.Count();
                     tsprogressbar.Value = 0;
                     foreach (string fileName in fileEntries) {
-                        counter = loadFile(fileName) ? counter + 1 : counter;
+                        string n = loadFile(fileName, mbi);
+                        if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
                         tsprogressbar.Value++;
                     }
                 } else {
-                    counter = loadFile(file) ? counter + 1 : counter;
+                    string n = loadFile(file, mbi);
+                    if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
                     try {
                         tsprogressbar.Value++;
                     } catch { }
                 }
 
             }
-            MessageBox.Show(counter + " of " + (files.Length) + " Files added.");
+            mbi.addText(counter + " of " + (files.Length) + " Files added.");
             newWorker();
         }
         /*
           * Checks if Dag-Dropped file is valid
          *@path Path to File or Directory
          */
-        private bool loadFile(string path) {
-            string filetype = System.IO.Path.GetExtension(path).ToLower();
+        private string loadFile(string path, MessageBoxInfo mbi) {
+            string filetype = Path.GetExtension(path).ToLower();
             if (filetype.Equals(".png") || filetype.Equals(".jpg") || filetype.Equals(".jpeg")) {
                 string hash = Utils.getHash(path);
                 if (db.ImageExists(hash)) {
-                    MessageBox.Show("File " + path + " already exists. Skipping...");
-                    return false;
+                    mbi.addText("File " + path + " already exists. Skipping...");
+                    return "";
                 }
                 Image img = db.addImage(path, hash, filetype);
-                System.IO.File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, false);
+                File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, false);
                 ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
-                return true;
+                mbi.addText("Added "+img.getName());
+                return img.getName();
             } else {
-                MessageBox.Show("File " + path + " is not a supported Image File. Skipping...");
+                mbi.addText("File " + path + " is not a supported Image File. Skipping...");
             }
-            return false;
+            return "";
         }
 
         void Form1_DragEnter(object sender, DragEventArgs e) {
@@ -186,6 +206,7 @@ namespace PhotoManager {
          */
         private void worker_finished(object sender, RunWorkerCompletedEventArgs e) {
             tsprogressbar.Value = shown.Count();
+            justDragDropped = null;
             panel_overview.Refresh();
             ThreadRunning = false;
             if (newWorkerRequested == true) {
@@ -207,16 +228,16 @@ namespace PhotoManager {
                     tslabel_picturesof.Text = shown.Count + "/" + db.getEntryCount();
                 });
             }
-            ToolTip toolTip = new ToolTip();
+            //ToolTip toolTip = new ToolTip();
             int ticks = Environment.TickCount + 700;
             foreach (Image img in shown) {
-                //setHandler(img);
-                //addMenuItems(img);
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
-                //bmp.Size = ImageGenerator.genSize(imagescale, bmp.Width, bmp.Height);
                 img.setPreview(bmp);
                 img.setImage(bmp);
-                toolTip.SetToolTip(img, Utils.getToolTipTextForImage(img));
+
+                if(justDragDropped != null && justDragDropped.Contains(img.getName())) { selectImage(img); }
+
+                //toolTip.SetToolTip(img, Utils.getToolTipTextForImage(img));
                 img.setSize(imagescale);
                 if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {          //No Location set -> No marker
                     map.addMarker(img.getLocation(), img.getPreview());
@@ -321,6 +342,11 @@ namespace PhotoManager {
                 i.showBorder();
             }
             panel_overview.Refresh();
+        }
+
+        private void selectImage(Image i) {
+            multiedit.Add(i);
+            i.showBorder();
         }
 
         /*
@@ -466,13 +492,13 @@ namespace PhotoManager {
 
             string desc = tb_description.Text;
             string tags = tb_tags.Text.Equals(" ") ? " " : tb_tags.Text.Replace(" ", "").Replace("\r\n", "");
+            bool tagjoin = checkBox_JoinTags.Checked;
             string location = tb_location.Text;
             string dtin = tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text;
 
             TagAlert ta = new TagAlert();
-
             foreach (Image i in multiedit) {
-                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, db.getConnectedTags(i.getName()), desc, dtin, ta);
+                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, db.getConnectedTags(i.getName()), desc, dtin, ta, tagjoin);
                 string[] dbstring = { "location", "tags", "description", "date" };
                 bool set = false;
                 for (int j = 0; j < list.Count(); j++) {
@@ -545,14 +571,6 @@ namespace PhotoManager {
                         }
                     }
                 }
-            } else if (tabControl1.SelectedTab == tabPage_Log) {
-                if (tb_log.Text.Equals("")) {
-                    tb_log.Text = "";// "           Name                      Type |        Date         | Hash | Loc | Tags | Beschreibung\r\n\r\n";
-                    List<Image> ListAll = db.loadEntries(new SearchQuery("", ""));
-                    foreach (Image i in ListAll) {
-                        tb_log.Text += i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Utils.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocationString() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n";
-                    }
-                }
             } else if (tabControl1.SelectedTab == tabPage_main) {
                 trackBar1.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
                 tslabel_picturesof.Text = shown.Count() + "/" + db.getEntryCount();
@@ -610,12 +628,36 @@ namespace PhotoManager {
         }
 
         private void combobox_sorting_TextChanged(object sender, EventArgs e) {
-
             foreach (OrderElement oe in combobox_sorting.Items) {
                 if (oe.Text.Equals(combobox_sorting.Text)) {
                     selectedorder = oe;
                     break;
                 }
+            }
+        }
+
+        private void btn_deleteUnusedFiles_Click(object sender, EventArgs e) {
+            MessageBoxInfo mbinfo = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
+            mbinfo.Show();
+            Utils.deleteImagesNotInDB(currentworkingdirectory, dir_full, dir_preview, db.loadEntries(null), mbinfo);
+            mbinfo = null;
+        }
+
+        private void comboBox_bgColor_SelectedIndexChanged(object sender, EventArgs e) {
+            panel_overview.BackColor = ((ColorSetting)comboBox_bgColor.Items[comboBox_bgColor.SelectedIndex]).Color;
+        }
+
+        private void comboBox_selectionColor_SelectedIndexChanged(object sender, EventArgs e) {
+            ImageGenerator.selectionColor = ((ColorSetting)comboBox_selectionColor.Items[comboBox_selectionColor.SelectedIndex]).Color;
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
+            mbi.Show();
+            List<Image> ListAll = db.loadEntries(null);
+            int c = 0;
+            foreach (Image i in ListAll) {
+                mbi.addText((++c) + ".    " + i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Utils.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocationString() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n");
             }
         }
 

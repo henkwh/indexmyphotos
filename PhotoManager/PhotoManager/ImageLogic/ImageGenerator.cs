@@ -19,6 +19,8 @@ namespace PhotoManager {
 
         public const int FRAME_SIZE = 10;
 
+        public static Color selectionColor;
+
 
         /*
          * Creates preview image and places it in preview folder
@@ -57,12 +59,12 @@ namespace PhotoManager {
             Bitmap b = new Bitmap(bm);
             Rectangle rectf = new Rectangle(FRAME_SIZE / 2, FRAME_SIZE / 2, b.Width - FRAME_SIZE, b.Height - FRAME_SIZE);
             Graphics g = Graphics.FromImage(b);
-            Pen p = new Pen(Color.Red, FRAME_SIZE);
+            //Pen p = new Pen(Color.Red, FRAME_SIZE);
             PointF[] point = new PointF[3];
             point[0] = new PointF(2 * bm.Width / 3, 0);
             point[1] = new PointF(bm.Width, 0);
             point[2] = new PointF(bm.Width, bm.Width - 2 * bm.Width / 3);
-            SolidBrush brush = new SolidBrush(Color.Yellow);
+            SolidBrush brush = new SolidBrush(selectionColor);
             g.FillPolygon(brush, point);
             g.Flush();
             return b;
