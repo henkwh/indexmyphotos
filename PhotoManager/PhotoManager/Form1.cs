@@ -76,7 +76,7 @@ namespace PhotoManager {
             string[] favs = db.getFavs();
             foreach (string s in favs) {
                 FavouriteElement fe = new FavouriteElement(s);
-                fe.resize(panel_favs.Width- SystemInformation.VerticalScrollBarWidth);
+                fe.resize(panel_favs.Width - SystemInformation.VerticalScrollBarWidth);
                 fe.delButton().Click += favDel_Click;
                 fe.copyButton().Click += favCpy_Click;
                 panel_favs.Controls.Add(fe);
@@ -187,7 +187,7 @@ namespace PhotoManager {
                     mbi.addText("File " + path + " already exists. Skipping...");
                     return "";
                 }
-                Image img = db.addImage(path, hash, filetype);
+                Image img = db.addImage(hash, filetype);
                 File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, false);
                 ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
                 mbi.addText("Added " + img.getName());
@@ -445,22 +445,6 @@ namespace PhotoManager {
             newWorker();
         }
 
-        /*
-        * Deletes a single image instance by click of ContetMenu
-        */
-        private void Delete_Entry(Image i) {
-            db.deleteEntry(i.getName());
-            multiedit.Remove(i);
-            string name = i.getName();
-            string type = i.getFileType();
-            i.Image.Dispose();
-            i.Image = null;
-            i.Dispose();
-            i = null;
-            File.Delete(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
-            File.Delete(currentworkingdirectory + dir_preview + i.getName() + i.getFileType());
-        }
-
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
             switch (e.KeyCode) {
                 case Keys.Escape:
@@ -677,7 +661,7 @@ namespace PhotoManager {
             List<Image> ListAll = db.loadEntries(null);
             int c = 0;
             foreach (Image i in ListAll) {
-                mbi.addText((++c) + ".    " + i.getName() + " | Type: " + i.getFileType() + "\r\n\t Hash       : " + Utils.getHash(currentworkingdirectory + dir_full + i.getName() + i.getFileType()) + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocationString() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n");
+                mbi.addText((++c) + ".    " + i.getName() + " | Type: " + i.getFileType() + "\r\n\t Date       : " + i.getDate() + "\r\n\t Location   : " + i.getLocationString() + "\r\n\t Tags       : " + db.getConnectedTags(i.getName()) + "\r\n\t Description: " + i.getDescription() + "\r\n");
             }
         }
 
@@ -732,6 +716,14 @@ namespace PhotoManager {
 
         private void tb_search_TextChanged(object sender, EventArgs e) {
             btn_fav.Text = "☆";
+        }
+
+        private void btn_dropall_Click(object sender, EventArgs e) {
+            DialogResult dialogResult = MessageBox.Show("Delete all Tables?", "Confirm", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes) {
+                db.dropTables();
+                MessageBox.Show("Please restart Program!");
+            }
         }
 
         public void ClickedMap(string location) {
