@@ -529,7 +529,6 @@ namespace PhotoManager {
                 }
                 tsprogressbar.Value++;
             }
-            db.removeUnusedTags();
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
