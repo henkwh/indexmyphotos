@@ -68,7 +68,7 @@ namespace PhotoManager {
 
         public void setImage(Bitmap b) {
             if (borderShown) {
-                Image = ImageGenerator.drawFrame(b);
+                Image = ImageGenerator.drawFrame(b, true);
             } else {
                 Image = b;
             }
@@ -118,7 +118,7 @@ namespace PhotoManager {
 
         public void showBorder() {
             if (!borderShown) {
-                Image = ImageGenerator.drawFrame((Bitmap)preview);
+                Image = ImageGenerator.drawFrame((Bitmap)preview, true);
                 borderShown = true;
             }
         }

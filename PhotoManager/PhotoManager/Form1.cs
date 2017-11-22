@@ -12,6 +12,8 @@ using System.Windows.Forms;
 namespace PhotoManager {
     public partial class Form1 : Form {
 
+        private enum EDITOPERATION { ADD, REMOVE, SWITCH };
+
         private bool newWorkerRequested = false, ThreadRunning = false;
         private string currentworkingdirectory = "";
         public static string dir_preview = @"\preview\";
@@ -42,7 +44,7 @@ namespace PhotoManager {
             this.AllowDrop = true;
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
-            map = new GMapInstance(this, currentworkingdirectory, Utils.SCALE_MAP_DEF);
+            map = new GMapInstance(this, currentworkingdirectory);
             tabPage_Map.Controls.Add(map);
             trackBar1.updateTabPage(TrackBarControl.tabPage.MAIN, 0);
             imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
@@ -107,15 +109,16 @@ namespace PhotoManager {
         }
 
         private void Panel_overview_Paint(object sender, PaintEventArgs e) {
-            Graphics g = panel_overview.CreateGraphics();
-            g.TranslateTransform(0, panel_overview.AutoScrollPosition.Y);
-            int panelwidth = panel_overview.VerticalScroll.Visible ? panel_overview.Width - SystemInformation.VerticalScrollBarWidth : panel_overview.Width;
+            FlowLayoutPanel panel = (FlowLayoutPanel)sender;
+            Graphics g = panel.CreateGraphics();
+            g.TranslateTransform(0, panel.AutoScrollPosition.Y);
+            int panelwidth = panel.VerticalScroll.Visible ? panel.Width - SystemInformation.VerticalScrollBarWidth : panel.Width;
             int[] tmp = ImageGenerator.calculateGap(Utils.GAP, imagescale, panelwidth);
             int gap = tmp[0];
             int rtrn = tmp[1];
             int x = gap;
             int y = Utils.GAP;
-            int max = panel_overview.Width - gap - imagescale;
+            int max = panel.Width - gap - imagescale;
             int c = 0;
             foreach (Image i in shown) {
                 Size s;
@@ -135,7 +138,7 @@ namespace PhotoManager {
                     c = 0;
                 }
             }
-            panel_overview.AutoScrollMinSize = new Size(panel_overview.AutoScrollMinSize.Width, y + imagescale + 2 * Utils.GAP);
+            panel.AutoScrollMinSize = new Size(panel.AutoScrollMinSize.Width, y + imagescale + 2 * Utils.GAP);
         }
 
 
@@ -188,7 +191,7 @@ namespace PhotoManager {
                     return "";
                 }
                 Image img = db.addImage(hash, filetype);
-                File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, false);
+                File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, true);
                 ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
                 mbi.addText("Added " + img.getName());
                 return img.getName();
@@ -243,7 +246,7 @@ namespace PhotoManager {
                     map.removeMarkers();
                     tsprogressbar.Maximum = shown.Count();
                     tsprogressbar.Value = 0;
-                    tslabel_picturesof.Text = shown.Count + "/" + db.getEntryCount();
+                    updateLabel(0);
                 });
             }
             //ToolTip toolTip = new ToolTip();
@@ -296,13 +299,8 @@ namespace PhotoManager {
                     if (a.Button == MouseButtons.Right) {
                     } else if (a.Button == MouseButtons.Left) {
                         if (ModifierKeys == Keys.Control) {
-                            if (multiedit.Contains(i)) {
-                                multiedit.Remove(i);
-                                i.hideBorder();
-                            } else {
-                                multiedit.Add(i);
-                                i.showBorder();
-                            }
+
+                            updateMultiedit(i, EDITOPERATION.SWITCH);
                             panel_overview.Refresh();
                         } else {
                             pictureBox_viewer.ShownImage = i;
@@ -336,8 +334,6 @@ namespace PhotoManager {
                         menuItem.Click += SelectAll_Click;
                         break;
                 }
-                //menuItem.setParentPictureBox(image);
-                //menuItem.Tag = image;
                 cm.MenuItems.Add(menuItem);
             }
             return cm;
@@ -346,25 +342,20 @@ namespace PhotoManager {
         private void Cm_Popup(object sender, EventArgs e) {
             Image i = getClickedImage(Cursor.Position);
             if (i != null) {
-                if (!multiedit.Contains(i)) {
-                    multiedit.Add(i);
-                    i.showBorder();
-                }
+                updateMultiedit(i, EDITOPERATION.ADD);
                 panel_overview.Refresh();
             }
         }
 
         private void SelectAll_Click(object sender, EventArgs e) {
             foreach (Image i in shown) {
-                multiedit.Add(i);
-                i.showBorder();
+                updateMultiedit(i, EDITOPERATION.ADD);
             }
             panel_overview.Refresh();
         }
 
         private void selectImage(Image i) {
-            multiedit.Add(i);
-            i.showBorder();
+            updateMultiedit(i, EDITOPERATION.ADD);
         }
 
         /*
@@ -404,8 +395,7 @@ namespace PhotoManager {
                     panel_tagedit.Controls.Remove(img);
                 }
             }
-            multiedit.Remove(i);
-            i.hideBorder();
+            updateMultiedit(i, EDITOPERATION.REMOVE);
             panel_tagedit.Update();
             panel_overview.Refresh();
             if (multiedit.Count == 1) {
@@ -428,7 +418,7 @@ namespace PhotoManager {
                 }
                 string name = multiedit[0].getName();
                 string type = multiedit[0].getFileType();
-                multiedit[0].setPreview(null);      //Dispose to avoid deleting while file in use
+                multiedit[0].setPreview(null);
                 if (multiedit[0].Image != null) {
                     multiedit[0].Image.Dispose();
                 }
@@ -438,7 +428,6 @@ namespace PhotoManager {
                     File.Delete(currentworkingdirectory + dir_full + name + type);
                     File.Delete(currentworkingdirectory + dir_preview + name + type);
                 } catch {
-                    //MessageBox.Show("Error deleting File");
                 }
             }
             multiedit.Clear();
@@ -457,7 +446,7 @@ namespace PhotoManager {
                         if (index > 0) {
                             pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + shown[index - 1].getName() + shown[index - 1].getFileType());
                             pictureBox_viewer.ShownImage = shown[index - 1];
-                            tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
+                            updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
                         }
                     }
                     break;
@@ -483,8 +472,7 @@ namespace PhotoManager {
                 panel_tagedit.Controls.Clear();
             }
             multiedit.Clear();
-            panel_overview.Update();
-            panel_tagedit.Update();
+            updateLabel(0);
             panel_overview.Refresh();
         }
 
@@ -496,7 +484,11 @@ namespace PhotoManager {
             string tags = tb_tags.Text.Equals(" ") ? " " : tb_tags.Text.Replace(" ", "").Replace("\r\n", "");
             bool tagjoin = checkBox_JoinTags.Checked;
             string location = tb_location.Text;
-            string dtin = tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text;
+            string dtin = Utils.parseDate(tb_dateyear.Text, true) + Utils.parseDate(tb_datemonth.Text, false) + Utils.parseDate(tb_dateday.Text, false);
+            if (dtin.Count() != 8) {
+                MessageBox.Show("Invalid Date");
+                return;
+            }
 
             TagAlert ta = new TagAlert();
             foreach (Image i in multiedit) {
@@ -564,12 +556,10 @@ namespace PhotoManager {
                     }
                     tb_tags.Text = db.getConnectedTags(multiedit[0].getName());
                     tb_description.Text = multiedit[0].getDescription();
-                    if (!multiedit[0].getDate().Equals(Utils.YEAR_STD)) {
+                    if (!multiedit[0].getDate().Equals(Utils.YEAR_STD + "0000")) {
                         tb_dateyear.Text = multiedit[0].getDate().Substring(0, 4);
-                        if (multiedit[0].getDate().Count() == Utils.YEAR_STD.Count()) {
-                            tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2);
-                            tb_dateday.Text = multiedit[0].getDate().Substring(6, 2);
-                        }
+                        tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2).Equals("00") ? "" : multiedit[0].getDate().Substring(4, 2);
+                        tb_dateday.Text = multiedit[0].getDate().Substring(6, 2).Equals("00") ? "" : multiedit[0].getDate().Substring(6, 2);
                     }
                 }
             } else if (tabControl1.SelectedTab == tabPage_main) {
@@ -621,6 +611,8 @@ namespace PhotoManager {
         private void trackBar1_Scroll(object sender, EventArgs e) {
             if (tabControl1.SelectedTab == tabPage_main) {
                 imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
+                Properties.Settings.Default.AUTOSCALE = checkBox_autoScale.Checked;
+                Properties.Settings.Default.Save();
                 panel_overview.Refresh();
 
             } else if (tabControl1.SelectedTab == tabPage_Map) {
@@ -722,6 +714,45 @@ namespace PhotoManager {
             if (dialogResult == DialogResult.Yes) {
                 db.dropTables();
                 MessageBox.Show("Please restart Program!");
+            }
+        }
+
+        private void updateMultiedit(Image i, EDITOPERATION op) {
+            switch (op) {
+                case EDITOPERATION.ADD:
+                    if (!multiedit.Contains(i)) {
+                        multiedit.Add(i);
+                        i.showBorder();
+                    }
+                    break;
+                case EDITOPERATION.REMOVE:
+                    if (multiedit.Contains(i)) {
+                        multiedit.Remove(i);
+                        i.hideBorder();
+                    }
+                    break;
+                case EDITOPERATION.SWITCH:
+                    if (multiedit.Contains(i)) {
+                        updateMultiedit(i, EDITOPERATION.REMOVE);
+                    } else {
+                        updateMultiedit(i, EDITOPERATION.ADD);
+                    }
+                    return;
+            }
+            updateLabel(multiedit.Count());
+        }
+
+        private void updateLabel(int first) {
+            string t = (first == 0) ? "" : first + "/";
+            t += shown.Count() + "/" + db.getEntryCount();
+            tslabel_picturesof.Text = t;
+        }
+
+        private void radioButton_SelectionMarker_CheckedChanged(object sender, EventArgs e) {
+            if ((RadioButton)sender == radioButton_Frame) {
+                radioButton_Edge.Checked = false;
+            } else if ((RadioButton)sender == radioButton_Edge) {
+                radioButton_Frame.Checked = false;
             }
         }
 

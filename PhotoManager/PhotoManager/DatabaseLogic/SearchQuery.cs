@@ -27,9 +27,10 @@ namespace PhotoManager {
             for (int i = 0; i < contains.Count(); i++) {
                 string keyword = contains[i];
                 keyword =
-                keyword.Replace(Utils.KEYWORD_LOCATION_DEFAULT, "0,0").
-                Replace(Utils.KEYWORD_DATE_DEFAULT, Utils.YEAR_STD);
-
+                keyword.Replace("-location:set", "location:0,0").
+                Replace("location:set", "location=0,0").
+                Replace("-date=set", "date=" + Utils.YEAR_STD + "0000").
+                Replace("date=set", "-date=" + Utils.YEAR_STD + "0000");
                 bool not = false;
                 if (keyword.Count() >= 1 && keyword[0].Equals('-')) {
                     not = true;
@@ -39,9 +40,9 @@ namespace PhotoManager {
                     keyword = keyword.Substring(Utils.KEYWORD_LOC.Count());
                     string[] split = keyword.Split(',');
                     if (split.Count() == 2) {
-                        s += " f.loclat " + negate(not, "!") + "= '" + split[0] + "'";
+                        s += " f.loclat " + negate(not) + "= '" + split[0] + "'";
                         s += " AND";
-                        s += " f.loclng " + negate(not, "!") + "= '" + split[1] + "'";
+                        s += " f.loclng " + negate(not) + "= '" + split[1] + "'";
                     } else {
                         System.Windows.Forms.MessageBox.Show("Syntax error - Location");
                     }
@@ -49,12 +50,15 @@ namespace PhotoManager {
                     keyword = keyword.Substring(Utils.KEYWORD_DATE.Count());
                     string connective = "";
                     if (keyword[0].Equals('>') || keyword[0].Equals('<')) {
-                        connective += (negate(not, "!") + keyword[0].ToString());
+                        connective += (negate(not) + keyword[0].ToString());
                         keyword = keyword.Substring(1);
                     }
                     if (keyword[0].Equals('=')) {
-                        connective += negate(not, "!") + keyword[0].ToString();
+                        connective += negate(not) + keyword[0].ToString();
                         keyword = keyword.Substring(1);
+                    }
+                    while (keyword.Count() < 8) {
+                        keyword += "0";
                     }
                     s += " f.date " + connective + "'" + keyword + "'";
                 } else if (not == true) {
@@ -77,9 +81,9 @@ namespace PhotoManager {
             return s;
         }
 
-        private static string negate(bool yesno, string text) {
+        private static string negate(bool yesno) {
             if (yesno) {
-                return text;
+                return "!";
             } else {
                 return "";
             }

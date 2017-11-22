@@ -25,13 +25,13 @@ namespace PhotoManager {
 
         private long lastClick;
 
-        public GMapInstance(Form1 f, string cwd, int pinscale) {
+        public GMapInstance(Form1 f, string cwd) {
             form = f;
             overlay = new GMapOverlay("markers");
             addBrowser();
             pincursor = new Cursor(Assembly.GetExecutingAssembly().GetManifestResourceStream("PhotoManager.Resources.pin2.cur"));
             editmode = false;
-            this.pinscale = pinscale;
+            pinscale = Properties.Settings.Default.SCALE_MAP;
         }
 
 
@@ -66,7 +66,7 @@ namespace PhotoManager {
 
         private void myMap_ButtonClick(object sender, KeyEventArgs e) {
             PointLatLng mypos = Position;
- 
+
             if (e.KeyCode == Keys.W) {
                 mypos.Lat += 1;
             } else if (e.KeyCode == Keys.S) {
@@ -167,7 +167,7 @@ namespace PhotoManager {
 
         public int getPinCount() {
             int sum = 0;
-            foreach(GMarkerElement marker in overlay.Markers) {
+            foreach (GMarkerElement marker in overlay.Markers) {
                 sum += marker.getToolTipCounter();
             }
             return sum;

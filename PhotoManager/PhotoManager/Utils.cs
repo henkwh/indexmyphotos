@@ -12,20 +12,11 @@ namespace PhotoManager {
     static class Utils {
 
         //Default date
-        public const string YEAR_STD = "17770101";
+        public const string YEAR_STD = "1000";
 
         //Identify extended commands in search
         public const string KEYWORD_LOC = "location:";
         public const string KEYWORD_DATE = "date";
-        public const string KEYWORD_DATE_DEFAULT = "ddef";
-        public const string KEYWORD_LOCATION_DEFAULT = "ldef";
-
-        //Defines the images that are added to the panel at once
-        public const int WORKER_FILL_INTERVAL = 20;
-        //Defines the time the worker waits during the evoke processs
-        public const int WORKER_SLEEP_TIME = 50;
-
-        public const int SCALE_MAP_DEF = 75;
 
         public const int GAP = 10;
 
@@ -168,6 +159,23 @@ namespace PhotoManager {
             }
             mbinfo.addText("Deleted: " + counter + " files!");
             return counter;
+        }
+
+        public static string parseDate(string d, bool year) {
+            if (d.Equals("")) {
+                if (year == true) {
+                    return YEAR_STD;
+                } else {
+                    return "00";
+                }
+            } else {
+                int fill = year == true? 4 : 2;
+                while(d.Count() < fill) {
+                    d = "0" + d;
+                }
+                return d;
+            }
+
         }
     }
 }

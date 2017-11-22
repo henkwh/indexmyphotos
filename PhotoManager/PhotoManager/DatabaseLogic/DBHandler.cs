@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,19 +17,19 @@ namespace PhotoManager {
 
         private int entryCount;
 
+        private const string DBNAME = "testdb.db3";
+
 
         public DBHandler(string workingdirectory) {
             currentworkingdirectory = workingdirectory;
             connection = "Data Source=testdb.db3";
-            //SQLiteConnection.CreateFile("testdb.db3");
+            if (!File.Exists(workingdirectory + @"\"+DBNAME)) {
+                SQLiteConnection.CreateFile(DBNAME);
+                createTable();
+            }
             SQLiteConnection.ClearAllPools();
-            createTable();
             removeUnusedTags();
             entryCount = countEntrys();
-
-            testQuery("INSERT INTO Foto (id, filetype, date) VALUES('manual', 'typ', '01012017')");
-            testQuery("INSERT INTO Foto (id, filetype, date) VALUES('manual2', 'typ2', '2017')");
-
         }
 
 
@@ -49,7 +50,7 @@ namespace PhotoManager {
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
                 con.Open();
                 try {
-                    using (SQLiteCommand command = new SQLiteCommand("CREATE TABLE Foto(id VARCHAR(59) PRIMARY KEY, filetype VARCHAR(255),loclat DECIMAL(9,6),loclng DECIMAL(9,6),date datetime,description VARCHAR(255));", con)) {
+                    using (SQLiteCommand command = new SQLiteCommand("CREATE TABLE Foto(id VARCHAR(59) PRIMARY KEY, filetype VARCHAR(255),loclat DECIMAL(9,6),loclng DECIMAL(9,6),date INTEGER,description VARCHAR(255));", con)) {
                         command.ExecuteNonQuery();
                         Debug.WriteLine("Table created.");
                     }
@@ -134,7 +135,7 @@ namespace PhotoManager {
                 }
                 con.Close(); con.Dispose();
             }
-            updateEntry(hash.ToString(), "date", Utils.YEAR_STD);
+            updateEntry(hash.ToString(), "date", Utils.YEAR_STD + "0000");
             updateEntry(hash.ToString(), new double[] { 0.0, 0.0 });
             updateEntry(hash.ToString(), "description", "");
             entryCount = countEntrys();
@@ -148,7 +149,7 @@ namespace PhotoManager {
                 try {
                     using (SQLiteCommand command = new SQLiteCommand("SELECT count(id) FROM Foto WHERE id LIKE @param;", con)) {
                         command.Parameters.AddWithValue("@param", hash);
-                        long scalar = (Int64)command.ExecuteScalar() == null ? 0 : (Int64)command.ExecuteScalar();
+                        long scalar = command.ExecuteScalar() == null ? 0 : (Int64)command.ExecuteScalar();
                         ret = (scalar > 0) ? true : false;
                     }
                 } catch {
@@ -224,23 +225,22 @@ namespace PhotoManager {
             Image ret = null;
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
                 con.Open();
-                //try {
-                //MessageBox.Show(id);
+                try {
                 using (SQLiteCommand command = new SQLiteCommand("SELECT f.id, f.filetype, f.loclat, f.loclng, f.date, f.description FROM Foto f WHERE f.id = @value", con)) {
                     command.Parameters.AddWithValue("@value", id);
                     SQLiteDataReader reader = command.ExecuteReader();
                     while (reader.Read()) {
                         Image img = new Image(reader[0] as string, reader[1] as string);
                         double[] location = new double[] { (double)(reader.GetDecimal(2)), (double)reader.GetDecimal(3) };
-                        string[] date = reader.GetDateTime(4).ToString().Split('.');
-                        string dateinput = (date.Count() >= 3) ? date[2].Substring(0, 4) + date[1] + date[0] : Utils.YEAR_STD;
+                        string datetemp = reader.GetInt64(4).ToString();
+                        int[] date = new int[] { Convert.ToInt32(datetemp.Substring(0, 4)), Convert.ToInt32(datetemp.Substring(4, 2)), Convert.ToInt32(datetemp.Substring(5, 2)) };
                         string description = reader[5] as string;
-                        img.setTags(dateinput, location, description, "");
+                        img.setTags(datetemp, location, description, "");
                         ret = img;
                     }
                 }
-                //} catch {
-                //}
+                } catch {
+                }
                 con.Close(); con.Dispose();
             }
             return ret;
@@ -323,7 +323,6 @@ namespace PhotoManager {
                         command.ExecuteNonQuery();
                     }
                 } catch {
-                    MessageBox.Show("FAIL");
                 }
 
                 con.Close(); con.Dispose(); con.Dispose();
@@ -353,24 +352,25 @@ namespace PhotoManager {
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
                 con.Open();
                 try {
-                    using (SQLiteCommand command = new SQLiteCommand(comm, con)) {
-                        SQLiteDataReader reader = command.ExecuteReader();
-                        while (reader.Read()) {
-                            //MessageBox.Show("Found");
-                            Image img = new Image(reader[0] as string, reader[1] as string);
-                            double[] location = new double[] { (double)(reader.GetDecimal(2)), (double)reader.GetDecimal(3) };
-                            string[] date = reader[4].ToString().Split('.');
-                            string dateinput = (date.Count() >= 3) ? date[2].Substring(0, 4) + date[1] + date[0] : Utils.YEAR_STD;
-                            string description = reader[5] as string;
-                            img.setTags(dateinput, location, description, "");
-                            loadinglist.Add(img);
-                            // MessageBox.Show("END");
-                        }
+                using (SQLiteCommand command = new SQLiteCommand(comm, con)) {
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    while (reader.Read()) {
+                        Image img = new Image(reader[0] as string, reader[1] as string);
+                        double[] location = new double[] { (double)(reader.GetDecimal(2)), (double)reader.GetDecimal(3) };
+                        string datetemp = reader.GetInt64(4).ToString();
+                        int uno = Convert.ToInt32(datetemp.Substring(0, 4));
+                        int dou = Convert.ToInt32(datetemp.Substring(4, 2));
+                        int tri = Convert.ToInt32(datetemp.Substring(6, 2));
+                        int[] date = new int[] { Convert.ToInt32(datetemp.Substring(0,4)), Convert.ToInt32(datetemp.Substring(4, 2)),
+                                Convert.ToInt32(datetemp.Substring(6, 2)) };
+                        string description = reader[5] as string;
+                        img.setTags(datetemp, location, description, "");
+                        loadinglist.Add(img);
                     }
-                } catch {
-                    Debug.WriteLine("Error processing: " + comm);
-                    //MessageBox.Show("Error processing: " + comm);
                 }
+                 } catch {
+                     Debug.WriteLine("Error processing: " + comm);
+                 }
                 con.Close(); con.Dispose();
             }
             return loadinglist;
@@ -404,7 +404,7 @@ namespace PhotoManager {
         /*
         * returns the amount of entries
         */
-        public int countEntrys() {
+        private int countEntrys() {
             long count = 0;
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
                 con.Open();

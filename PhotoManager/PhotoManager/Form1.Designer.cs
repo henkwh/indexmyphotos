@@ -63,6 +63,10 @@
             this.label6 = new System.Windows.Forms.Label();
             this.checkBox_autoScale = new System.Windows.Forms.CheckBox();
             this.btn_dropall = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.radioButton_Frame = new System.Windows.Forms.RadioButton();
+            this.radioButton_Edge = new System.Windows.Forms.RadioButton();
             this.tabPage_favs = new System.Windows.Forms.TabPage();
             this.panel_favs = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -96,6 +100,10 @@
             this.splitContainer1.SuspendLayout();
             this.tabPage_Settings.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
+            this.splitContainer5.Panel1.SuspendLayout();
+            this.splitContainer5.Panel2.SuspendLayout();
+            this.splitContainer5.SuspendLayout();
             this.tabPage_favs.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -495,15 +503,18 @@
             this.tableLayoutPanel5.Controls.Add(this.label6, 0, 3);
             this.tableLayoutPanel5.Controls.Add(this.checkBox_autoScale, 1, 3);
             this.tableLayoutPanel5.Controls.Add(this.btn_dropall, 0, 4);
+            this.tableLayoutPanel5.Controls.Add(this.label7, 0, 5);
+            this.tableLayoutPanel5.Controls.Add(this.splitContainer5, 1, 5);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 22);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 5;
+            this.tableLayoutPanel5.RowCount = 6;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 73.19588F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 26.80412F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 68F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(416, 248);
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 44F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(416, 260);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // btn_deleteUnusedFiles
@@ -522,7 +533,7 @@
             this.comboBox_bgColor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox_bgColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_bgColor.FormattingEnabled = true;
-            this.comboBox_bgColor.Location = new System.Drawing.Point(211, 92);
+            this.comboBox_bgColor.Location = new System.Drawing.Point(211, 86);
             this.comboBox_bgColor.Name = "comboBox_bgColor";
             this.comboBox_bgColor.Size = new System.Drawing.Size(202, 21);
             this.comboBox_bgColor.TabIndex = 1;
@@ -531,9 +542,9 @@
             // lb_bgColor
             // 
             this.lb_bgColor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_bgColor.Location = new System.Drawing.Point(3, 89);
+            this.lb_bgColor.Location = new System.Drawing.Point(3, 83);
             this.lb_bgColor.Name = "lb_bgColor";
-            this.lb_bgColor.Size = new System.Drawing.Size(202, 32);
+            this.lb_bgColor.Size = new System.Drawing.Size(202, 30);
             this.lb_bgColor.TabIndex = 2;
             this.lb_bgColor.Text = "Background color";
             this.lb_bgColor.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -541,7 +552,7 @@
             // label5
             // 
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(3, 121);
+            this.label5.Location = new System.Drawing.Point(3, 113);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(202, 26);
             this.label5.TabIndex = 3;
@@ -553,7 +564,7 @@
             this.comboBox_selectionColor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox_selectionColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_selectionColor.FormattingEnabled = true;
-            this.comboBox_selectionColor.Location = new System.Drawing.Point(211, 124);
+            this.comboBox_selectionColor.Location = new System.Drawing.Point(211, 116);
             this.comboBox_selectionColor.Name = "comboBox_selectionColor";
             this.comboBox_selectionColor.Size = new System.Drawing.Size(202, 21);
             this.comboBox_selectionColor.TabIndex = 4;
@@ -573,9 +584,9 @@
             // label6
             // 
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label6.Location = new System.Drawing.Point(3, 147);
+            this.label6.Location = new System.Drawing.Point(3, 139);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(202, 68);
+            this.label6.Size = new System.Drawing.Size(202, 44);
             this.label6.TabIndex = 6;
             this.label6.Text = "Autoscale gaps between images";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -585,9 +596,9 @@
             this.checkBox_autoScale.Checked = true;
             this.checkBox_autoScale.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox_autoScale.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBox_autoScale.Location = new System.Drawing.Point(211, 150);
+            this.checkBox_autoScale.Location = new System.Drawing.Point(211, 142);
             this.checkBox_autoScale.Name = "checkBox_autoScale";
-            this.checkBox_autoScale.Size = new System.Drawing.Size(202, 62);
+            this.checkBox_autoScale.Size = new System.Drawing.Size(202, 38);
             this.checkBox_autoScale.TabIndex = 7;
             this.checkBox_autoScale.Text = "Enbable Autoscale";
             this.checkBox_autoScale.UseVisualStyleBackColor = true;
@@ -596,13 +607,67 @@
             // btn_dropall
             // 
             this.btn_dropall.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_dropall.Location = new System.Drawing.Point(3, 218);
+            this.btn_dropall.Location = new System.Drawing.Point(3, 186);
             this.btn_dropall.Name = "btn_dropall";
-            this.btn_dropall.Size = new System.Drawing.Size(202, 27);
+            this.btn_dropall.Size = new System.Drawing.Size(202, 32);
             this.btn_dropall.TabIndex = 8;
             this.btn_dropall.Text = "Drop all Tables";
             this.btn_dropall.UseVisualStyleBackColor = true;
             this.btn_dropall.Click += new System.EventHandler(this.btn_dropall_Click);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label7.Location = new System.Drawing.Point(3, 221);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(202, 39);
+            this.label7.TabIndex = 9;
+            this.label7.Text = "Selection marker";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // splitContainer5
+            // 
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(211, 224);
+            this.splitContainer5.Name = "splitContainer5";
+            // 
+            // splitContainer5.Panel1
+            // 
+            this.splitContainer5.Panel1.Controls.Add(this.radioButton_Frame);
+            // 
+            // splitContainer5.Panel2
+            // 
+            this.splitContainer5.Panel2.Controls.Add(this.radioButton_Edge);
+            this.splitContainer5.Size = new System.Drawing.Size(202, 33);
+            this.splitContainer5.SplitterDistance = 67;
+            this.splitContainer5.TabIndex = 11;
+            // 
+            // radioButton_Frame
+            // 
+            this.radioButton_Frame.AutoSize = true;
+            this.radioButton_Frame.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_Frame.Location = new System.Drawing.Point(0, 0);
+            this.radioButton_Frame.Name = "radioButton_Frame";
+            this.radioButton_Frame.Size = new System.Drawing.Size(67, 33);
+            this.radioButton_Frame.TabIndex = 10;
+            this.radioButton_Frame.TabStop = true;
+            this.radioButton_Frame.Text = "Frame";
+            this.radioButton_Frame.UseVisualStyleBackColor = true;
+            this.radioButton_Frame.CheckedChanged += new System.EventHandler(this.radioButton_SelectionMarker_CheckedChanged);
+            // 
+            // radioButton_Edge
+            // 
+            this.radioButton_Edge.AutoSize = true;
+            this.radioButton_Edge.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.radioButton_Edge.Location = new System.Drawing.Point(0, 0);
+            this.radioButton_Edge.Name = "radioButton_Edge";
+            this.radioButton_Edge.Size = new System.Drawing.Size(131, 33);
+            this.radioButton_Edge.TabIndex = 0;
+            this.radioButton_Edge.TabStop = true;
+            this.radioButton_Edge.Text = "Edge";
+            this.radioButton_Edge.UseVisualStyleBackColor = true;
+            this.radioButton_Edge.CheckedChanged += new System.EventHandler(this.radioButton_SelectionMarker_CheckedChanged);
             // 
             // tabPage_favs
             // 
@@ -652,7 +717,7 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.98167F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.01833F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 194F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 231F));
             this.tableLayoutPanel4.Controls.Add(this.tsprogressbar, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.tslabel_picturesof, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.combobox_sorting, 2, 0);
@@ -697,7 +762,7 @@
             this.combobox_sorting.Location = new System.Drawing.Point(225, 0);
             this.combobox_sorting.Margin = new System.Windows.Forms.Padding(0);
             this.combobox_sorting.Name = "combobox_sorting";
-            this.combobox_sorting.Size = new System.Drawing.Size(198, 21);
+            this.combobox_sorting.Size = new System.Drawing.Size(177, 21);
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
@@ -705,9 +770,9 @@
             // 
             this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(610, 3);
+            this.trackBar1.Location = new System.Drawing.Point(573, 3);
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(189, 17);
+            this.trackBar1.Size = new System.Drawing.Size(226, 17);
             this.trackBar1.TabIndex = 2;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
@@ -715,7 +780,7 @@
             // lb_Size
             // 
             this.lb_Size.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_Size.Location = new System.Drawing.Point(575, 0);
+            this.lb_Size.Location = new System.Drawing.Point(538, 0);
             this.lb_Size.Name = "lb_Size";
             this.lb_Size.Size = new System.Drawing.Size(29, 23);
             this.lb_Size.TabIndex = 4;
@@ -800,6 +865,13 @@
             this.splitContainer1.ResumeLayout(false);
             this.tabPage_Settings.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel5.PerformLayout();
+            this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel1.PerformLayout();
+            this.splitContainer5.Panel2.ResumeLayout(false);
+            this.splitContainer5.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
+            this.splitContainer5.ResumeLayout(false);
             this.tabPage_favs.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
@@ -868,6 +940,10 @@
         private System.Windows.Forms.FlowLayoutPanel panel_favs;
         private System.Windows.Forms.Button btn_fav;
         private System.Windows.Forms.Button btn_dropall;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.RadioButton radioButton_Frame;
+        private System.Windows.Forms.RadioButton radioButton_Edge;
     }
 }
 

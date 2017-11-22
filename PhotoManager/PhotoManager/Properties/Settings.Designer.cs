@@ -70,5 +70,29 @@ namespace PhotoManager.Properties {
                 this["JOIN"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int SCALE_MAIN {
+            get {
+                return ((int)(this["SCALE_MAIN"]));
+            }
+            set {
+                this["SCALE_MAIN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("75")]
+        public int SCALE_MAP {
+            get {
+                return ((int)(this["SCALE_MAP"]));
+            }
+            set {
+                this["SCALE_MAP"] = value;
+            }
+        }
     }
 }
