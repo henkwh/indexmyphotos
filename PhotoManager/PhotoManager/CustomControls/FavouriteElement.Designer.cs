@@ -77,6 +77,7 @@
             this.btn_copy.TabIndex = 2;
             this.btn_copy.Text = "C";
             this.btn_copy.UseVisualStyleBackColor = true;
+            this.btn_copy.Click += new System.EventHandler(this.btn_copy_Click);
             // 
             // FavouriteElement
             // 

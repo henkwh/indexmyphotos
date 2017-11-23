@@ -19,9 +19,9 @@ namespace PhotoManager {
 
         public const int FRAME_SIZE = 10;
 
-        public static Color selectionColor;
-
         public static bool autoscale = true;
+
+        public static Color selectionColor = Color.White;
 
         /*
          * Creates preview image and places it in preview folder
@@ -61,7 +61,7 @@ namespace PhotoManager {
             Graphics g = Graphics.FromImage(b);
             if (frame) {
                 Rectangle rectf = new Rectangle(FRAME_SIZE / 2, FRAME_SIZE / 2, b.Width - FRAME_SIZE, b.Height - FRAME_SIZE);
-                Pen p = new Pen(Color.Red, FRAME_SIZE);
+                Pen p = new Pen(selectionColor, FRAME_SIZE);
                 g.DrawRectangle(p, rectf);
             } else {
                 PointF[] point = new PointF[3];
@@ -84,24 +84,19 @@ namespace PhotoManager {
         }
 
         public static int[] calculateGap(int gap, int imagescale, int panelwidth) {
+            int one = 0, c = 1;
+            while (one <= panelwidth) {
+                c++;
+                one += (gap + imagescale);
+            }
+            if (c < 3) {
+                return new int[] { 0, 3 };
+            }
             if (autoscale) {
-                int one = 0;
-                int c = 1;
-                while (one <= panelwidth) {
-                    c++;
-                    one += (gap + imagescale);
-                }
                 one -= (gap + imagescale);
-                System.Diagnostics.Debug.WriteLine(c + " " + one + "");
                 return new int[] { gap + ((panelwidth - one) / c), c };
             } else {
-                int one = 0;
-                int c = 1;
-                while (one <= panelwidth) {
-                    c++;
-                    one += (gap + imagescale);
-                }
-                return new int[] { gap, c};
+                return new int[] { gap, c };
             }
 
         }

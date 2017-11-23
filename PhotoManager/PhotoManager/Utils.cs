@@ -12,13 +12,11 @@ namespace PhotoManager {
     static class Utils {
 
         //Default date
-        public const string YEAR_STD = "1000";
+        public const string YEAR_STD = "10000000";
 
         //Identify extended commands in search
         public const string KEYWORD_LOC = "location:";
         public const string KEYWORD_DATE = "date";
-
-        public const int GAP = 10;
 
         /*
          * Creates Hash value from file
@@ -99,8 +97,8 @@ namespace PhotoManager {
         public static string getToolTipTextForImage(Image i) {
             string location = i.getLocationString();
             string s = i.getName() + i.getFileType() + "\n";
-            s += "Location: " + location + "\n";
-            s += "Date: " + i.getDate() + "\n";
+            s += "Location: " + location.Replace("0,0", "") + "\n";
+            s += "Date: " + i.getDate().Replace(YEAR_STD, "") + "\n";
             s += "tags: " + i.getTags() + "\n";
             s += "Description: " + i.getDescription();
             return s;
@@ -164,13 +162,13 @@ namespace PhotoManager {
         public static string parseDate(string d, bool year) {
             if (d.Equals("")) {
                 if (year == true) {
-                    return YEAR_STD;
+                    return YEAR_STD.Substring(0,4);
                 } else {
                     return "00";
                 }
             } else {
-                int fill = year == true? 4 : 2;
-                while(d.Count() < fill) {
+                int fill = year == true ? 4 : 2;
+                while (d.Count() < fill) {
                     d = "0" + d;
                 }
                 return d;

@@ -94,5 +94,41 @@ namespace PhotoManager.Properties {
                 this["SCALE_MAP"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool BORDERSTYLE_FRAME {
+            get {
+                return ((bool)(this["BORDERSTYLE_FRAME"]));
+            }
+            set {
+                this["BORDERSTYLE_FRAME"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int GAPSCALE {
+            get {
+                return ((int)(this["GAPSCALE"]));
+            }
+            set {
+                this["GAPSCALE"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool QUICKINFO {
+            get {
+                return ((bool)(this["QUICKINFO"]));
+            }
+            set {
+                this["QUICKINFO"] = value;
+            }
+        }
     }
 }

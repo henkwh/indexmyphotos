@@ -32,6 +32,8 @@ namespace PhotoManager {
 
         private OrderElement selectedorder;
 
+        private ToolTip toolTip;
+
         public Form1() {
             currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
             InitializeComponent();
@@ -56,25 +58,31 @@ namespace PhotoManager {
             combobox_sorting.Items.Add(new OrderElement("Location E to W", " ORDER BY f.loclng DESC"));
             combobox_sorting.Items.Add(new OrderElement("Filetype", " ORDER BY f.filetype ASC"));
             combobox_sorting.SelectedIndex = 1;
-            comboBox_bgColor.Items.Add(new ColorSetting("Wheat", Color.Wheat));
+            comboBox_bgColor.Items.Add(new ColorSetting("Wheat", Color.PapayaWhip));
+            comboBox_bgColor.Items.Add(new ColorSetting("Light blue", Color.LightSteelBlue));
+            comboBox_bgColor.Items.Add(new ColorSetting("Light Red", Color.LightCoral));
+            comboBox_bgColor.Items.Add(new ColorSetting("Light Green", Color.DarkSeaGreen));
+            comboBox_bgColor.Items.Add(new ColorSetting("Red", Color.Red));
             comboBox_bgColor.Items.Add(new ColorSetting("White", Color.White));
             comboBox_bgColor.Items.Add(new ColorSetting("Black", Color.Black));
-            comboBox_bgColor.Items.Add(new ColorSetting("Red", Color.Red));
-            comboBox_bgColor.Items.Add(new ColorSetting("Green", Color.Green));
-            comboBox_bgColor.Items.Add(new ColorSetting("Blue", Color.Blue));
             comboBox_selectionColor.Items.AddRange(comboBox_bgColor.Items.Cast<ColorSetting>().ToArray());
-
+            toolTip = new ToolTip();
+            toolTip.AutomaticDelay = 1000;
+            toolTip.UseFading = true;
+            toolTip.UseAnimation = true;
+            checkBox_Quickinfo.Checked = Properties.Settings.Default.QUICKINFO;
             foreach (ColorSetting cs in comboBox_bgColor.Items) {
                 if (cs.Color == Properties.Settings.Default.BGCOLOR) {
                     comboBox_bgColor.SelectedIndex = comboBox_bgColor.Items.IndexOf(cs);
                 }
                 if (cs.Color == Properties.Settings.Default.SELCOLOR) {
+                    ImageGenerator.selectionColor = cs.Color;
                     comboBox_selectionColor.SelectedIndex = comboBox_selectionColor.Items.IndexOf(cs);
                 }
             }
-            checkBox_JoinTags.Checked = Properties.Settings.Default.JOIN;
-
-
+            RadioButton btn = Properties.Settings.Default.BORDERSTYLE_FRAME ? radioButton_Frame : radioButton_Edge;
+            btn.Checked = true;
+            trackBar_scale.Value = Math.Min(Math.Max((Properties.Settings.Default.GAPSCALE - 10) / 2, 0), trackBar_scale.Maximum);
             string[] favs = db.getFavs();
             foreach (string s in favs) {
                 FavouriteElement fe = new FavouriteElement(s);
@@ -100,7 +108,6 @@ namespace PhotoManager {
             panel_overview.Scroll += Panel_overview_Scroll;
             setHandler();
             panel_overview.ContextMenu = addMenuItems();
-            //Utils.deleteImagesNotInDB(currentworkingdirectory, dir_full, dir_preview, db.loadEntries(null));
             newWorker();
         }
 
@@ -113,11 +120,12 @@ namespace PhotoManager {
             Graphics g = panel.CreateGraphics();
             g.TranslateTransform(0, panel.AutoScrollPosition.Y);
             int panelwidth = panel.VerticalScroll.Visible ? panel.Width - SystemInformation.VerticalScrollBarWidth : panel.Width;
-            int[] tmp = ImageGenerator.calculateGap(Utils.GAP, imagescale, panelwidth);
+            int[] tmp = ImageGenerator.calculateGap(Properties.Settings.Default.GAPSCALE, imagescale, panelwidth);
             int gap = tmp[0];
             int rtrn = tmp[1];
             int x = gap;
-            int y = Utils.GAP;
+            Debug.WriteLine(Properties.Settings.Default.GAPSCALE);
+            int y = Properties.Settings.Default.GAPSCALE;
             int max = panel.Width - gap - imagescale;
             int c = 0;
             foreach (Image i in shown) {
@@ -133,12 +141,12 @@ namespace PhotoManager {
                 x += gap + imagescale;
                 c++;
                 if (c == rtrn - 2) {
-                    y += gap + imagescale;
+                    y += Properties.Settings.Default.GAPSCALE + imagescale;
                     x = gap;
                     c = 0;
                 }
             }
-            panel.AutoScrollMinSize = new Size(panel.AutoScrollMinSize.Width, y + imagescale + 2 * Utils.GAP);
+            panel.AutoScrollMinSize = new Size(panel.AutoScrollMinSize.Width, y);
         }
 
 
@@ -249,16 +257,14 @@ namespace PhotoManager {
                     updateLabel(0);
                 });
             }
-            //ToolTip toolTip = new ToolTip();
+            panel_overview.MouseMove += Panel_overview_MouseMove1;
             int ticks = Environment.TickCount + 700;
+            bool frame = Properties.Settings.Default.BORDERSTYLE_FRAME;
             foreach (Image img in shown) {
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
                 img.setPreview(bmp);
-                img.setImage(bmp);
-
+                img.setImage(bmp, frame);
                 if (justDragDropped != null && justDragDropped.Contains(img.getName())) { selectImage(img); }
-
-                //toolTip.SetToolTip(img, Utils.getToolTipTextForImage(img));
                 img.setSize(imagescale);
                 if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {          //No Location set -> No marker
                     map.addMarker(img.getLocation(), img.getPreview());
@@ -273,6 +279,31 @@ namespace PhotoManager {
                 if (e.Cancel || worker.CancellationPending) {   //Abort Worker
                     break;
                 }
+            }
+        }
+
+        private void Panel_overview_MouseMove1(object sender, MouseEventArgs e) {
+            if (Properties.Settings.Default.QUICKINFO) {
+                Image i = getClickedImage(Cursor.Position);
+                if (i != null && !i.getName().Equals((string)toolTip.Tag)) {
+                    toolTip.SetToolTip(panel_overview, Utils.getToolTipTextForImage(i));
+                    toolTip.Tag = i.getName();
+                    //toolTip.Active = false;
+                    toolTip.Active = true;
+                } else if (i == null) {
+                    toolTip.Active = false;
+                }
+            }
+        }
+
+        private void Panel_overview_MouseMove(object sender, MouseEventArgs e) {
+
+        }
+
+        private void ToolTip_Popup(object sender, PopupEventArgs e) {
+            Image i = getClickedImage(Cursor.Position);
+            if (i != null && toolTip.ToolTipTitle != i.getName()) {
+                ((ToolTip)sender).ToolTipTitle = i.getName();
             }
         }
 
@@ -299,7 +330,6 @@ namespace PhotoManager {
                     if (a.Button == MouseButtons.Right) {
                     } else if (a.Button == MouseButtons.Left) {
                         if (ModifierKeys == Keys.Control) {
-
                             updateMultiedit(i, EDITOPERATION.SWITCH);
                             panel_overview.Refresh();
                         } else {
@@ -556,7 +586,7 @@ namespace PhotoManager {
                     }
                     tb_tags.Text = db.getConnectedTags(multiedit[0].getName());
                     tb_description.Text = multiedit[0].getDescription();
-                    if (!multiedit[0].getDate().Equals(Utils.YEAR_STD + "0000")) {
+                    if (!multiedit[0].getDate().Equals(Utils.YEAR_STD)) {
                         tb_dateyear.Text = multiedit[0].getDate().Substring(0, 4);
                         tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2).Equals("00") ? "" : multiedit[0].getDate().Substring(4, 2);
                         tb_dateday.Text = multiedit[0].getDate().Substring(6, 2).Equals("00") ? "" : multiedit[0].getDate().Substring(6, 2);
@@ -639,11 +669,13 @@ namespace PhotoManager {
         private void comboBox_bgColor_SelectedIndexChanged(object sender, EventArgs e) {
             panel_overview.BackColor = ((ColorSetting)comboBox_bgColor.Items[comboBox_bgColor.SelectedIndex]).Color;
             Properties.Settings.Default.BGCOLOR = panel_overview.BackColor;
+            Properties.Settings.Default.Save();
         }
 
         private void comboBox_selectionColor_SelectedIndexChanged(object sender, EventArgs e) {
             ImageGenerator.selectionColor = ((ColorSetting)comboBox_selectionColor.Items[comboBox_selectionColor.SelectedIndex]).Color;
             Properties.Settings.Default.SELCOLOR = ImageGenerator.selectionColor;
+            Properties.Settings.Default.Save();
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -691,6 +723,9 @@ namespace PhotoManager {
         private void favCpy_Click(object sender, EventArgs e) {
             FavouriteElement fe = (FavouriteElement)(((Button)sender).Parent).Parent;
             tb_search.Text = fe.getText();
+            tabControl1.SelectedTab = tabPage_main;
+            KeyEventArgs kea = new KeyEventArgs(Keys.Return);
+            tb_search_KeyDown(null, kea);
         }
 
         private void favDel_Click(object sender, EventArgs e) {
@@ -722,7 +757,7 @@ namespace PhotoManager {
                 case EDITOPERATION.ADD:
                     if (!multiedit.Contains(i)) {
                         multiedit.Add(i);
-                        i.showBorder();
+                        i.showBorder(Properties.Settings.Default.BORDERSTYLE_FRAME);
                     }
                     break;
                 case EDITOPERATION.REMOVE:
@@ -749,11 +784,25 @@ namespace PhotoManager {
         }
 
         private void radioButton_SelectionMarker_CheckedChanged(object sender, EventArgs e) {
-            if ((RadioButton)sender == radioButton_Frame) {
-                radioButton_Edge.Checked = false;
-            } else if ((RadioButton)sender == radioButton_Edge) {
-                radioButton_Frame.Checked = false;
+            Properties.Settings.Default.BORDERSTYLE_FRAME = radioButton_Frame.Checked ? true : false;
+            Properties.Settings.Default.Save();
+        }
+
+        private void trackBar_scale_Scroll(object sender, EventArgs e) {
+            Properties.Settings.Default.GAPSCALE = 10 + 2 * trackBar_scale.Value;
+            Properties.Settings.Default.Save();
+        }
+
+        /* Disable Keys*/
+        private void tabControl1_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right) {
+                e.Handled = true;
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.QUICKINFO = checkBox_Quickinfo.Checked;
+            Properties.Settings.Default.Save();
         }
 
         public void ClickedMap(string location) {

@@ -25,6 +25,10 @@ namespace PhotoManager.CustomControls {
             tb_text.Text += t + "\r\n";
         }
 
+        public TextBox getTextBox() {
+            return tb_text;
+        }
+
         private void btn_OK_Click(object sender, EventArgs e) {
             this.Hide();
         }

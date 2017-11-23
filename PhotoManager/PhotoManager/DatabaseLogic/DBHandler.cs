@@ -25,8 +25,8 @@ namespace PhotoManager {
             connection = "Data Source=testdb.db3";
             if (!File.Exists(workingdirectory + @"\"+DBNAME)) {
                 SQLiteConnection.CreateFile(DBNAME);
-                createTable();
             }
+            createTable();
             SQLiteConnection.ClearAllPools();
             removeUnusedTags();
             entryCount = countEntrys();
@@ -135,7 +135,7 @@ namespace PhotoManager {
                 }
                 con.Close(); con.Dispose();
             }
-            updateEntry(hash.ToString(), "date", Utils.YEAR_STD + "0000");
+            updateEntry(hash.ToString(), "date", Utils.YEAR_STD);
             updateEntry(hash.ToString(), new double[] { 0.0, 0.0 });
             updateEntry(hash.ToString(), "description", "");
             entryCount = countEntrys();

@@ -28,9 +28,9 @@ namespace PhotoManager {
                 string keyword = contains[i];
                 keyword =
                 keyword.Replace("-location:set", "location:0,0").
-                Replace("location:set", "location=0,0").
-                Replace("-date=set", "date=" + Utils.YEAR_STD + "0000").
-                Replace("date=set", "-date=" + Utils.YEAR_STD + "0000");
+                Replace("location:set", "location:0,0").
+                Replace("-date=set", "date=" + Utils.YEAR_STD).
+                Replace("date=set", "-date=" + Utils.YEAR_STD);
                 bool not = false;
                 if (keyword.Count() >= 1 && keyword[0].Equals('-')) {
                     not = true;

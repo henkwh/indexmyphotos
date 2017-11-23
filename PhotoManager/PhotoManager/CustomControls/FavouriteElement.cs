@@ -31,5 +31,9 @@ namespace PhotoManager.CustomControls {
         public Button copyButton() {
             return btn_copy;
         }
+
+        private void btn_copy_Click(object sender, EventArgs e) {
+
+        }
     }
 }

@@ -66,9 +66,9 @@ namespace PhotoManager {
             Image = preview;
         }
 
-        public void setImage(Bitmap b) {
+        public void setImage(Bitmap b, bool frame) {
             if (borderShown) {
-                Image = ImageGenerator.drawFrame(b, true);
+                Image = ImageGenerator.drawFrame(b, frame);
             } else {
                 Image = b;
             }
@@ -116,9 +116,9 @@ namespace PhotoManager {
         }
 
 
-        public void showBorder() {
+        public void showBorder(bool frame) {
             if (!borderShown) {
-                Image = ImageGenerator.drawFrame((Bitmap)preview, true);
+                Image = ImageGenerator.drawFrame((Bitmap)preview, frame);
                 borderShown = true;
             }
         }

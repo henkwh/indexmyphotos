@@ -26,9 +26,7 @@
             this.tb_search = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_main = new System.Windows.Forms.TabPage();
-            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.tabPage_viewer = new System.Windows.Forms.TabPage();
-            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabPage_tags = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -61,12 +59,14 @@
             this.comboBox_selectionColor = new System.Windows.Forms.ComboBox();
             this.btn_printAllEntries = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioButton_Edge = new System.Windows.Forms.RadioButton();
+            this.radioButton_Frame = new System.Windows.Forms.RadioButton();
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.trackBar_scale = new System.Windows.Forms.TrackBar();
             this.checkBox_autoScale = new System.Windows.Forms.CheckBox();
             this.btn_dropall = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
-            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.radioButton_Frame = new System.Windows.Forms.RadioButton();
-            this.radioButton_Edge = new System.Windows.Forms.RadioButton();
             this.tabPage_favs = new System.Windows.Forms.TabPage();
             this.panel_favs = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -74,15 +74,17 @@
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.tslabel_picturesof = new System.Windows.Forms.Label();
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
-            this.trackBar1 = new PhotoManager.TrackBarControl();
-            this.lb_Size = new System.Windows.Forms.Label();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.btn_fav = new System.Windows.Forms.Button();
+            this.trackBar1 = new PhotoManager.TrackBarControl();
+            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
+            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
+            this.label8 = new System.Windows.Forms.Label();
+            this.checkBox_Quickinfo = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.tabPage_tags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -100,19 +102,22 @@
             this.splitContainer1.SuspendLayout();
             this.tabPage_Settings.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.tabPage_favs.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_search
@@ -143,6 +148,7 @@
             this.tabControl1.Size = new System.Drawing.Size(796, 326);
             this.tabControl1.TabIndex = 2;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            this.tabControl1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tabControl1_KeyDown);
             this.tabControl1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             // 
             // tabPage_main
@@ -156,16 +162,6 @@
             this.tabPage_main.Text = "Main";
             this.tabPage_main.UseVisualStyleBackColor = true;
             // 
-            // panel_overview
-            // 
-            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_overview.Location = new System.Drawing.Point(3, 3);
-            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
-            this.panel_overview.Name = "panel_overview";
-            this.panel_overview.Size = new System.Drawing.Size(782, 294);
-            this.panel_overview.TabIndex = 0;
-            this.panel_overview.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_overview_Scroll_1);
-            // 
             // tabPage_viewer
             // 
             this.tabPage_viewer.Controls.Add(this.pictureBox_viewer);
@@ -175,17 +171,6 @@
             this.tabPage_viewer.Size = new System.Drawing.Size(788, 300);
             this.tabPage_viewer.TabIndex = 5;
             this.tabPage_viewer.Text = "View";
-            // 
-            // pictureBox_viewer
-            // 
-            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox_viewer.Name = "pictureBox_viewer";
-            this.pictureBox_viewer.ShownImage = null;
-            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
-            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox_viewer.TabIndex = 0;
-            this.pictureBox_viewer.TabStop = false;
             // 
             // tabPage_tags
             // 
@@ -501,20 +486,24 @@
             this.tableLayoutPanel5.Controls.Add(this.comboBox_selectionColor, 1, 2);
             this.tableLayoutPanel5.Controls.Add(this.btn_printAllEntries, 1, 0);
             this.tableLayoutPanel5.Controls.Add(this.label6, 0, 3);
-            this.tableLayoutPanel5.Controls.Add(this.checkBox_autoScale, 1, 3);
-            this.tableLayoutPanel5.Controls.Add(this.btn_dropall, 0, 4);
             this.tableLayoutPanel5.Controls.Add(this.label7, 0, 5);
-            this.tableLayoutPanel5.Controls.Add(this.splitContainer5, 1, 5);
+            this.tableLayoutPanel5.Controls.Add(this.groupBox1, 1, 5);
+            this.tableLayoutPanel5.Controls.Add(this.splitContainer5, 1, 3);
+            this.tableLayoutPanel5.Controls.Add(this.label8, 0, 6);
+            this.tableLayoutPanel5.Controls.Add(this.btn_dropall, 0, 7);
+            this.tableLayoutPanel5.Controls.Add(this.checkBox_Quickinfo, 1, 6);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 22);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
-            this.tableLayoutPanel5.RowCount = 6;
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 73.19588F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 26.80412F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 44F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(416, 260);
+            this.tableLayoutPanel5.RowCount = 8;
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(454, 260);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // btn_deleteUnusedFiles
@@ -522,7 +511,7 @@
             this.btn_deleteUnusedFiles.Dock = System.Windows.Forms.DockStyle.Top;
             this.btn_deleteUnusedFiles.Location = new System.Drawing.Point(3, 3);
             this.btn_deleteUnusedFiles.Name = "btn_deleteUnusedFiles";
-            this.btn_deleteUnusedFiles.Size = new System.Drawing.Size(202, 35);
+            this.btn_deleteUnusedFiles.Size = new System.Drawing.Size(221, 29);
             this.btn_deleteUnusedFiles.TabIndex = 0;
             this.btn_deleteUnusedFiles.Text = "Delete unused Files";
             this.btn_deleteUnusedFiles.UseVisualStyleBackColor = true;
@@ -533,18 +522,18 @@
             this.comboBox_bgColor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox_bgColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_bgColor.FormattingEnabled = true;
-            this.comboBox_bgColor.Location = new System.Drawing.Point(211, 86);
+            this.comboBox_bgColor.Location = new System.Drawing.Point(230, 38);
             this.comboBox_bgColor.Name = "comboBox_bgColor";
-            this.comboBox_bgColor.Size = new System.Drawing.Size(202, 21);
+            this.comboBox_bgColor.Size = new System.Drawing.Size(221, 21);
             this.comboBox_bgColor.TabIndex = 1;
             this.comboBox_bgColor.SelectedIndexChanged += new System.EventHandler(this.comboBox_bgColor_SelectedIndexChanged);
             // 
             // lb_bgColor
             // 
             this.lb_bgColor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_bgColor.Location = new System.Drawing.Point(3, 83);
+            this.lb_bgColor.Location = new System.Drawing.Point(3, 35);
             this.lb_bgColor.Name = "lb_bgColor";
-            this.lb_bgColor.Size = new System.Drawing.Size(202, 30);
+            this.lb_bgColor.Size = new System.Drawing.Size(221, 25);
             this.lb_bgColor.TabIndex = 2;
             this.lb_bgColor.Text = "Background color";
             this.lb_bgColor.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -552,9 +541,9 @@
             // label5
             // 
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Location = new System.Drawing.Point(3, 113);
+            this.label5.Location = new System.Drawing.Point(3, 60);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(202, 26);
+            this.label5.Size = new System.Drawing.Size(221, 25);
             this.label5.TabIndex = 3;
             this.label5.Text = "Selection color";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -564,18 +553,18 @@
             this.comboBox_selectionColor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBox_selectionColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_selectionColor.FormattingEnabled = true;
-            this.comboBox_selectionColor.Location = new System.Drawing.Point(211, 116);
+            this.comboBox_selectionColor.Location = new System.Drawing.Point(230, 63);
             this.comboBox_selectionColor.Name = "comboBox_selectionColor";
-            this.comboBox_selectionColor.Size = new System.Drawing.Size(202, 21);
+            this.comboBox_selectionColor.Size = new System.Drawing.Size(221, 21);
             this.comboBox_selectionColor.TabIndex = 4;
             this.comboBox_selectionColor.SelectedIndexChanged += new System.EventHandler(this.comboBox_selectionColor_SelectedIndexChanged);
             // 
             // btn_printAllEntries
             // 
             this.btn_printAllEntries.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btn_printAllEntries.Location = new System.Drawing.Point(211, 3);
+            this.btn_printAllEntries.Location = new System.Drawing.Point(230, 3);
             this.btn_printAllEntries.Name = "btn_printAllEntries";
-            this.btn_printAllEntries.Size = new System.Drawing.Size(202, 35);
+            this.btn_printAllEntries.Size = new System.Drawing.Size(221, 29);
             this.btn_printAllEntries.TabIndex = 5;
             this.btn_printAllEntries.Text = "Print all Entries";
             this.btn_printAllEntries.UseVisualStyleBackColor = true;
@@ -584,90 +573,109 @@
             // label6
             // 
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label6.Location = new System.Drawing.Point(3, 139);
+            this.label6.Location = new System.Drawing.Point(3, 85);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(202, 44);
+            this.label6.Size = new System.Drawing.Size(221, 35);
             this.label6.TabIndex = 6;
             this.label6.Text = "Autoscale gaps between images";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // checkBox_autoScale
-            // 
-            this.checkBox_autoScale.Checked = true;
-            this.checkBox_autoScale.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_autoScale.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBox_autoScale.Location = new System.Drawing.Point(211, 142);
-            this.checkBox_autoScale.Name = "checkBox_autoScale";
-            this.checkBox_autoScale.Size = new System.Drawing.Size(202, 38);
-            this.checkBox_autoScale.TabIndex = 7;
-            this.checkBox_autoScale.Text = "Enbable Autoscale";
-            this.checkBox_autoScale.UseVisualStyleBackColor = true;
-            this.checkBox_autoScale.CheckedChanged += new System.EventHandler(this.checkBox_autoScale_CheckedChanged);
-            // 
-            // btn_dropall
-            // 
-            this.btn_dropall.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_dropall.Location = new System.Drawing.Point(3, 186);
-            this.btn_dropall.Name = "btn_dropall";
-            this.btn_dropall.Size = new System.Drawing.Size(202, 32);
-            this.btn_dropall.TabIndex = 8;
-            this.btn_dropall.Text = "Drop all Tables";
-            this.btn_dropall.UseVisualStyleBackColor = true;
-            this.btn_dropall.Click += new System.EventHandler(this.btn_dropall_Click);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Location = new System.Drawing.Point(3, 221);
+            this.label7.Location = new System.Drawing.Point(3, 155);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(202, 39);
+            this.label7.Size = new System.Drawing.Size(221, 40);
             this.label7.TabIndex = 9;
-            this.label7.Text = "Selection marker";
+            this.label7.Text = "Selection marker style";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // splitContainer5
+            // groupBox1
             // 
-            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer5.Location = new System.Drawing.Point(211, 224);
-            this.splitContainer5.Name = "splitContainer5";
+            this.groupBox1.Controls.Add(this.radioButton_Edge);
+            this.groupBox1.Controls.Add(this.radioButton_Frame);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(230, 158);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(221, 34);
+            this.groupBox1.TabIndex = 12;
+            this.groupBox1.TabStop = false;
             // 
-            // splitContainer5.Panel1
+            // radioButton_Edge
             // 
-            this.splitContainer5.Panel1.Controls.Add(this.radioButton_Frame);
-            // 
-            // splitContainer5.Panel2
-            // 
-            this.splitContainer5.Panel2.Controls.Add(this.radioButton_Edge);
-            this.splitContainer5.Size = new System.Drawing.Size(202, 33);
-            this.splitContainer5.SplitterDistance = 67;
-            this.splitContainer5.TabIndex = 11;
+            this.radioButton_Edge.AutoSize = true;
+            this.radioButton_Edge.Location = new System.Drawing.Point(119, 10);
+            this.radioButton_Edge.Name = "radioButton_Edge";
+            this.radioButton_Edge.Size = new System.Drawing.Size(50, 17);
+            this.radioButton_Edge.TabIndex = 0;
+            this.radioButton_Edge.TabStop = true;
+            this.radioButton_Edge.Text = "Edge";
+            this.radioButton_Edge.UseVisualStyleBackColor = true;
+            this.radioButton_Edge.CheckedChanged += new System.EventHandler(this.radioButton_SelectionMarker_CheckedChanged);
             // 
             // radioButton_Frame
             // 
             this.radioButton_Frame.AutoSize = true;
-            this.radioButton_Frame.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton_Frame.Location = new System.Drawing.Point(0, 0);
+            this.radioButton_Frame.Location = new System.Drawing.Point(36, 10);
             this.radioButton_Frame.Name = "radioButton_Frame";
-            this.radioButton_Frame.Size = new System.Drawing.Size(67, 33);
+            this.radioButton_Frame.Size = new System.Drawing.Size(54, 17);
             this.radioButton_Frame.TabIndex = 10;
             this.radioButton_Frame.TabStop = true;
             this.radioButton_Frame.Text = "Frame";
             this.radioButton_Frame.UseVisualStyleBackColor = true;
             this.radioButton_Frame.CheckedChanged += new System.EventHandler(this.radioButton_SelectionMarker_CheckedChanged);
             // 
-            // radioButton_Edge
+            // splitContainer5
             // 
-            this.radioButton_Edge.AutoSize = true;
-            this.radioButton_Edge.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton_Edge.Location = new System.Drawing.Point(0, 0);
-            this.radioButton_Edge.Name = "radioButton_Edge";
-            this.radioButton_Edge.Size = new System.Drawing.Size(131, 33);
-            this.radioButton_Edge.TabIndex = 0;
-            this.radioButton_Edge.TabStop = true;
-            this.radioButton_Edge.Text = "Edge";
-            this.radioButton_Edge.UseVisualStyleBackColor = true;
-            this.radioButton_Edge.CheckedChanged += new System.EventHandler(this.radioButton_SelectionMarker_CheckedChanged);
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(230, 88);
+            this.splitContainer5.Name = "splitContainer5";
+            // 
+            // splitContainer5.Panel1
+            // 
+            this.splitContainer5.Panel1.Controls.Add(this.trackBar_scale);
+            // 
+            // splitContainer5.Panel2
+            // 
+            this.splitContainer5.Panel2.Controls.Add(this.checkBox_autoScale);
+            this.splitContainer5.Size = new System.Drawing.Size(221, 29);
+            this.splitContainer5.SplitterDistance = 123;
+            this.splitContainer5.TabIndex = 13;
+            // 
+            // trackBar_scale
+            // 
+            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar_scale.LargeChange = 1;
+            this.trackBar_scale.Location = new System.Drawing.Point(0, 0);
+            this.trackBar_scale.Maximum = 6;
+            this.trackBar_scale.Name = "trackBar_scale";
+            this.trackBar_scale.Size = new System.Drawing.Size(123, 29);
+            this.trackBar_scale.TabIndex = 0;
+            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
+            // 
+            // checkBox_autoScale
+            // 
+            this.checkBox_autoScale.Checked = true;
+            this.checkBox_autoScale.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_autoScale.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBox_autoScale.Location = new System.Drawing.Point(0, 0);
+            this.checkBox_autoScale.Name = "checkBox_autoScale";
+            this.checkBox_autoScale.Size = new System.Drawing.Size(94, 29);
+            this.checkBox_autoScale.TabIndex = 7;
+            this.checkBox_autoScale.Text = "Autoscale";
+            this.checkBox_autoScale.UseVisualStyleBackColor = true;
+            this.checkBox_autoScale.CheckedChanged += new System.EventHandler(this.checkBox_autoScale_CheckedChanged);
+            // 
+            // btn_dropall
+            // 
+            this.btn_dropall.Location = new System.Drawing.Point(3, 231);
+            this.btn_dropall.Name = "btn_dropall";
+            this.btn_dropall.Size = new System.Drawing.Size(202, 26);
+            this.btn_dropall.TabIndex = 8;
+            this.btn_dropall.Text = "Drop all Tables";
+            this.btn_dropall.UseVisualStyleBackColor = true;
+            this.btn_dropall.Click += new System.EventHandler(this.btn_dropall_Click);
             // 
             // tabPage_favs
             // 
@@ -712,17 +720,16 @@
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.ColumnCount = 6;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 56.98167F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 43.01833F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 231F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10.06712F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.13423F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.12137F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.43568F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.77852F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.46309F));
             this.tableLayoutPanel4.Controls.Add(this.tsprogressbar, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.tslabel_picturesof, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.combobox_sorting, 2, 0);
             this.tableLayoutPanel4.Controls.Add(this.trackBar1, 5, 0);
-            this.tableLayoutPanel4.Controls.Add(this.lb_Size, 4, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 382);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -735,18 +742,19 @@
             // tsprogressbar
             // 
             this.tsprogressbar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tsprogressbar.Location = new System.Drawing.Point(78, 3);
+            this.tsprogressbar.Location = new System.Drawing.Point(83, 3);
             this.tsprogressbar.Name = "tsprogressbar";
-            this.tsprogressbar.Size = new System.Drawing.Size(144, 17);
+            this.tsprogressbar.Size = new System.Drawing.Size(155, 17);
             this.tsprogressbar.TabIndex = 1;
             // 
             // tslabel_picturesof
             // 
             this.tslabel_picturesof.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tslabel_picturesof.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tslabel_picturesof.Location = new System.Drawing.Point(3, 3);
             this.tslabel_picturesof.Margin = new System.Windows.Forms.Padding(3);
             this.tslabel_picturesof.Name = "tslabel_picturesof";
-            this.tslabel_picturesof.Size = new System.Drawing.Size(69, 17);
+            this.tslabel_picturesof.Size = new System.Drawing.Size(74, 17);
             this.tslabel_picturesof.TabIndex = 0;
             this.tslabel_picturesof.Text = "0/0";
             this.tslabel_picturesof.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -759,33 +767,12 @@
             this.combobox_sorting.FormattingEnabled = true;
             this.combobox_sorting.IntegralHeight = false;
             this.combobox_sorting.ItemHeight = 13;
-            this.combobox_sorting.Location = new System.Drawing.Point(225, 0);
-            this.combobox_sorting.Margin = new System.Windows.Forms.Padding(0);
+            this.combobox_sorting.Location = new System.Drawing.Point(246, 0);
+            this.combobox_sorting.Margin = new System.Windows.Forms.Padding(5, 0, 0, 0);
             this.combobox_sorting.Name = "combobox_sorting";
-            this.combobox_sorting.Size = new System.Drawing.Size(177, 21);
+            this.combobox_sorting.Size = new System.Drawing.Size(148, 21);
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(573, 3);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(226, 17);
-            this.trackBar1.TabIndex = 2;
-            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
-            // lb_Size
-            // 
-            this.lb_Size.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_Size.Location = new System.Drawing.Point(538, 0);
-            this.lb_Size.Name = "lb_Size";
-            this.lb_Size.Size = new System.Drawing.Size(29, 23);
-            this.lb_Size.TabIndex = 4;
-            this.lb_Size.Text = "Size";
-            this.lb_Size.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panel_tabHolder
             // 
@@ -829,6 +816,60 @@
             this.btn_fav.UseVisualStyleBackColor = true;
             this.btn_fav.Click += new System.EventHandler(this.btn_fav_Click);
             // 
+            // trackBar1
+            // 
+            this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar1.LargeChange = 1;
+            this.trackBar1.Location = new System.Drawing.Point(646, 3);
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(153, 17);
+            this.trackBar1.TabIndex = 2;
+            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
+            // panel_overview
+            // 
+            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_overview.Location = new System.Drawing.Point(3, 3);
+            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_overview.Name = "panel_overview";
+            this.panel_overview.Size = new System.Drawing.Size(782, 294);
+            this.panel_overview.TabIndex = 0;
+            this.panel_overview.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_overview_Scroll_1);
+            // 
+            // pictureBox_viewer
+            // 
+            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox_viewer.Name = "pictureBox_viewer";
+            this.pictureBox_viewer.ShownImage = null;
+            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
+            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_viewer.TabIndex = 0;
+            this.pictureBox_viewer.TabStop = false;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label8.Location = new System.Drawing.Point(3, 195);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(221, 33);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "Enable Quickinfo";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // checkBox_Quickinfo
+            // 
+            this.checkBox_Quickinfo.Dock = System.Windows.Forms.DockStyle.Right;
+            this.checkBox_Quickinfo.Location = new System.Drawing.Point(309, 198);
+            this.checkBox_Quickinfo.Name = "checkBox_Quickinfo";
+            this.checkBox_Quickinfo.Size = new System.Drawing.Size(142, 27);
+            this.checkBox_Quickinfo.TabIndex = 15;
+            this.checkBox_Quickinfo.Text = "Quickinfo";
+            this.checkBox_Quickinfo.UseVisualStyleBackColor = true;
+            this.checkBox_Quickinfo.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -844,7 +885,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage_main.ResumeLayout(false);
             this.tabPage_viewer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.tabPage_tags.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -866,23 +906,26 @@
             this.tabPage_Settings.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.splitContainer5.Panel1.ResumeLayout(false);
             this.splitContainer5.Panel1.PerformLayout();
             this.splitContainer5.Panel2.ResumeLayout(false);
-            this.splitContainer5.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             this.tabPage_favs.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel1.PerformLayout();
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -918,7 +961,6 @@
         private System.Windows.Forms.ProgressBar tsprogressbar;
         private System.Windows.Forms.Panel panel_tabHolder;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.Label lb_Size;
         private System.Windows.Forms.ComboBox combobox_sorting;
         private TrackBarControl trackBar1;
         private CustomControls.PictureBoxViewer pictureBox_viewer;
@@ -941,9 +983,13 @@
         private System.Windows.Forms.Button btn_fav;
         private System.Windows.Forms.Button btn_dropall;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.SplitContainer splitContainer5;
         private System.Windows.Forms.RadioButton radioButton_Frame;
         private System.Windows.Forms.RadioButton radioButton_Edge;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.TrackBar trackBar_scale;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.CheckBox checkBox_Quickinfo;
     }
 }
 

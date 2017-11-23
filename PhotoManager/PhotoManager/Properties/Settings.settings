@@ -20,5 +20,14 @@
     <Setting Name="SCALE_MAP" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">75</Value>
     </Setting>
+    <Setting Name="BORDERSTYLE_FRAME" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="GAPSCALE" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="QUICKINFO" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
