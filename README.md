@@ -1,6 +1,10 @@
 # indexmyphotos
 assigns tags, dates and location data to photos.
 
+## Getting started
+
+Just Drag and Drop your image file into the program. It will create a local copy in the program files folder and manage any files completely self-sufficient within a database.
+
 ## Motivation
 
 My search for any offline-service that is capable of managing my photos and showing their location on a map was badly disappointing.
@@ -23,13 +27,13 @@ Database: GUID (filename), filetype, loclat, loclng, date, tags, description
 Software required:
 - Microsoft Windows envionment
 - MS Visual Studio
-- MS SQL Server
+- <del>MS SQL Server</del> (embedded SQLite database in use)
 
 Create Database "Database.mdf" in Project Folder
 
 ## Installation Issues
 
--SQl Server not found:
+SQl Server not found (Outdated, embedded SQLite in use):
 Change version number in Database connection string or create an instance of LocalDB to match the version number:
 ```
 SqlLocalDB create "v13.0" -s
