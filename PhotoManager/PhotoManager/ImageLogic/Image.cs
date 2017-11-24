@@ -2,8 +2,11 @@
 using System.Windows.Forms;
 
 namespace PhotoManager {
-
     public class Image : PictureBox {
+
+        /*
+         * Image represents an image file from the database and its image in /preview and /full folder
+         */
 
         private Bitmap preview;
         private string name, filetype, date, description, tags;

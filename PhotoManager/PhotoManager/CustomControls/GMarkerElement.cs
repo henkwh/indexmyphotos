@@ -7,6 +7,10 @@ using System.Drawing;
 namespace PhotoManager {
     class GMarkerElement : GMarkerGoogle {
 
+        /*
+         * GMarkerElement is a marker icon on the GMap showing up as a preview image.
+         */
+
         private int ToolTipCounter;
 
         public GMarkerElement(PointLatLng p, Bitmap b) : base(p, b) {

@@ -14,12 +14,12 @@ namespace PhotoManager {
 
         private int entryCount;
 
-        private const string DBNAME = "testdb.db3";
+        private const string DBNAME = "Database.db3";
 
 
         public DBHandler(string workingdirectory) {
             currentworkingdirectory = workingdirectory;
-            connection = "Data Source=testdb.db3";
+            connection = "Data Source="+DBNAME;
             if (!File.Exists(workingdirectory + @"\"+DBNAME)) {
                 SQLiteConnection.CreateFile(DBNAME);
             }
@@ -27,17 +27,6 @@ namespace PhotoManager {
             SQLiteConnection.ClearAllPools();
             removeUnusedTags();
             entryCount = countEntrys();
-        }
-
-
-        private void testQuery(string q) {
-            using (SQLiteConnection con = new SQLiteConnection(connection)) {
-                con.Open();
-                using (SQLiteCommand command = new SQLiteCommand(q, con)) {
-                    command.ExecuteNonQuery();
-                }
-                con.Close(); con.Dispose();
-            }
         }
 
         /*
@@ -157,6 +146,7 @@ namespace PhotoManager {
             return ret;
         }
 
+
         /*
          * returns true if string tag already exists
          */
@@ -218,6 +208,10 @@ namespace PhotoManager {
             }
         }
 
+
+        /*
+         * returns entry matching the id
+         */
         public Image getImage(string id) {
             Image ret = null;
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
@@ -243,6 +237,9 @@ namespace PhotoManager {
             return ret;
         }
 
+        /*
+         * Updates location
+         */
         public void updateEntry(string id, double[] loc) {
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
                 con.Open();
@@ -269,8 +266,9 @@ namespace PhotoManager {
             }
         }
 
+
         /*
-         * Deletes an entry from Foto DB
+         * Deletes an entry from table Foto
          */
         public void deleteEntry(string id) {
             removeTags(id);
@@ -310,6 +308,9 @@ namespace PhotoManager {
             }
         }
 
+        /*
+         * Removes tags from Table Tag that are not connected to any Entry in table Foto
+         */
         public void removeUnusedTags() {
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
                 SQLiteConnection.ClearAllPools();
@@ -418,6 +419,9 @@ namespace PhotoManager {
         }
 
 
+        /*
+         * Returns saved search strings
+         */
         public string[] getFavs() {
             List<string> list = new List<string>();
 
@@ -437,6 +441,9 @@ namespace PhotoManager {
             return list.ToArray();
         }
 
+        /*
+         * Adds search string
+         */
         public bool addFav(string f) {
             bool ret = false;
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
@@ -456,6 +463,9 @@ namespace PhotoManager {
             return ret;
         }
 
+        /*
+         * Removes search string
+         */
         public void removeFav(string t) {
             SQLiteConnection.ClearAllPools();
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
@@ -471,50 +481,12 @@ namespace PhotoManager {
             }
         }
 
-        public void dropTables() {
-            using (SQLiteConnection con = new SQLiteConnection(connection)) {
-                con.Open();
-                try {
-                    using (SQLiteCommand command = new SQLiteCommand("Drop Table Foto", con)) {
-                        command.ExecuteNonQuery();
-                    }
-                } catch {
-                    Debug.WriteLine("Error counting Entrys");
-                }
-                try {
-                    using (SQLiteCommand command = new SQLiteCommand("Drop Table FotoTag", con)) {
-                        command.ExecuteNonQuery();
-                    }
-                } catch {
-                    Debug.WriteLine("Error counting Entrys");
-                }
-                try {
-                    using (SQLiteCommand command = new SQLiteCommand("Drop Table Tag", con)) {
-                        command.ExecuteNonQuery();
-                    }
-                } catch {
-                    Debug.WriteLine("Error counting Entrys");
-                }
-                try {
-                    using (SQLiteCommand command = new SQLiteCommand("Drop Table Favs", con)) {
-                        command.ExecuteNonQuery();
-                    }
-                } catch {
-                    Debug.WriteLine("Error counting Entrys");
-                }
-                con.Close(); con.Dispose();
-            }
-        }
-
-
-
         /*
         * generates a new GUID
         */
         private Guid genGUID() {
             return Guid.NewGuid();
         }
-
         public int getEntryCount() {
             return entryCount;
         }

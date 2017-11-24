@@ -4,6 +4,12 @@ using System.Windows.Forms;
 
 namespace PhotoManager.CustomControls {
     public partial class MessageBoxInfo : Form {
+
+        /*
+         * This forms pops up to give a textual feedback.
+         * The only interaction is clicking OK that will dispose the form
+         */
+
         public MessageBoxInfo(int parentxpos, int parentypos, int parentwidth, int parentheight) {
             InitializeComponent();
             StartPosition = FormStartPosition.Manual;

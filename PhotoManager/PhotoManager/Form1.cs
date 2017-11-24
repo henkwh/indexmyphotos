@@ -34,79 +34,53 @@ namespace PhotoManager {
         private ToolTip toolTip;
 
         public Form1() {
-            currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
             InitializeComponent();
+            this.AllowDrop = true;
+            this.DragEnter += new DragEventHandler(Form1_DragEnter);
+            this.DragDrop += new DragEventHandler(Form1_DragDrop);
+            currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
+            Utils.createDirectories(currentworkingdirectory, dir_full, dir_preview);
+
+            //Ititialize BAckgroundworker
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
             worker.DoWork += new DoWorkEventHandler(worker_DoWork);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_finished);
+
+            //Initialize DBHandler
             db = new DBHandler(currentworkingdirectory);
-            this.AllowDrop = true;
-            this.DragEnter += new DragEventHandler(Form1_DragEnter);
-            this.DragDrop += new DragEventHandler(Form1_DragDrop);
+            string[] favs = db.getFavs();
+            addFavElement(favs);
+
+            //Initialize GMap
             map = new GMapInstance(this, currentworkingdirectory);
             tabPage_Map.Controls.Add(map);
-            trackBar1.updateTabPage(TrackBarControl.tabPage.MAIN, 0);
-            imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
-            combobox_sorting.Items.Add(new OrderElement("Date ascending", " ORDER BY f.date ASC"));
-            combobox_sorting.Items.Add(new OrderElement("Date descending", " ORDER BY f.date DESC"));
-            combobox_sorting.Items.Add(new OrderElement("Location N to S", " ORDER BY f.loclat DESC"));
-            combobox_sorting.Items.Add(new OrderElement("Location S to N", " ORDER BY f.loclat ASC"));
-            combobox_sorting.Items.Add(new OrderElement("Location W to E", " ORDER BY f.loclng ASC"));
-            combobox_sorting.Items.Add(new OrderElement("Location E to W", " ORDER BY f.loclng DESC"));
-            combobox_sorting.Items.Add(new OrderElement("Filetype", " ORDER BY f.filetype ASC"));
-            combobox_sorting.SelectedIndex = 1;
-            comboBox_bgColor.Items.Add(new ColorSetting("Wheat", Color.PapayaWhip));
-            comboBox_bgColor.Items.Add(new ColorSetting("Light blue", Color.LightSteelBlue));
-            comboBox_bgColor.Items.Add(new ColorSetting("Light Red", Color.LightCoral));
-            comboBox_bgColor.Items.Add(new ColorSetting("Light Green", Color.DarkSeaGreen));
-            comboBox_bgColor.Items.Add(new ColorSetting("Red", Color.Red));
-            comboBox_bgColor.Items.Add(new ColorSetting("White", Color.White));
-            comboBox_bgColor.Items.Add(new ColorSetting("Black", Color.Black));
-            comboBox_selectionColor.Items.AddRange(comboBox_bgColor.Items.Cast<ColorSetting>().ToArray());
+            trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAIN, 0);
+            imagescale = trackBar_scale.scrollEvent(TrackBarControl.tabPage.MAIN);
+
+            //Initialize quickinfo tooltip
             toolTip = new ToolTip();
             toolTip.AutomaticDelay = 1000;
             toolTip.UseFading = true;
             toolTip.UseAnimation = true;
+
+            //Load settings from Properties.Settings.Default
             checkBox_Quickinfo.Checked = Properties.Settings.Default.QUICKINFO;
-            foreach (ColorSetting cs in comboBox_bgColor.Items) {
-                if (cs.Color == Properties.Settings.Default.BGCOLOR) {
-                    comboBox_bgColor.SelectedIndex = comboBox_bgColor.Items.IndexOf(cs);
-                }
-                if (cs.Color == Properties.Settings.Default.SELCOLOR) {
-                    ImageGenerator.selectionColor = cs.Color;
-                    comboBox_selectionColor.SelectedIndex = comboBox_selectionColor.Items.IndexOf(cs);
-                }
-            }
             RadioButton btn = Properties.Settings.Default.BORDERSTYLE_FRAME ? radioButton_Frame : radioButton_Edge;
             btn.Checked = true;
-            trackBar_scale.Value = Math.Min(Math.Max((Properties.Settings.Default.GAPSCALE - 10) / 2, 0), trackBar_scale.Maximum);
-            string[] favs = db.getFavs();
-            foreach (string s in favs) {
-                FavouriteElement fe = new FavouriteElement(s);
-                fe.resize(panel_favs.Width - SystemInformation.VerticalScrollBarWidth);
-                fe.delButton().Click += favDel_Click;
-                fe.copyButton().Click += favCpy_Click;
-                panel_favs.Controls.Add(fe);
-            }
-
+            trackBar_scale_gap.Value = Math.Min(Math.Max((Properties.Settings.Default.GAPSCALE - 10) / 2, 0), trackBar_scale_gap.Maximum);
             Properties.Settings.Default.Upgrade();
             checkBox_autoScale.Checked = Properties.Settings.Default.AUTOSCALE;
+            Utils.addSelectionObects(combobox_sorting, comboBox_bgColor, comboBox_selectionColor);
 
-            if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
-                System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
-            }
-            if (!System.IO.Directory.Exists(currentworkingdirectory + dir_preview)) {
-                System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_preview);
-            }
-
-
-
+            //Add event handlers
             panel_overview.Paint += Panel_overview_Paint;
             panel_overview.Scroll += Panel_overview_Scroll;
-            setHandler();
+            panel_overview.MouseClick += Panel_overview_MouseClick;
             panel_overview.ContextMenu = addMenuItems();
+
+            //Load
             newWorker();
         }
 
@@ -172,12 +146,14 @@ namespace PhotoManager {
                         string n = loadFile(fileName, mbi);
                         if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
                         tsprogressbar.Value++;
+                        tsprogressbar.Refresh();
                     }
                 } else {
                     string n = loadFile(file, mbi);
                     if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
                     try {
                         tsprogressbar.Value++;
+                        tsprogressbar.Refresh();
                     } catch { }
                 }
 
@@ -211,10 +187,6 @@ namespace PhotoManager {
         void Form1_DragEnter(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 e.Effect = DragDropEffects.Copy;
-        }
-
-        private void Form1_Load(object sender, EventArgs e) {
-
         }
 
         /*
@@ -257,7 +229,7 @@ namespace PhotoManager {
                 });
             }
             panel_overview.MouseMove += Panel_overview_MouseMove1;
-            int ticks = Environment.TickCount + 700;
+            int ticks = Environment.TickCount + 700;            //Delay after refresh()
             bool frame = Properties.Settings.Default.BORDERSTYLE_FRAME;
             foreach (Image img in shown) {
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
@@ -265,7 +237,8 @@ namespace PhotoManager {
                 img.setImage(bmp, frame);
                 if (justDragDropped != null && justDragDropped.Contains(img.getName())) { selectImage(img); }
                 img.setSize(imagescale);
-                if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {          //No Location set -> No marker
+
+                if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {
                     map.addMarker(img.getLocation(), img.getPreview());
                 }
                 if (Environment.TickCount - ticks > 1000) {
@@ -275,7 +248,7 @@ namespace PhotoManager {
                         ticks = Environment.TickCount;
                     });
                 }
-                if (e.Cancel || worker.CancellationPending) {   //Abort Worker
+                if (e.Cancel || worker.CancellationPending) {
                     break;
                 }
             }
@@ -295,17 +268,9 @@ namespace PhotoManager {
             }
         }
 
-        private void Panel_overview_MouseMove(object sender, MouseEventArgs e) {
-
-        }
-
-        private void ToolTip_Popup(object sender, PopupEventArgs e) {
-            Image i = getClickedImage(Cursor.Position);
-            if (i != null && toolTip.ToolTipTitle != i.getName()) {
-                ((ToolTip)sender).ToolTipTitle = i.getName();
-            }
-        }
-
+        /*
+         * Returns clicked image on main panel from cursor position
+         */
         private Image getClickedImage(Point cursorposition) {
             Point p = panel_overview.PointToClient(cursorposition);
             p.Y -= panel_overview.AutoScrollPosition.Y;
@@ -319,27 +284,26 @@ namespace PhotoManager {
             return null;
         }
 
+
         /*
-         * Adds MouseEventHandler to  the preview Image in main panel
+         * Mouse event handler in main panel
          */
-        private void setHandler() {
-            panel_overview.MouseClick += new MouseEventHandler((o, a) => {
-                Image i = getClickedImage(Cursor.Position);
-                if (i != null) {
-                    if (a.Button == MouseButtons.Right) {
-                    } else if (a.Button == MouseButtons.Left) {
-                        if (ModifierKeys == Keys.Control) {
-                            updateMultiedit(i, EDITOPERATION.SWITCH);
-                            panel_overview.Refresh();
-                        } else {
-                            pictureBox_viewer.ShownImage = i;
-                            tabControl1.SelectedTab = tabPage_viewer;
-                            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
-                        }
+        private void Panel_overview_MouseClick(object sender, MouseEventArgs a) {
+            Image i = getClickedImage(Cursor.Position);
+            if (i != null) {
+                if (a.Button == MouseButtons.Right) {
+
+                } else if (a.Button == MouseButtons.Left) {
+                    if (ModifierKeys == Keys.Control) {
+                        updateMultiedit(i, EDITOPERATION.SWITCH);
+                        panel_overview.Refresh();
+                    } else {
+                        pictureBox_viewer.ShownImage = i;
+                        tabControl1.SelectedTab = tabPage_viewer;
+                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
                     }
                 }
             }
-           );
         }
 
 
@@ -491,8 +455,6 @@ namespace PhotoManager {
                     }
                     break;
             }
-
-
         }
 
         private void resetMultiedit() {
@@ -590,12 +552,12 @@ namespace PhotoManager {
                     }
                 }
             } else if (tabControl1.SelectedTab == tabPage_main) {
-                trackBar1.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
+                trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
                 tslabel_picturesof.Text = shown.Count() + "/" + db.getEntryCount();
             } else if (tabControl1.SelectedTab == tabPage_Map) {
                 tslabel_picturesof.Text = map.getPinCount() + "/" + shown.Count() + "/" + db.getEntryCount();
                 map.setEditMode(false);
-                trackBar1.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
+                trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
             } else if (tabControl1.SelectedTab == tabPage_viewer) {
                 if (pictureBox_viewer.ShownImage != null) {
                     tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
@@ -637,11 +599,11 @@ namespace PhotoManager {
 
         private void trackBar1_Scroll(object sender, EventArgs e) {
             if (tabControl1.SelectedTab == tabPage_main) {
-                imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
+                imagescale = trackBar_scale.scrollEvent(TrackBarControl.tabPage.MAIN);
                 Properties.Settings.Default.AUTOSCALE = checkBox_autoScale.Checked;
                 panel_overview.Refresh();
             } else if (tabControl1.SelectedTab == tabPage_Map) {
-                map.setPinScale(trackBar1.scrollEvent(TrackBarControl.tabPage.MAP));
+                map.setPinScale(trackBar_scale.scrollEvent(TrackBarControl.tabPage.MAP));
             }
         }
 
@@ -664,16 +626,16 @@ namespace PhotoManager {
         private void comboBox_bgColor_SelectedIndexChanged(object sender, EventArgs e) {
             panel_overview.BackColor = ((ColorSetting)comboBox_bgColor.Items[comboBox_bgColor.SelectedIndex]).Color;
             Properties.Settings.Default.BGCOLOR = panel_overview.BackColor;
-          
+
         }
 
         private void comboBox_selectionColor_SelectedIndexChanged(object sender, EventArgs e) {
             ImageGenerator.selectionColor = ((ColorSetting)comboBox_selectionColor.Items[comboBox_selectionColor.SelectedIndex]).Color;
             Properties.Settings.Default.SELCOLOR = ImageGenerator.selectionColor;
-          
+
         }
 
-        private void button1_Click(object sender, EventArgs e) {
+        private void button_printAll_Click(object sender, EventArgs e) {
             MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
             mbi.Show();
             List<Image> ListAll = db.loadEntries(null);
@@ -696,6 +658,9 @@ namespace PhotoManager {
             Properties.Settings.Default.JOIN = checkBox_JoinTags.Checked;
         }
 
+        /*
+         * Add new search string to database
+         */
         private void btn_fav_Click(object sender, EventArgs e) {
             btn_fav.Text = "★";
             bool b = db.addFav(tb_search.Text);
@@ -706,7 +671,7 @@ namespace PhotoManager {
                 fe.copyButton().Click += favCpy_Click;
                 panel_favs.Controls.Add(fe);
             }
-                    }
+        }
 
         private void favCpy_Click(object sender, EventArgs e) {
             FavouriteElement fe = (FavouriteElement)(((Button)sender).Parent).Parent;
@@ -732,14 +697,9 @@ namespace PhotoManager {
             btn_fav.Text = "☆";
         }
 
-        private void btn_dropall_Click(object sender, EventArgs e) {
-            DialogResult dialogResult = MessageBox.Show("Delete all Tables?", "Confirm", MessageBoxButtons.YesNo);
-            if (dialogResult == DialogResult.Yes) {
-                db.dropTables();
-                MessageBox.Show("Please restart Program!");
-            }
-        }
-
+        /*
+         * Handles change requests in multieditlist
+         */
         private void updateMultiedit(Image i, EDITOPERATION op) {
             switch (op) {
                 case EDITOPERATION.ADD:
@@ -755,11 +715,7 @@ namespace PhotoManager {
                     }
                     break;
                 case EDITOPERATION.SWITCH:
-                    if (multiedit.Contains(i)) {
-                        updateMultiedit(i, EDITOPERATION.REMOVE);
-                    } else {
-                        updateMultiedit(i, EDITOPERATION.ADD);
-                    }
+                    updateMultiedit(i, multiedit.Contains(i) ? EDITOPERATION.REMOVE : EDITOPERATION.ADD);
                     return;
             }
             updateLabel(multiedit.Count());
@@ -776,10 +732,10 @@ namespace PhotoManager {
         }
 
         private void trackBar_scale_Scroll(object sender, EventArgs e) {
-            Properties.Settings.Default.GAPSCALE = 10 + 2 * trackBar_scale.Value;
+            Properties.Settings.Default.GAPSCALE = 10 + 2 * trackBar_scale_gap.Value;
         }
 
-        /* Disable Keys*/
+        /* Disable Keys in tabcontrol to avoid switching to another tab while scroling through fotos*/
         private void tabControl1_KeyDown(object sender, KeyEventArgs e) {
             if (tabControl1.SelectedTab != tabPage_tags && (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)) {
                 e.Handled = true;
@@ -788,15 +744,17 @@ namespace PhotoManager {
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.QUICKINFO = checkBox_Quickinfo.Checked;
-          
-        }
-
-        private void tabPage_Map_Click(object sender, EventArgs e) {
 
         }
 
-        private void panel_overview_Scroll_1(object sender, ScrollEventArgs e) {
-
+        private void addFavElement(string[] favs) {
+            foreach (string s in favs) {
+                FavouriteElement fe = new FavouriteElement(s);
+                fe.resize(panel_favs.Width - SystemInformation.VerticalScrollBarWidth);
+                fe.delButton().Click += favDel_Click;
+                fe.copyButton().Click += favCpy_Click;
+                panel_favs.Controls.Add(fe);
+            }
         }
 
         public void ClickedMap(string location) {

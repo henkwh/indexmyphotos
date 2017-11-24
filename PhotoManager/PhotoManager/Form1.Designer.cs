@@ -66,10 +66,9 @@
             this.radioButton_Edge = new System.Windows.Forms.RadioButton();
             this.radioButton_Frame = new System.Windows.Forms.RadioButton();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
-            this.trackBar_scale = new System.Windows.Forms.TrackBar();
+            this.trackBar_scale_gap = new System.Windows.Forms.TrackBar();
             this.checkBox_autoScale = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.btn_dropall = new System.Windows.Forms.Button();
             this.checkBox_Quickinfo = new System.Windows.Forms.CheckBox();
             this.tabPage_favs = new System.Windows.Forms.TabPage();
             this.panel_favs = new System.Windows.Forms.FlowLayoutPanel();
@@ -78,7 +77,7 @@
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.tslabel_picturesof = new System.Windows.Forms.Label();
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
-            this.trackBar1 = new PhotoManager.TrackBarControl();
+            this.trackBar_scale = new PhotoManager.TrackBarControl();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.btn_fav = new System.Windows.Forms.Button();
@@ -108,11 +107,11 @@
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale_gap)).BeginInit();
             this.tabPage_favs.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
@@ -483,7 +482,6 @@
             this.tabPage_Map.TabIndex = 3;
             this.tabPage_Map.Text = "Map";
             this.tabPage_Map.UseVisualStyleBackColor = true;
-            this.tabPage_Map.Click += new System.EventHandler(this.tabPage_Map_Click);
             // 
             // tabPage_Settings
             // 
@@ -511,7 +509,6 @@
             this.tableLayoutPanel5.Controls.Add(this.groupBox1, 1, 5);
             this.tableLayoutPanel5.Controls.Add(this.splitContainer5, 1, 3);
             this.tableLayoutPanel5.Controls.Add(this.label8, 0, 6);
-            this.tableLayoutPanel5.Controls.Add(this.btn_dropall, 0, 7);
             this.tableLayoutPanel5.Controls.Add(this.checkBox_Quickinfo, 1, 6);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 22);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
@@ -589,7 +586,7 @@
             this.btn_printAllEntries.TabIndex = 5;
             this.btn_printAllEntries.Text = "Print all Entries";
             this.btn_printAllEntries.UseVisualStyleBackColor = true;
-            this.btn_printAllEntries.Click += new System.EventHandler(this.button1_Click);
+            this.btn_printAllEntries.Click += new System.EventHandler(this.button_printAll_Click);
             // 
             // label6
             // 
@@ -655,7 +652,7 @@
             // 
             // splitContainer5.Panel1
             // 
-            this.splitContainer5.Panel1.Controls.Add(this.trackBar_scale);
+            this.splitContainer5.Panel1.Controls.Add(this.trackBar_scale_gap);
             // 
             // splitContainer5.Panel2
             // 
@@ -664,16 +661,16 @@
             this.splitContainer5.SplitterDistance = 123;
             this.splitContainer5.TabIndex = 13;
             // 
-            // trackBar_scale
+            // trackBar_scale_gap
             // 
-            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar_scale.LargeChange = 1;
-            this.trackBar_scale.Location = new System.Drawing.Point(0, 0);
-            this.trackBar_scale.Maximum = 6;
-            this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(123, 29);
-            this.trackBar_scale.TabIndex = 0;
-            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
+            this.trackBar_scale_gap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar_scale_gap.LargeChange = 1;
+            this.trackBar_scale_gap.Location = new System.Drawing.Point(0, 0);
+            this.trackBar_scale_gap.Maximum = 6;
+            this.trackBar_scale_gap.Name = "trackBar_scale_gap";
+            this.trackBar_scale_gap.Size = new System.Drawing.Size(123, 29);
+            this.trackBar_scale_gap.TabIndex = 0;
+            this.trackBar_scale_gap.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
             // 
             // checkBox_autoScale
             // 
@@ -698,16 +695,6 @@
             this.label8.TabIndex = 14;
             this.label8.Text = "Enable Quickinfo";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // btn_dropall
-            // 
-            this.btn_dropall.Location = new System.Drawing.Point(3, 231);
-            this.btn_dropall.Name = "btn_dropall";
-            this.btn_dropall.Size = new System.Drawing.Size(202, 26);
-            this.btn_dropall.TabIndex = 8;
-            this.btn_dropall.Text = "Drop all Tables";
-            this.btn_dropall.UseVisualStyleBackColor = true;
-            this.btn_dropall.Click += new System.EventHandler(this.btn_dropall_Click);
             // 
             // checkBox_Quickinfo
             // 
@@ -772,7 +759,7 @@
             this.tableLayoutPanel4.Controls.Add(this.tsprogressbar, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.tslabel_picturesof, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.combobox_sorting, 2, 0);
-            this.tableLayoutPanel4.Controls.Add(this.trackBar1, 5, 0);
+            this.tableLayoutPanel4.Controls.Add(this.trackBar_scale, 5, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 382);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -817,16 +804,16 @@
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
-            // trackBar1
+            // trackBar_scale
             // 
-            this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(646, 3);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(153, 17);
-            this.trackBar1.TabIndex = 2;
-            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar_scale.LargeChange = 1;
+            this.trackBar_scale.Location = new System.Drawing.Point(646, 3);
+            this.trackBar_scale.Name = "trackBar_scale";
+            this.trackBar_scale.Size = new System.Drawing.Size(153, 17);
+            this.trackBar_scale.TabIndex = 2;
+            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // panel_tabHolder
             // 
@@ -880,7 +867,6 @@
             this.Name = "Form1";
             this.Text = "indexmyphotos";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             this.tabControl1.ResumeLayout(false);
             this.tabPage_main.ResumeLayout(false);
@@ -914,12 +900,12 @@
             this.splitContainer5.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale_gap)).EndInit();
             this.tabPage_favs.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel1.PerformLayout();
@@ -962,7 +948,7 @@
         private System.Windows.Forms.Panel panel_tabHolder;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.ComboBox combobox_sorting;
-        private TrackBarControl trackBar1;
+        private TrackBarControl trackBar_scale;
         private CustomControls.PictureBoxViewer pictureBox_viewer;
         private CustomControls.FlowLayoutOverview panel_overview;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -981,13 +967,12 @@
         private System.Windows.Forms.TabPage tabPage_favs;
         private System.Windows.Forms.FlowLayoutPanel panel_favs;
         private System.Windows.Forms.Button btn_fav;
-        private System.Windows.Forms.Button btn_dropall;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.RadioButton radioButton_Frame;
         private System.Windows.Forms.RadioButton radioButton_Edge;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.SplitContainer splitContainer5;
-        private System.Windows.Forms.TrackBar trackBar_scale;
+        private System.Windows.Forms.TrackBar trackBar_scale_gap;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox checkBox_Quickinfo;
     }

@@ -4,6 +4,10 @@ using System.Linq;
 namespace PhotoManager {
     class SearchQuery {
 
+        /*
+         * Parses the search string into a SQLite command
+         */
+
         private string SQLCommand;
 
         public SearchQuery(string q, string sorting) {
@@ -25,7 +29,7 @@ namespace PhotoManager {
                 string keyword = contains[i];
                 keyword =
                 keyword.Replace("-location:set", "location:0,0").
-                Replace("location:set", "location:0,0").
+                Replace("location:set", "-location:0,0").
                 Replace("-date=set", "date=" + Utils.YEAR_STD).
                 Replace("date=set", "-date=" + Utils.YEAR_STD);
                 bool not = false;

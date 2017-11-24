@@ -1,7 +1,10 @@
-﻿using System;
+﻿using PhotoManager.CustomControls;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace PhotoManager {
     static class Utils {
@@ -13,6 +16,7 @@ namespace PhotoManager {
         public const string KEYWORD_LOC = "location:";
         public const string KEYWORD_DATE = "date";
 
+
         /*
          * Creates Hash value from file
          */
@@ -20,6 +24,37 @@ namespace PhotoManager {
             FileStream fop = File.OpenRead(filepath);
             return BitConverter.ToString(System.Security.Cryptography.SHA1.Create().ComputeHash(fop));
 
+        }
+
+        /*
+         * Add selection possibilities for sorting, background color, and selection color
+         */
+        public static void addSelectionObects(ComboBox combobox_sorting, ComboBox comboBox_bgColor, ComboBox comboBox_selectionColor) {
+            combobox_sorting.Items.Add(new OrderElement("Date ascending", " ORDER BY f.date ASC"));
+            combobox_sorting.Items.Add(new OrderElement("Date descending", " ORDER BY f.date DESC"));
+            combobox_sorting.Items.Add(new OrderElement("Location N to S", " ORDER BY f.loclat DESC"));
+            combobox_sorting.Items.Add(new OrderElement("Location S to N", " ORDER BY f.loclat ASC"));
+            combobox_sorting.Items.Add(new OrderElement("Location W to E", " ORDER BY f.loclng ASC"));
+            combobox_sorting.Items.Add(new OrderElement("Location E to W", " ORDER BY f.loclng DESC"));
+            combobox_sorting.Items.Add(new OrderElement("Filetype", " ORDER BY f.filetype ASC"));
+            combobox_sorting.SelectedIndex = 1;
+            comboBox_bgColor.Items.Add(new ColorSetting("Light yellow", Color.PapayaWhip));
+            comboBox_bgColor.Items.Add(new ColorSetting("Light blue", Color.LightSteelBlue));
+            comboBox_bgColor.Items.Add(new ColorSetting("Light Red", Color.LightCoral));
+            comboBox_bgColor.Items.Add(new ColorSetting("Light Green", Color.DarkSeaGreen));
+            comboBox_bgColor.Items.Add(new ColorSetting("Red", Color.Red));
+            comboBox_bgColor.Items.Add(new ColorSetting("White", Color.White));
+            comboBox_bgColor.Items.Add(new ColorSetting("Black", Color.Black));
+            comboBox_selectionColor.Items.AddRange(comboBox_bgColor.Items.Cast<ColorSetting>().ToArray());
+            foreach (ColorSetting cs in comboBox_bgColor.Items) {
+                if (cs.Color == Properties.Settings.Default.BGCOLOR) {
+                    comboBox_bgColor.SelectedIndex = comboBox_bgColor.Items.IndexOf(cs);
+                }
+                if (cs.Color == Properties.Settings.Default.SELCOLOR) {
+                    ImageGenerator.selectionColor = cs.Color;
+                    comboBox_selectionColor.SelectedIndex = comboBox_selectionColor.Items.IndexOf(cs);
+                }
+            }
         }
 
         public static UpdateParameter[] checkInputTags(Image i, string _location, string _tags, string _dbtags, string _description, string _datetime, bool joinTags) {
@@ -42,6 +77,9 @@ namespace PhotoManager {
             return list;
         }
 
+        /*
+         * Parses the location string to fill into the database
+         */
         public static double[] parseLocation(string location) {
             if (location.Equals("")) {
                 return new double[] { 0, 0 };
@@ -60,29 +98,6 @@ namespace PhotoManager {
         }
 
         /*
-         * Checks weather Textfield tags is empty or not
-         */
-        public static string TagsIn(string s) {
-            if (s.Equals("")) {
-                return "";
-            } else if (s.Equals(" ")) {
-                return s;
-            }
-            s = (s.Replace(" ", "").Replace("\r\n", ""));
-            return s;
-        }
-
-        /*
-     * Checks weather Textfield location is empty or not
-     */
-        public static string LocationIn(string s) {
-            if (s.Contains(",")) {
-                return s.Replace(" ", "");
-            }
-            return "";
-        }
-
-        /*
          * Creates text showing in tooltip 
          */
         public static string getToolTipTextForImage(Image i) {
@@ -95,7 +110,9 @@ namespace PhotoManager {
             return s;
         }
 
-
+        /*
+         * Replaces , and . to match with Google Maps Styled Latitude/Longitude
+         */
         public static string getWorkingLocation(double[] l) {
             return l[0].ToString().Replace(",", ".") + "," + l[1].ToString().Replace(",", ".");
         }
@@ -104,6 +121,9 @@ namespace PhotoManager {
             return lat.ToString().Replace(".", ",") + "," + lng.ToString().Replace(".", ",");
         }
 
+        /*
+      * Deletes files that are accidently not listed in Database
+      */
         public static int deleteImagesNotInDB(string cwd, string dir_full, string dir_preview, List<Image> list, CustomControls.MessageBoxInfo mbinfo) {
             int counter = 0;
             string[] folderfiles = Directory.GetFiles(cwd + dir_full);
@@ -125,7 +145,6 @@ namespace PhotoManager {
                     }
                 }
             }
-
             string[] folderfiles2 = Directory.GetFiles(cwd + dir_preview);
             foreach (string s in folderfiles2) {
                 string t = Path.GetFileNameWithoutExtension(s);
@@ -150,6 +169,21 @@ namespace PhotoManager {
             return counter;
         }
 
+        /*
+         * Checks if directories exist
+         */
+        public static void createDirectories(string currentworkingdirectory, string dir_full, string dir_preview) {
+            if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
+                System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
+            }
+            if (!System.IO.Directory.Exists(currentworkingdirectory + dir_preview)) {
+                System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_preview);
+            }
+        }
+
+        /*
+         * Parses the input date set in tag edit page
+         */
         public static string parseDate(string d, bool year) {
             if (d.Equals("")) {
                 if (year == true) {
@@ -158,6 +192,11 @@ namespace PhotoManager {
                     return "00";
                 }
             } else {
+                int n;
+                bool isNumeric = int.TryParse(d, out n);
+                if (!isNumeric) {
+                    return "ERRORERROR";
+                }
                 int fill = year == true ? 4 : 2;
                 while (d.Count() < fill) {
                     d = "0" + d;

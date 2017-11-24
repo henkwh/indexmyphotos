@@ -9,13 +9,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PhotoManager {
-
-
-
     static class ImageGenerator {
-        private static int MAXSIZE = 150;
-        public static int SIZE = MAXSIZE;
-        public static int[] MINMAXSIZE = { 100, 300 };
+
+        /*
+         * Adds functionality to edit, generate previews and resize images
+         */
 
         public const int FRAME_SIZE = 10;
 
