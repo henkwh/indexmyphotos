@@ -23,6 +23,9 @@ namespace PhotoManager.CustomControls {
 
         public void addText(string t) {
             tb_text.Text += t + "\r\n";
+            tb_text.SelectionStart = tb_text.Text.Length;
+            tb_text.ScrollToCaret();
+            tb_text.Refresh();
         }
 
         public TextBox getTextBox() {

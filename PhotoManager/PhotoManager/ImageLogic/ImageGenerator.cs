@@ -30,7 +30,12 @@ namespace PhotoManager {
                 if (!File.Exists(complete)) {
                     return null;
                 }
-                Bitmap tempBmp = new Bitmap(complete);
+                Bitmap tempBmp;
+                try {
+                    tempBmp = new Bitmap(complete);
+                } catch {
+                    return null;
+                }
                 Size ret = new Size(scale, scale);
                 if (tempBmp.Height > tempBmp.Width) {
                     ret.Height = scale;

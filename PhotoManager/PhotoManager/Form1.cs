@@ -156,7 +156,6 @@ namespace PhotoManager {
                         tsprogressbar.Refresh();
                     } catch { }
                 }
-
             }
             mbi.addText(counter + " of " + (files.Length) + " Files added.");
             newWorker();
@@ -174,9 +173,15 @@ namespace PhotoManager {
                     return "";
                 }
                 Image img = db.addImage(hash, filetype);
-                File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, true);
-                ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
-                mbi.addText("Added " + img.getName());
+                bool check = true; ;
+                try { File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, true); } catch { check = false; }
+                check = (ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale) == null || check == false) ? false : true;
+                if (check == false) {
+                    db.deleteEntry(hash);
+                    mbi.addText("Broken file: " + img.getName() + " was now removed from DB");
+                } else {
+                    mbi.addText("Added " + img.getName());
+                }
                 return img.getName();
             } else {
                 mbi.addText("File " + path + " is not a supported Image File. Skipping...");
@@ -721,10 +726,12 @@ namespace PhotoManager {
             updateLabel(multiedit.Count());
         }
 
-        private void updateLabel(int first) {
-            string t = (first == 0) ? "" : first + "/";
-            t += shown.Count() + "/" + db.getEntryCount();
-            tslabel_picturesof.Text = t;
+        private void updateLabel(int first) {               //THROWS THRAEDÜBERGREIFENDERZUGRIFF AUF TSLABEL_PIC...
+            try {
+                string t = (first == 0) ? "" : first + "/";
+                t += shown.Count() + "/" + db.getEntryCount();
+                tslabel_picturesof.Text = t;
+            } catch { }
         }
 
         private void radioButton_SelectionMarker_CheckedChanged(object sender, EventArgs e) {
