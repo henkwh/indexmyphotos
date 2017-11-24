@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace PhotoManager {
@@ -519,10 +518,8 @@ namespace PhotoManager {
                 MessageBox.Show("Invalid Date");
                 return;
             }
-
-            TagAlert ta = new TagAlert();
             foreach (Image i in multiedit) {
-                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, db.getConnectedTags(i.getName()), desc, dtin, ta, tagjoin);
+                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, db.getConnectedTags(i.getName()), desc, dtin, tagjoin);
                 string[] dbstring = { "location", "tags", "description", "date" };
                 bool set = false;
                 for (int j = 0; j < list.Count(); j++) {
@@ -642,9 +639,7 @@ namespace PhotoManager {
             if (tabControl1.SelectedTab == tabPage_main) {
                 imagescale = trackBar1.scrollEvent(TrackBarControl.tabPage.MAIN);
                 Properties.Settings.Default.AUTOSCALE = checkBox_autoScale.Checked;
-                Properties.Settings.Default.Save();
                 panel_overview.Refresh();
-
             } else if (tabControl1.SelectedTab == tabPage_Map) {
                 map.setPinScale(trackBar1.scrollEvent(TrackBarControl.tabPage.MAP));
             }
@@ -669,13 +664,13 @@ namespace PhotoManager {
         private void comboBox_bgColor_SelectedIndexChanged(object sender, EventArgs e) {
             panel_overview.BackColor = ((ColorSetting)comboBox_bgColor.Items[comboBox_bgColor.SelectedIndex]).Color;
             Properties.Settings.Default.BGCOLOR = panel_overview.BackColor;
-            Properties.Settings.Default.Save();
+          
         }
 
         private void comboBox_selectionColor_SelectedIndexChanged(object sender, EventArgs e) {
             ImageGenerator.selectionColor = ((ColorSetting)comboBox_selectionColor.Items[comboBox_selectionColor.SelectedIndex]).Color;
             Properties.Settings.Default.SELCOLOR = ImageGenerator.selectionColor;
-            Properties.Settings.Default.Save();
+          
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -691,11 +686,6 @@ namespace PhotoManager {
         private void checkBox_autoScale_CheckedChanged(object sender, EventArgs e) {
             ImageGenerator.autoscale = checkBox_autoScale.Checked;
             Properties.Settings.Default.AUTOSCALE = checkBox_autoScale.Checked;
-            Properties.Settings.Default.Save();
-        }
-
-        private void panel_overview_Scroll_1(object sender, ScrollEventArgs e) {
-
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e) {
@@ -716,9 +706,7 @@ namespace PhotoManager {
                 fe.copyButton().Click += favCpy_Click;
                 panel_favs.Controls.Add(fe);
             }
-
-
-        }
+                    }
 
         private void favCpy_Click(object sender, EventArgs e) {
             FavouriteElement fe = (FavouriteElement)(((Button)sender).Parent).Parent;
@@ -785,24 +773,30 @@ namespace PhotoManager {
 
         private void radioButton_SelectionMarker_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.BORDERSTYLE_FRAME = radioButton_Frame.Checked ? true : false;
-            Properties.Settings.Default.Save();
         }
 
         private void trackBar_scale_Scroll(object sender, EventArgs e) {
             Properties.Settings.Default.GAPSCALE = 10 + 2 * trackBar_scale.Value;
-            Properties.Settings.Default.Save();
         }
 
         /* Disable Keys*/
         private void tabControl1_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right) {
+            if (tabControl1.SelectedTab != tabPage_tags && (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)) {
                 e.Handled = true;
             }
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.QUICKINFO = checkBox_Quickinfo.Checked;
-            Properties.Settings.Default.Save();
+          
+        }
+
+        private void tabPage_Map_Click(object sender, EventArgs e) {
+
+        }
+
+        private void panel_overview_Scroll_1(object sender, ScrollEventArgs e) {
+
         }
 
         public void ClickedMap(string location) {

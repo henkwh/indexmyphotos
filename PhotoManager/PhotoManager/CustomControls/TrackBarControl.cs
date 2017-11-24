@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace PhotoManager {
     class TrackBarControl : TrackBar {
 
-        private TrackBarSettings main, map;
+        private TrackBarSetting main, map;
         public enum tabPage { MAIN, MAP };
 
         public TrackBarControl() {
-            main = new TrackBarSettings(50, 150, Properties.Settings.Default.SCALE_MAIN, 5);
-            map = new TrackBarSettings(40, 90, Properties.Settings.Default.SCALE_MAP, 15);
+            main = new TrackBarSetting(50, 150, Properties.Settings.Default.SCALE_MAIN, 5);
+            map = new TrackBarSetting(40, 90, Properties.Settings.Default.SCALE_MAP, 15);
         }
 
         public void updateTabPage(tabPage tp, int value) {
-            TrackBarSettings tbs = null;
+            TrackBarSetting tbs = null;
             if (tp == tabPage.MAIN) {
                 tbs = main;
             } else if (tp == tabPage.MAP) {
@@ -29,7 +24,7 @@ namespace PhotoManager {
         }
 
         public int scrollEvent(tabPage tp) {   // 50 150 100 5
-            TrackBarSettings tbs = null;
+            TrackBarSetting tbs = null;
             if (tp == tabPage.MAIN) {
                 tbs = main;
                 tbs.Value = (int)(1.0 * tbs.Min + Value * (1.0 * (tbs.Max - tbs.Min) / tbs.Ticks));

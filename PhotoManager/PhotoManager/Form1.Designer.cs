@@ -26,7 +26,9 @@
             this.tb_search = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_main = new System.Windows.Forms.TabPage();
+            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.tabPage_viewer = new System.Windows.Forms.TabPage();
+            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabPage_tags = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -66,7 +68,9 @@
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.trackBar_scale = new System.Windows.Forms.TrackBar();
             this.checkBox_autoScale = new System.Windows.Forms.CheckBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.btn_dropall = new System.Windows.Forms.Button();
+            this.checkBox_Quickinfo = new System.Windows.Forms.CheckBox();
             this.tabPage_favs = new System.Windows.Forms.TabPage();
             this.panel_favs = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -74,17 +78,14 @@
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.tslabel_picturesof = new System.Windows.Forms.Label();
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
+            this.trackBar1 = new PhotoManager.TrackBarControl();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.btn_fav = new System.Windows.Forms.Button();
-            this.trackBar1 = new PhotoManager.TrackBarControl();
-            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
-            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
-            this.label8 = new System.Windows.Forms.Label();
-            this.checkBox_Quickinfo = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.tabPage_tags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -111,13 +112,12 @@
             this.tabPage_favs.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_search
@@ -162,6 +162,15 @@
             this.tabPage_main.Text = "Main";
             this.tabPage_main.UseVisualStyleBackColor = true;
             // 
+            // panel_overview
+            // 
+            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_overview.Location = new System.Drawing.Point(3, 3);
+            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_overview.Name = "panel_overview";
+            this.panel_overview.Size = new System.Drawing.Size(782, 294);
+            this.panel_overview.TabIndex = 0;
+            // 
             // tabPage_viewer
             // 
             this.tabPage_viewer.Controls.Add(this.pictureBox_viewer);
@@ -171,6 +180,17 @@
             this.tabPage_viewer.Size = new System.Drawing.Size(788, 300);
             this.tabPage_viewer.TabIndex = 5;
             this.tabPage_viewer.Text = "View";
+            // 
+            // pictureBox_viewer
+            // 
+            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox_viewer.Name = "pictureBox_viewer";
+            this.pictureBox_viewer.ShownImage = null;
+            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
+            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_viewer.TabIndex = 0;
+            this.pictureBox_viewer.TabStop = false;
             // 
             // tabPage_tags
             // 
@@ -463,6 +483,7 @@
             this.tabPage_Map.TabIndex = 3;
             this.tabPage_Map.Text = "Map";
             this.tabPage_Map.UseVisualStyleBackColor = true;
+            this.tabPage_Map.Click += new System.EventHandler(this.tabPage_Map_Click);
             // 
             // tabPage_Settings
             // 
@@ -667,6 +688,17 @@
             this.checkBox_autoScale.UseVisualStyleBackColor = true;
             this.checkBox_autoScale.CheckedChanged += new System.EventHandler(this.checkBox_autoScale_CheckedChanged);
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label8.Location = new System.Drawing.Point(3, 195);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(221, 33);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "Enable Quickinfo";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // btn_dropall
             // 
             this.btn_dropall.Location = new System.Drawing.Point(3, 231);
@@ -676,6 +708,17 @@
             this.btn_dropall.Text = "Drop all Tables";
             this.btn_dropall.UseVisualStyleBackColor = true;
             this.btn_dropall.Click += new System.EventHandler(this.btn_dropall_Click);
+            // 
+            // checkBox_Quickinfo
+            // 
+            this.checkBox_Quickinfo.Dock = System.Windows.Forms.DockStyle.Right;
+            this.checkBox_Quickinfo.Location = new System.Drawing.Point(309, 198);
+            this.checkBox_Quickinfo.Name = "checkBox_Quickinfo";
+            this.checkBox_Quickinfo.Size = new System.Drawing.Size(142, 27);
+            this.checkBox_Quickinfo.TabIndex = 15;
+            this.checkBox_Quickinfo.Text = "Quickinfo";
+            this.checkBox_Quickinfo.UseVisualStyleBackColor = true;
+            this.checkBox_Quickinfo.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // tabPage_favs
             // 
@@ -774,6 +817,17 @@
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
+            // trackBar1
+            // 
+            this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar1.LargeChange = 1;
+            this.trackBar1.Location = new System.Drawing.Point(646, 3);
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(153, 17);
+            this.trackBar1.TabIndex = 2;
+            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
             // panel_tabHolder
             // 
             this.panel_tabHolder.Controls.Add(this.tabControl1);
@@ -816,60 +870,6 @@
             this.btn_fav.UseVisualStyleBackColor = true;
             this.btn_fav.Click += new System.EventHandler(this.btn_fav_Click);
             // 
-            // trackBar1
-            // 
-            this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(646, 3);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(153, 17);
-            this.trackBar1.TabIndex = 2;
-            this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
-            // panel_overview
-            // 
-            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_overview.Location = new System.Drawing.Point(3, 3);
-            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
-            this.panel_overview.Name = "panel_overview";
-            this.panel_overview.Size = new System.Drawing.Size(782, 294);
-            this.panel_overview.TabIndex = 0;
-            this.panel_overview.Scroll += new System.Windows.Forms.ScrollEventHandler(this.panel_overview_Scroll_1);
-            // 
-            // pictureBox_viewer
-            // 
-            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox_viewer.Name = "pictureBox_viewer";
-            this.pictureBox_viewer.ShownImage = null;
-            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
-            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox_viewer.TabIndex = 0;
-            this.pictureBox_viewer.TabStop = false;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label8.Location = new System.Drawing.Point(3, 195);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(221, 33);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "Enable Quickinfo";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // checkBox_Quickinfo
-            // 
-            this.checkBox_Quickinfo.Dock = System.Windows.Forms.DockStyle.Right;
-            this.checkBox_Quickinfo.Location = new System.Drawing.Point(309, 198);
-            this.checkBox_Quickinfo.Name = "checkBox_Quickinfo";
-            this.checkBox_Quickinfo.Size = new System.Drawing.Size(142, 27);
-            this.checkBox_Quickinfo.TabIndex = 15;
-            this.checkBox_Quickinfo.Text = "Quickinfo";
-            this.checkBox_Quickinfo.UseVisualStyleBackColor = true;
-            this.checkBox_Quickinfo.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -885,6 +885,7 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage_main.ResumeLayout(false);
             this.tabPage_viewer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.tabPage_tags.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -918,14 +919,13 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel1.PerformLayout();
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.ResumeLayout(false);
 
         }

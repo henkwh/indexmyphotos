@@ -1,4 +1,7 @@
-﻿namespace PhotoManager.Properties {
+﻿using System;
+using System.ComponentModel;
+
+namespace PhotoManager.Properties {
     
     
     // Diese Klasse ermöglicht die Behandlung bestimmter Ereignisse der Einstellungsklasse:
@@ -15,8 +18,13 @@
             //
             // this.SettingsSaving += this.SettingsSavingEventHandler;
             //
+            // this.PropertyChanged += this.PropertyChangedEventHandler;
         }
-        
+
+        private void PropertyChangedEventHandler(object sender, PropertyChangedEventArgs e) {
+
+        }
+
         private void SettingChangingEventHandler(object sender, System.Configuration.SettingChangingEventArgs e) {
             // Fügen Sie hier Code zum Behandeln des SettingChangingEvent-Ereignisses hinzu.
         }
@@ -24,5 +32,7 @@
         private void SettingsSavingEventHandler(object sender, System.ComponentModel.CancelEventArgs e) {
             // Fügen Sie hier Code zum Behandeln des SettingsSaving-Ereignisses hinzu.
         }
+
+        
     }
 }

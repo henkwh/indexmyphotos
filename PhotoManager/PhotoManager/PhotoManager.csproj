@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,8 +28,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -66,8 +66,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.106.0\lib\net46\System.Data.SQLite.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.SQLite.EF6, Version=1.0.106.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.EF6.1.0.106.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
@@ -89,9 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\ColorSetting.cs" />
-    <Compile Include="CustomControls\ComboBoxItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="CustomControls\FavouriteElement.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -134,16 +131,10 @@
     <Compile Include="DatabaseLogic\SearchQuery.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="CustomControls\TagAlert.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CustomControls\TagAlert.Designer.cs">
-      <DependentUpon>TagAlert.cs</DependentUpon>
-    </Compile>
     <Compile Include="CustomControls\TrackBarControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CustomControls\TrackBarSettings.cs" />
+    <Compile Include="CustomControls\TrackBarSetting.cs" />
     <Compile Include="DatabaseLogic\UpdateParameter.cs" />
     <EmbeddedResource Include="CustomControls\FavouriteElement.resx">
       <DependentUpon>FavouriteElement.cs</DependentUpon>
@@ -167,9 +158,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="CustomControls\TagAlert.resx">
-      <DependentUpon>TagAlert.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

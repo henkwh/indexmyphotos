@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace PhotoManager {
     static class Utils {
@@ -27,7 +22,7 @@ namespace PhotoManager {
 
         }
 
-        public static UpdateParameter[] checkInputTags(Image i, string _location, string _tags, string _dbtags, string _description, string _datetime, TagAlert ta, bool joinTags) {
+        public static UpdateParameter[] checkInputTags(Image i, string _location, string _tags, string _dbtags, string _description, string _datetime, bool joinTags) {
             UpdateParameter location = new UpdateParameter(_location, getWorkingLocation(new double[] { i.getLocation()[0], i.getLocation()[1] }));
             UpdateParameter tags = new UpdateParameter(_tags, _dbtags);
             UpdateParameter description = new UpdateParameter(_description, i.getDescription());
@@ -36,14 +31,10 @@ namespace PhotoManager {
             UpdateParameter[] list = { location, tags, description, datetime };
             foreach (UpdateParameter p in list) {
                 if (p.requestedChange()) {
-                    if (p.isOldEntryEmpty()) {
+                    if (p == tags && joinTags) {
+                        p.setReturnValue(p.NewEntry + "," + p.OldEntry);
+                    } else {
                         p.setReturnValue(p.NewEntry);
-                    } else if (!p.isEqual()) {
-                        if (p == tags && joinTags) {
-                            p.setReturnValue(p.NewEntry + "," + p.OldEntry);
-                        } else {
-                            p.setReturnValue(p.NewEntry);
-                        }
                     }
                 }
             }
@@ -162,7 +153,7 @@ namespace PhotoManager {
         public static string parseDate(string d, bool year) {
             if (d.Equals("")) {
                 if (year == true) {
-                    return YEAR_STD.Substring(0,4);
+                    return YEAR_STD.Substring(0, 4);
                 } else {
                     return "00";
                 }
@@ -173,7 +164,8 @@ namespace PhotoManager {
                 }
                 return d;
             }
-
         }
     }
+
 }
+

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace PhotoManager {
+    class TrackBarSetting {
 
-namespace PhotoManager {
-    class TrackBarSettings {
-
-
-        public TrackBarSettings(int min, int max, int value, int ticks) {
+        public TrackBarSetting(int min, int max, int value, int ticks) {
             Max = max;
             Min = min;
             Value = value;
