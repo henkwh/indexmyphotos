@@ -5,7 +5,7 @@ assigns tags, dates and location data to photos.
 
 Just Drag and Drop your image file into the program. It will create a local copy in the program files folder and manage any files completely self-sufficient within a database.
 
-![Screenshot](https://github.com/henkwh/indexmyphotos/tree/master/PhotoManager/PhotoManager/Resources/demo1.png)
+![Screenshot](https://github.com/henkwh/indexmyphotos/blob/master/PhotoManager/PhotoManager/Resources/demo1.png?raw=true)
 
 ## Motivation
 
@@ -26,8 +26,8 @@ Database: Table Foto: GUID (filename), filetype, loclat, loclng, date, descripti
 
 ## Demo
 
-![Screenshot](https://github.com/henkwh/indexmyphotos/tree/master/PhotoManager/PhotoManager/Resources/demo2.png)
-![Screenshot](https://github.com/henkwh/indexmyphotos/tree/master/PhotoManager/PhotoManager/Resources/demo3.png)
+![Screenshot](https://github.com/henkwh/indexmyphotos/blob/master/PhotoManager/PhotoManager/Resources/demo2.png?raw=true)
+![Screenshot](https://github.com/henkwh/indexmyphotos/blob/master/PhotoManager/PhotoManager/Resources/demo3.png?raw=true)
 
 ## Prerequisites
 
