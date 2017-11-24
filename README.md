@@ -5,6 +5,11 @@ assigns tags, dates and location data to photos.
 
 Just Drag and Drop your image file into the program. It will create a local copy in the program files folder and manage any files completely self-sufficient within a database.
 
+
+<p align="center">
+  <img src="https://github.com/henkwh/indexmyphotos/tree/master/PhotoManager/PhotoManager/Resources/demo1.png" width="350"/>
+</p>
+
 ## Motivation
 
 My search for any offline-service that is capable of managing my photos and showing their location on a map was badly disappointing.
@@ -21,6 +26,13 @@ The tab to edit tags has textfields to set the location (as Coordinates lat/lng)
 A new file can be load to the program by dragging them onto the Form. Two local copies are created. The first 1:1-copy in the "full" folder is done because the program manages itself. Theres also a smaller, comprimated preview of the foto in the "preview" folder. The filename is changed to a Globally Unique Identifier.
 By adding a new foto to the program, an entry in the local database "Database.mdf" is created. Every entry's ID is a Globally Unique Identifier.
 Database: GUID (filename), filetype, loclat, loclng, date, tags, description
+
+##Demo
+
+<p align="center">
+  <img src="https://github.com/henkwh/indexmyphotos/tree/master/PhotoManager/PhotoManager/Resources/demo2.png" width="350"/>
+  <img src="https://github.com/henkwh/indexmyphotos/tree/master/PhotoManager/PhotoManager/Resources/demo3.png" width="350"/>
+</p>
 
 ## Prerequisites
 
