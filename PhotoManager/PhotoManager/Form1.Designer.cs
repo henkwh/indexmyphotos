@@ -26,9 +26,7 @@
             this.tb_search = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_main = new System.Windows.Forms.TabPage();
-            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.tabPage_viewer = new System.Windows.Forms.TabPage();
-            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabPage_tags = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -72,19 +70,22 @@
             this.checkBox_Quickinfo = new System.Windows.Forms.CheckBox();
             this.tabPage_favs = new System.Windows.Forms.TabPage();
             this.panel_favs = new System.Windows.Forms.FlowLayoutPanel();
+            this.tabPage_Taglist = new System.Windows.Forms.TabPage();
+            this.flowLayoutPanel_tags = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.tslabel_picturesof = new System.Windows.Forms.Label();
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
-            this.trackBar_scale = new PhotoManager.TrackBarControl();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.btn_fav = new System.Windows.Forms.Button();
+            this.trackBar_scale = new PhotoManager.TrackBarControl();
+            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
+            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.tabPage_tags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -109,14 +110,16 @@
             this.splitContainer5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale_gap)).BeginInit();
             this.tabPage_favs.SuspendLayout();
+            this.tabPage_Taglist.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_search
@@ -140,6 +143,7 @@
             this.tabControl1.Controls.Add(this.tabPage_Map);
             this.tabControl1.Controls.Add(this.tabPage_Settings);
             this.tabControl1.Controls.Add(this.tabPage_favs);
+            this.tabControl1.Controls.Add(this.tabPage_Taglist);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -161,15 +165,6 @@
             this.tabPage_main.Text = "Main";
             this.tabPage_main.UseVisualStyleBackColor = true;
             // 
-            // panel_overview
-            // 
-            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_overview.Location = new System.Drawing.Point(3, 3);
-            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
-            this.panel_overview.Name = "panel_overview";
-            this.panel_overview.Size = new System.Drawing.Size(782, 294);
-            this.panel_overview.TabIndex = 0;
-            // 
             // tabPage_viewer
             // 
             this.tabPage_viewer.Controls.Add(this.pictureBox_viewer);
@@ -179,17 +174,6 @@
             this.tabPage_viewer.Size = new System.Drawing.Size(788, 300);
             this.tabPage_viewer.TabIndex = 5;
             this.tabPage_viewer.Text = "View";
-            // 
-            // pictureBox_viewer
-            // 
-            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox_viewer.Name = "pictureBox_viewer";
-            this.pictureBox_viewer.ShownImage = null;
-            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
-            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox_viewer.TabIndex = 0;
-            this.pictureBox_viewer.TabStop = false;
             // 
             // tabPage_tags
             // 
@@ -730,6 +714,28 @@
             this.panel_favs.WrapContents = false;
             this.panel_favs.Resize += new System.EventHandler(this.panel_favs_Resize);
             // 
+            // tabPage_Taglist
+            // 
+            this.tabPage_Taglist.Controls.Add(this.flowLayoutPanel_tags);
+            this.tabPage_Taglist.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Taglist.Name = "tabPage_Taglist";
+            this.tabPage_Taglist.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Taglist.Size = new System.Drawing.Size(788, 300);
+            this.tabPage_Taglist.TabIndex = 8;
+            this.tabPage_Taglist.Text = "Tags";
+            this.tabPage_Taglist.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanel_tags
+            // 
+            this.flowLayoutPanel_tags.AutoScroll = true;
+            this.flowLayoutPanel_tags.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel_tags.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel_tags.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanel_tags.Name = "flowLayoutPanel_tags";
+            this.flowLayoutPanel_tags.Size = new System.Drawing.Size(782, 294);
+            this.flowLayoutPanel_tags.TabIndex = 0;
+            this.flowLayoutPanel_tags.WrapContents = false;
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
@@ -804,17 +810,6 @@
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
-            // trackBar_scale
-            // 
-            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar_scale.LargeChange = 1;
-            this.trackBar_scale.Location = new System.Drawing.Point(646, 3);
-            this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(153, 17);
-            this.trackBar_scale.TabIndex = 2;
-            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
             // panel_tabHolder
             // 
             this.panel_tabHolder.Controls.Add(this.tabControl1);
@@ -857,6 +852,37 @@
             this.btn_fav.UseVisualStyleBackColor = true;
             this.btn_fav.Click += new System.EventHandler(this.btn_fav_Click);
             // 
+            // trackBar_scale
+            // 
+            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar_scale.LargeChange = 1;
+            this.trackBar_scale.Location = new System.Drawing.Point(646, 3);
+            this.trackBar_scale.Name = "trackBar_scale";
+            this.trackBar_scale.Size = new System.Drawing.Size(153, 17);
+            this.trackBar_scale.TabIndex = 2;
+            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
+            // panel_overview
+            // 
+            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_overview.Location = new System.Drawing.Point(3, 3);
+            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_overview.Name = "panel_overview";
+            this.panel_overview.Size = new System.Drawing.Size(782, 294);
+            this.panel_overview.TabIndex = 0;
+            // 
+            // pictureBox_viewer
+            // 
+            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox_viewer.Name = "pictureBox_viewer";
+            this.pictureBox_viewer.ShownImage = null;
+            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
+            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_viewer.TabIndex = 0;
+            this.pictureBox_viewer.TabStop = false;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -871,7 +897,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage_main.ResumeLayout(false);
             this.tabPage_viewer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.tabPage_tags.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -902,16 +927,18 @@
             this.splitContainer5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale_gap)).EndInit();
             this.tabPage_favs.ResumeLayout(false);
+            this.tabPage_Taglist.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel1.PerformLayout();
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -975,6 +1002,8 @@
         private System.Windows.Forms.TrackBar trackBar_scale_gap;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.CheckBox checkBox_Quickinfo;
+        private System.Windows.Forms.TabPage tabPage_Taglist;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_tags;
     }
 }
 

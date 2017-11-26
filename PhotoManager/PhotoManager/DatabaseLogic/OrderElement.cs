@@ -1,6 +1,6 @@
 ﻿namespace PhotoManager {
     class OrderElement {
-       
+
         public OrderElement(string text, string query) {
             this.Text = text;
             this.Query = query;

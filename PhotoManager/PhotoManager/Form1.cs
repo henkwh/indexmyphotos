@@ -50,7 +50,9 @@ namespace PhotoManager {
 
             //Initialize DBHandler
             db = new DBHandler(currentworkingdirectory);
+            db.open();
             string[] favs = db.getFavs();
+            db.close();
             addFavElement(favs);
 
             //Initialize GMap
@@ -130,6 +132,7 @@ namespace PhotoManager {
         void Form1_DragDrop(object sender, DragEventArgs e) {
             justDragDropped = new List<string>();
             int counter = 0;
+            db.open();
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
             mbi.Show();
@@ -158,6 +161,7 @@ namespace PhotoManager {
                 }
             }
             mbi.addText(counter + " of " + (files.Length) + " Files added.");
+            db.close();
             newWorker();
         }
         /*
@@ -318,8 +322,8 @@ namespace PhotoManager {
         private ContextMenu addMenuItems() {
             ContextMenu cm = new ContextMenu();
             cm.Popup += Cm_Popup;
-            string[] name = new string[] { "Delete", "Edit Tags", "Select all" };
-            for (int i = 0; i < 3; i++) {
+            string[] name = new string[] { "Delete", "Edit Tags", "Select all", "Show in explorer" };
+            for (int i = 0; i < name.Count(); i++) {
                 MenuItemImage menuItem = new MenuItemImage(name[i]);
                 switch (i) {
                     case 0:
@@ -331,10 +335,20 @@ namespace PhotoManager {
                     case 2:
                         menuItem.Click += SelectAll_Click;
                         break;
+                    case 3:
+                        menuItem.Click += Open_Explorer_Click;
+                        break;
                 }
                 cm.MenuItems.Add(menuItem);
             }
             return cm;
+        }
+
+        private void Open_Explorer_Click(object sender, EventArgs e) {
+            Image i = getClickedImage(Cursor.Position);
+            if (i != null && File.Exists(currentworkingdirectory + dir_full + i.getName() + i.getFileType())) {
+                Process.Start("explorer.exe", "/select, \"" + currentworkingdirectory + dir_full + i.getName() + i.getFileType() + "\"");
+            }
         }
 
         private void Cm_Popup(object sender, EventArgs e) {
@@ -408,7 +422,9 @@ namespace PhotoManager {
         private void Delete_Click(Object sender, EventArgs e) {
             while (multiedit.Count != 0) {
                 Debug.WriteLine("Deleting: " + multiedit[0].getName());
+                db.open();
                 db.deleteEntry(multiedit[0].getName());
+                db.close();
                 map.removeMarkers();
                 if (multiedit[0] == pictureBox_viewer.ShownImage) {
                     pictureBox_viewer.ShownImage.Dispose();
@@ -485,8 +501,10 @@ namespace PhotoManager {
                 MessageBox.Show("Invalid Date");
                 return;
             }
+            db.open();
+            bool inserttag = true;
             foreach (Image i in multiedit) {
-                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, db.getConnectedTags(i.getName()), desc, dtin, tagjoin);
+                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, i.getTags(), desc, dtin, tagjoin);//db.getConnectedTags(i.getName())
                 string[] dbstring = { "location", "tags", "description", "date" };
                 bool set = false;
                 for (int j = 0; j < list.Count(); j++) {
@@ -499,10 +517,12 @@ namespace PhotoManager {
                             string[] tagssplit = p.getReturnValue().Split(',');
                             db.removeTags(i.getName());
                             if (tagssplit.Count() == 1 && tagssplit[0].Replace(" ", "").Equals("")) {
+
                             } else {
                                 foreach (string s in tagssplit) {
-                                    db.connectTag(i.getName(), s);
+                                    if (!s.Equals("")) { db.connectTag(i.getName(), s, inserttag); }
                                 }
+                                inserttag = false;
                             }
                         } else {
                             db.updateEntry(i.getName(), dbstring[j], p.getReturnValue());
@@ -515,6 +535,7 @@ namespace PhotoManager {
                 }
                 tsprogressbar.Value++;
             }
+            db.close();
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
@@ -567,6 +588,29 @@ namespace PhotoManager {
                 if (pictureBox_viewer.ShownImage != null) {
                     tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
                 }
+            } else if (tabControl1.SelectedTab == tabPage_Taglist) {
+                flowLayoutPanel_tags.Controls.Clear();
+                TagEditElement[] tee = db.getTags();
+                flowLayoutPanel_tags.SuspendLayout();
+                foreach (TagEditElement t in tee) {
+                    t.getEditButton().Click += (sndr, evnt) => {
+                        db.updateTag(t.getNewTag(), t.OldTag);
+                        t.OldTag = t.getNewTag();
+                    };
+                    t.GetDeleteButton().Click += (sndr, evnt) => {
+                        if (t.getNewTag().Equals(t.OldTag)) {
+                            db.deleteTag(t.OldTag);
+                            flowLayoutPanel_tags.Controls.Remove(t);
+                            flowLayoutPanel_tags.Refresh();
+                        } else {
+                            MessageBox.Show("Tag was changed - Save first");
+                        }
+
+                    };
+                    flowLayoutPanel_tags.Controls.Add(t);
+                }
+                flowLayoutPanel_tags.ResumeLayout();
+                flowLayoutPanel_tags.Refresh();
             }
         }
 
@@ -591,6 +635,7 @@ namespace PhotoManager {
             if (dialogResult != DialogResult.Yes) {
                 return;
             }
+            db.open();
             foreach (Image i in multiedit) {
                 db.updateEntry(i.getName(), new double[] { 0, 0 });
                 db.updateEntry(i.getName(), "description", "");
@@ -600,6 +645,7 @@ namespace PhotoManager {
                 tsprogressbar.Value++;
                 tabControl1_SelectedIndexChanged(multiedit[0], null);
             }
+            db.close();
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e) {
@@ -657,6 +703,7 @@ namespace PhotoManager {
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e) {
             Properties.Settings.Default.Save();
+            db.close();
         }
 
         private void checkBox_JoinTags_CheckedChanged(object sender, EventArgs e) {
@@ -667,14 +714,19 @@ namespace PhotoManager {
          * Add new search string to database
          */
         private void btn_fav_Click(object sender, EventArgs e) {
-            btn_fav.Text = "★";
-            bool b = db.addFav(tb_search.Text);
-            if (b) {
-                FavouriteElement fe = new FavouriteElement(tb_search.Text);
-                fe.resize(panel_favs.Width - SystemInformation.VerticalScrollBarWidth);
-                fe.delButton().Click += favDel_Click;
-                fe.copyButton().Click += favCpy_Click;
-                panel_favs.Controls.Add(fe);
+            if (!string.IsNullOrEmpty(tb_search.Text)) {
+                btn_fav.Text = "★";
+                db.open();
+                bool b = db.addFav(tb_search.Text);
+                db.close();
+                if (b) {
+                    FavouriteElement fe = new FavouriteElement(tb_search.Text);
+                    fe.resize(panel_favs.Width - SystemInformation.VerticalScrollBarWidth);
+                    fe.delButton().Click += favDel_Click;
+                    fe.copyButton().Click += favCpy_Click;
+                    panel_favs.Controls.Add(fe);
+                    panel_favs.Refresh();
+                }
             }
         }
 
@@ -689,7 +741,9 @@ namespace PhotoManager {
         private void favDel_Click(object sender, EventArgs e) {
             FavouriteElement fe = (FavouriteElement)(((Button)sender).Parent).Parent;
             panel_favs.Controls.Remove(fe);
+            db.open();
             db.removeFav(fe.getText());
+            db.close();
         }
 
         private void panel_favs_Resize(object sender, EventArgs e) {
@@ -728,8 +782,10 @@ namespace PhotoManager {
 
         private void updateLabel(int first) {               //THROWS THRAEDÜBERGREIFENDERZUGRIFF AUF TSLABEL_PIC...
             try {
+                db.open();
                 string t = (first == 0) ? "" : first + "/";
                 t += shown.Count() + "/" + db.getEntryCount();
+                db.close();
                 tslabel_picturesof.Text = t;
             } catch { }
         }
