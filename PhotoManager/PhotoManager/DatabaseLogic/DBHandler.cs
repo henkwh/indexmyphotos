@@ -87,19 +87,39 @@ namespace PhotoManager {
         /*
       * Adds a connection between image and tag
       */
-        public void connectTag(string id, string tag, bool inserttag) {
+        public void connectTag(string id, string[] tags, bool inserttag) {
             if (inserttag) {
-                insertTag(tag);
+                foreach (string t in tags) {
+                    insertTag(t);
+                }
             }
-            string comm = "INSERT INTO FotoTag(FotoID, TagID) SELECT f.id, t.id FROM Foto f, Tag t WHERE f.id LIKE @id AND t.tag LIKE @tag";
+            List<string> addTag = new List<string>();
+            string comstring = "";
+            foreach (string t in tags) {
+                if (!t.Equals(" ") && !t.Equals("")) {
+                    if (addTag.Count() == 0) {
+                        comstring += "INSERT OR IGNORE INTO FotoTag SELECT @id AS FotoID, t.id AS TagID FROM Tag t WHERE t.tag LIKE @tag0 ";
+                    } else {
+                        comstring += "UNION ALL SELECT @id, id FROM Tag WHERE tag LIKE @tag" + (addTag.Count()) + " ";
+                    }
+                    addTag.Add(t);
+                }
+
+            }
+            //string comm = "INSERT INTO FotoTag(FotoID, TagID) SELECT f.id, t.id FROM Foto f, Tag t WHERE f.id LIKE @id AND t.tag LIKE @tag";
             try {
-                using (SQLiteCommand command = new SQLiteCommand(comm, con)) {
+                using (SQLiteCommand command = new SQLiteCommand(comstring, con)) {
                     command.Parameters.AddWithValue("@id", id);
-                    command.Parameters.AddWithValue("@tag", tag);
+                    int i = 0;
+                    foreach (string t in addTag) {
+                        command.Parameters.AddWithValue("@tag" + (i++), t);
+                        Debug.WriteLine("tag: " + t);
+                    }
                     command.ExecuteNonQuery();
-                    Debug.WriteLine(id + " und " + tag);
+                    Debug.WriteLine(comstring + ";  " + id);
                 }
             } catch {
+                Debug.WriteLine("ERROR: " + comstring + ";  " + id);
             }
         }
 
@@ -110,10 +130,10 @@ namespace PhotoManager {
         public Image addImage(string hash, string filetype) {
             Image f = null;
             try {
-                using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foto (id, filetype, loclat, loclng) VALUES(@id, @filetype, 0, 0)", con)) {
-
+                using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foto (id, filetype, loclat, loclng, date, description) VALUES(@id, @filetype, 0, 0, @stddate, '')", con)) {
                     command.Parameters.AddWithValue("@id", hash);
                     command.Parameters.AddWithValue("@filetype", filetype);
+                    command.Parameters.AddWithValue("@stddate", Utils.YEAR_STD);
                     SQLiteDataReader reader = command.ExecuteReader();
                     f = new Image(hash.ToString(), filetype);
                 }
@@ -121,9 +141,6 @@ namespace PhotoManager {
             } catch {
                 Debug.WriteLine("Error: addEntry()");
             }
-            updateEntry(hash.ToString(), "date", Utils.YEAR_STD);
-            updateEntry(hash.ToString(), new double[] { 0.0, 0.0 });
-            updateEntry(hash.ToString(), "description", "");
             entryCount = countEntrys();
             return f;
         }
@@ -137,7 +154,7 @@ namespace PhotoManager {
                     ret = (scalar > 0) ? true : false;
                 }
             } catch {
-                Debug.WriteLine("Error: IMeg exists");
+                Debug.WriteLine("Error: Image exists");
             }
             return ret;
         }
@@ -161,16 +178,26 @@ namespace PhotoManager {
         /*
          * Updates a value in DB
          */
-        public void updateEntry(string id, string type, string value) {
+        public void updateEntry(string[] id, string type, string value) {
+
+            string comstring = "UPDATE Foto SET " + type + "= @value WHERE id LIKE ";
+            for (int i = 0; i < id.Count(); i++) {
+                comstring += ("@id" + i + " OR id LIKE ");
+            }
+            comstring = comstring.Substring(0, comstring.Count() - 12) + ";";
 
             try {
-                using (SQLiteCommand command = new SQLiteCommand("UPDATE Foto SET " + type + "= @value WHERE id LIKE @id", con)) {
+                using (SQLiteCommand command = new SQLiteCommand(comstring, con)) {
                     command.Parameters.AddWithValue("@value", value);
-                    command.Parameters.AddWithValue("@id", id);
+                    Debug.WriteLine("value" + ": " + value);
+                    int c = 0;
+                    foreach (string s in id) {
+                        command.Parameters.AddWithValue("@id" + (c++), s);
+                    }
                     command.ExecuteNonQuery();
                 }
             } catch {
-                MessageBox.Show("Error updating " + id + "\r\n" + "UPDATE Foto SET " + type + "= " + value + " WHERE id LIKE " + id);
+                MessageBox.Show("ERROR:" + comstring);
             }
         }
 
@@ -202,24 +229,44 @@ namespace PhotoManager {
         /*
          * Updates location
          */
-        public void updateEntry(string id, double[] loc) {
-            try {
-                using (SQLiteCommand command = new SQLiteCommand("UPDATE Foto SET loclat= @value WHERE id LIKE @id", con)) {
-                    command.Parameters.AddWithValue("@value", loc[0]);
-                    command.Parameters.AddWithValue("@id", id);
-                    command.ExecuteNonQuery();
-                }
-            } catch {
-                MessageBox.Show("Error updating lat " + id);
+        public void updateEntry(string[] id, double[] loc) {
+
+            string comstring = "UPDATE Foto SET loclat= @value WHERE id LIKE ";
+            for (int i = 0; i < id.Count(); i++) {
+                comstring += ("@id" + i + " OR id LIKE ");
             }
+            comstring = comstring.Substring(0, comstring.Count() - 12) + ";";
             try {
-                using (SQLiteCommand command = new SQLiteCommand("UPDATE Foto SET loclng= @value WHERE id LIKE @id", con)) {
-                    command.Parameters.AddWithValue("@value", loc[1]);
-                    command.Parameters.AddWithValue("@id", id);
+                using (SQLiteCommand command = new SQLiteCommand(comstring, con)) {
+                    command.Parameters.AddWithValue("@value", loc[0]);
+                    int c = 0;
+                    foreach (string s in id) {
+                        command.Parameters.AddWithValue("@id" + (c++), s);
+                    }
                     command.ExecuteNonQuery();
                 }
             } catch {
-                MessageBox.Show("Error updating lng " + id);
+                MessageBox.Show("LAT:" + comstring);
+            }
+
+
+            comstring = "UPDATE Foto SET loclng= @value WHERE id LIKE ";
+            for (int i = 0; i < id.Count(); i++) {
+                comstring += ("@id" + i + " OR id LIKE ");
+            }
+            comstring = comstring.Substring(0, comstring.Count() - 12) + ";";
+
+            try {
+                using (SQLiteCommand command = new SQLiteCommand(comstring, con)) {
+                    command.Parameters.AddWithValue("@value", loc[1]);
+                    int c = 0;
+                    foreach (string s in id) {
+                        command.Parameters.AddWithValue("@id" + (c++), s);
+                    }
+                    command.ExecuteNonQuery();
+                }
+            } catch {
+                MessageBox.Show("LNG:" + comstring);
             }
         }
 
@@ -228,7 +275,7 @@ namespace PhotoManager {
          * Deletes an entry from table Foto
          */
         public void deleteEntry(string id) {
-            removeTags(id);
+            removeTags(new string[] { id });
             SQLiteConnection.ClearAllPools();
             try {
                 using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Foto WHERE id LIKE @id", con)) {
@@ -245,11 +292,21 @@ namespace PhotoManager {
         /*
          * Removes every tag related to an image
          */
-        public void removeTags(string id) {
+        public void removeTags(string[] id) {
             SQLiteConnection.ClearAllPools();
             try {
-                using (SQLiteCommand command = new SQLiteCommand("DELETE FROM FotoTag WHERE FotoID = @id", con)) {
-                    command.Parameters.AddWithValue("@id", id);
+
+                string comstring = "DELETE FROM FotoTag WHERE FotoID = ";
+                for (int i = 0; i < id.Count(); i++) {
+                    comstring += ("@id" + i + " OR FotoID = ");
+                }
+                comstring = comstring.Substring(0, comstring.Count() - 13) + ";";
+
+                using (SQLiteCommand command = new SQLiteCommand(comstring, con)) {
+                    int c = 0;
+                    foreach (string s in id) {
+                        command.Parameters.AddWithValue("@id" + (c++), s);
+                    }
                     command.ExecuteNonQuery();
                 }
             } catch {
@@ -292,7 +349,7 @@ namespace PhotoManager {
             List<Image> loadinglist = new List<Image>();
             try {
                 using (SQLiteConnection con = new SQLiteConnection(connection)) {
-                con.Open();
+                    con.Open();
                     using (SQLiteCommand command = new SQLiteCommand(comm, con)) {
                         SQLiteDataReader reader = command.ExecuteReader();
                         while (reader.Read()) {
@@ -311,7 +368,7 @@ namespace PhotoManager {
                     }
                 }
             } catch {
-             //   Debug.WriteLine("Error processing: " + comm);
+                //   Debug.WriteLine("Error processing: " + comm);
             }
             return loadinglist;
         }
@@ -380,7 +437,7 @@ namespace PhotoManager {
             //try {
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
                 con.Open();
-                using (SQLiteCommand command = new SQLiteCommand("SELECT tag, COUNT(t.id) as 'Cntr' FROM Tag t LEFT JOIN FotoTag ft on t.id = ft.TagID GROUP BY tag ORDER BY Cntr DESC;", con)) {
+                using (SQLiteCommand command = new SQLiteCommand("SELECT tag, COUNT(ft.TagID) as 'Cntr' FROM Tag t LEFT JOIN FotoTag ft on t.id = ft.TagID GROUP BY tag ORDER BY Cntr DESC;", con)) {
                     SQLiteDataReader reader = command.ExecuteReader();
                     while (reader.Read()) {
                         list.Add(new TagEditElement(reader[0].ToString(), reader.GetInt32(1)));

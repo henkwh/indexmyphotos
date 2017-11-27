@@ -1,4 +1,5 @@
 ﻿using PhotoManager.CustomControls;
+using PhotoManager.DatabaseLogic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,6 +33,8 @@ namespace PhotoManager {
         private OrderElement selectedorder;
 
         private ToolTip toolTip;
+
+        private int lastWorker;
 
         public Form1() {
             InitializeComponent();
@@ -121,7 +124,7 @@ namespace PhotoManager {
                     c = 0;
                 }
             }
-            panel.AutoScrollMinSize = new Size(panel.AutoScrollMinSize.Width, y);
+            panel.AutoScrollMinSize = new Size(panel.AutoScrollMinSize.Width, Properties.Settings.Default.GAPSCALE + imagescale + y);
         }
 
 
@@ -130,67 +133,17 @@ namespace PhotoManager {
          * Handles Drag-and-Drop of Files
          */
         void Form1_DragDrop(object sender, DragEventArgs e) {
-            justDragDropped = new List<string>();
-            int counter = 0;
-            db.open();
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
-            mbi.Show();
-            tsprogressbar.Maximum = files.Count();
-            tsprogressbar.Value = 0;
-            foreach (string file in files) {
-                Console.WriteLine(file);
-                FileAttributes attr = File.GetAttributes(file);
-                if ((attr & FileAttributes.Directory) == FileAttributes.Directory) {
-                    string[] fileEntries = Directory.GetFiles(file);
-                    tsprogressbar.Maximum = fileEntries.Count();
-                    tsprogressbar.Value = 0;
-                    foreach (string fileName in fileEntries) {
-                        string n = loadFile(fileName, mbi);
-                        if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
-                        tsprogressbar.Value++;
-                        tsprogressbar.Refresh();
-                    }
-                } else {
-                    string n = loadFile(file, mbi);
-                    if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
-                    try {
-                        tsprogressbar.Value++;
-                        tsprogressbar.Refresh();
-                    } catch { }
-                }
-            }
-            mbi.addText(counter + " of " + (files.Length) + " Files added.");
-            db.close();
-            newWorker();
+            DragandDropWorker dnd = new DragandDropWorker(files, currentworkingdirectory, dir_full, dir_preview, imagescale, db, new MessageBoxInfo(Location.X, Location.Y, Width, Height));
+            dnd.RunWorkerCompleted += Dnd_RunWorkerCompleted;
+            dnd.RunWorkerAsync();
         }
-        /*
-          * Checks if Dag-Dropped file is valid
-         *@path Path to File or Directory
-         */
-        private string loadFile(string path, MessageBoxInfo mbi) {
-            string filetype = Path.GetExtension(path).ToLower();
-            if (filetype.Equals(".png") || filetype.Equals(".jpg") || filetype.Equals(".jpeg")) {
-                string hash = Utils.getHash(path);
-                if (db.ImageExists(hash)) {
-                    mbi.addText("File " + path + " already exists. Skipping...");
-                    return "";
-                }
-                Image img = db.addImage(hash, filetype);
-                bool check = true; ;
-                try { File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, true); } catch { check = false; }
-                check = (ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale) == null || check == false) ? false : true;
-                if (check == false) {
-                    db.deleteEntry(hash);
-                    mbi.addText("Broken file: " + img.getName() + " was now removed from DB");
-                } else {
-                    mbi.addText("Added " + img.getName());
-                }
-                return img.getName();
-            } else {
-                mbi.addText("File " + path + " is not a supported Image File. Skipping...");
-            }
-            return "";
+
+        private void Dnd_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            justDragDropped = ((DragandDropWorker)sender).getjustDragDropped();
+            MessageBoxInfo mbi = ((DragandDropWorker)sender).getMessgageBox();
+            mbi.BringToFront();
+            newWorker();
         }
 
         void Form1_DragEnter(object sender, DragEventArgs e) {
@@ -201,7 +154,11 @@ namespace PhotoManager {
         /*
          * Creates a new worker instance
          */
-        private void newWorker() {
+        public void newWorker() {
+            if (Environment.TickCount - lastWorker <= 500) {
+                return;
+            }
+            lastWorker = Environment.TickCount;
             if (ThreadRunning == true) {
                 newWorkerRequested = true;
                 worker.CancelAsync();
@@ -223,7 +180,6 @@ namespace PhotoManager {
                 newWorker();
             }
         }
-
 
         private void worker_DoWork(object sender, DoWorkEventArgs e) {
             //Get images matching the input string
@@ -489,6 +445,12 @@ namespace PhotoManager {
         }
 
         private void btn_applytag_Click(object sender, EventArgs e) {
+
+            if (multiedit.Count() == 0) {
+                MessageBox.Show("No items selected!");
+                return;
+            }
+
             tsprogressbar.Maximum = multiedit.Count();
             tsprogressbar.Value = 0;
 
@@ -502,40 +464,48 @@ namespace PhotoManager {
                 return;
             }
             db.open();
-            bool inserttag = true;
+            List<string> ids = new List<string>();
             foreach (Image i in multiedit) {
-                UpdateParameter[] list = Utils.checkInputTags(i, location, tags, i.getTags(), desc, dtin, tagjoin);//db.getConnectedTags(i.getName())
-                string[] dbstring = { "location", "tags", "description", "date" };
-                bool set = false;
-                for (int j = 0; j < list.Count(); j++) {
-                    UpdateParameter p = list[j];
-                    if (p.isreturnValueSet()) {
-                        set = true;
-                        if (j == 0) {
-                            db.updateEntry(i.getName(), Utils.parseLocation(p.getReturnValue()));
-                        } else if (j == 1) {
-                            string[] tagssplit = p.getReturnValue().Split(',');
-                            db.removeTags(i.getName());
-                            if (tagssplit.Count() == 1 && tagssplit[0].Replace(" ", "").Equals("")) {
+                ids.Add(i.getName());
+            }
+            string[] idarr = ids.ToArray();
+            if (!tags.Equals("") && !checkBox_JoinTags.Checked) {
+                db.removeTags(idarr);
+                Debug.WriteLine("Removed tags");
+            }
+            tsprogressbar.Value = tsprogressbar.Maximum / 4;
+            if (!tags.Equals(" ") && !tags.Equals("")) {
+                string[] tagssplit = tags.Split(',');
+                foreach (Image i in multiedit) {
+                    db.connectTag(i.getName(), tagssplit, i == multiedit[0]);
+                }
+            }
 
-                            } else {
-                                foreach (string s in tagssplit) {
-                                    if (!s.Equals("")) { db.connectTag(i.getName(), s, inserttag); }
-                                }
-                                inserttag = false;
-                            }
-                        } else {
-                            db.updateEntry(i.getName(), dbstring[j], p.getReturnValue());
-                        }
-                    }
-                }
-                if (set) {
-                    Image i2 = db.getImage(i.getName());
-                    i.setTags(i2.getDate(), i2.getLocation(), i2.getDescription(), i2.getTags());
-                }
-                tsprogressbar.Value++;
+            tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, tsprogressbar.Maximum / 2);
+            if (desc.Equals(" ")) {
+                db.updateEntry(idarr, "description", "");
+                Debug.WriteLine("reset desc");
+            } else if (!desc.Equals("")) {
+                Debug.WriteLine("set desc");
+                db.updateEntry(idarr, "description", desc);
+            }
+            if (location.Equals(" ")) {
+                Debug.WriteLine("reset loc");
+                db.updateEntry(idarr, new double[] { 0, 0 });
+            } else if (!location.Equals("")) {
+                Debug.WriteLine("set loc");
+                db.updateEntry(idarr, Utils.parseLocation(location));
+            }
+            tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, (tsprogressbar.Maximum * 3) / 4);
+            if ((tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals(" ")) {
+                db.updateEntry(idarr, "date", Utils.YEAR_STD);
+                Debug.WriteLine("reset date");
+            } else if (!(tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals("")) {
+                db.updateEntry(idarr, "date", dtin);
+                Debug.WriteLine("set date");
             }
             db.close();
+            tsprogressbar.Value = tsprogressbar.Maximum;
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
@@ -629,6 +599,10 @@ namespace PhotoManager {
         }
 
         private void btn_tagtodefault_Click(object sender, EventArgs e) {
+            if (multiedit.Count() == 0) {
+                MessageBox.Show("No items selected!");
+                return;
+            }
             tsprogressbar.Maximum = multiedit.Count();
             tsprogressbar.Value = 0;
             DialogResult dialogResult = MessageBox.Show("Reset Tags to default?", "Critical Operation", MessageBoxButtons.YesNo);
@@ -636,15 +610,17 @@ namespace PhotoManager {
                 return;
             }
             db.open();
+            List<string> ids = new List<string>();
             foreach (Image i in multiedit) {
-                db.updateEntry(i.getName(), new double[] { 0, 0 });
-                db.updateEntry(i.getName(), "description", "");
-                db.updateEntry(i.getName(), "date", Utils.YEAR_STD);
-                db.removeTags(i.getName());
+                ids.Add(i.getName());
                 i.setTags(Utils.YEAR_STD, null, "", "");
                 tsprogressbar.Value++;
                 tabControl1_SelectedIndexChanged(multiedit[0], null);
             }
+            db.removeTags(ids.ToArray());
+            db.updateEntry(ids.ToArray(), Utils.parseLocation("0,0"));
+            db.updateEntry(ids.ToArray(), "description", "");
+            db.updateEntry(ids.ToArray(), "date", Utils.YEAR_STD);
             db.close();
         }
 

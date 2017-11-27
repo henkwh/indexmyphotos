@@ -26,6 +26,7 @@ namespace PhotoManager.CustomControls {
             tb_text.SelectionStart = tb_text.Text.Length;
             tb_text.ScrollToCaret();
             tb_text.Refresh();
+            this.Refresh();
         }
 
         public TextBox getTextBox() {

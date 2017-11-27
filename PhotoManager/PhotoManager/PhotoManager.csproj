@@ -114,6 +114,9 @@
       <DependentUpon>TagEditElement.cs</DependentUpon>
     </Compile>
     <Compile Include="DatabaseLogic\DBHandler.cs" />
+    <Compile Include="DatabaseLogic\DragandDropWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="DatabaseLogic\OrderElement.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -141,7 +144,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomControls\TrackBarSetting.cs" />
-    <Compile Include="DatabaseLogic\UpdateParameter.cs" />
     <EmbeddedResource Include="CustomControls\FavouriteElement.resx">
       <DependentUpon>FavouriteElement.cs</DependentUpon>
     </EmbeddedResource>

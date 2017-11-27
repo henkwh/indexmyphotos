@@ -652,7 +652,7 @@
             this.trackBar_scale_gap.Location = new System.Drawing.Point(0, 0);
             this.trackBar_scale_gap.Maximum = 6;
             this.trackBar_scale_gap.Name = "trackBar_scale_gap";
-            this.trackBar_scale_gap.Size = new System.Drawing.Size(123, 29);
+            this.trackBar_scale_gap.Size = new System.Drawing.Size(123, 45);
             this.trackBar_scale_gap.TabIndex = 0;
             this.trackBar_scale_gap.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
             // 

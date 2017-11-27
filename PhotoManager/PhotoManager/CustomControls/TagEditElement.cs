@@ -13,6 +13,9 @@ namespace PhotoManager.CustomControls {
         public TagEditElement(string tag, int occ) {
             InitializeComponent();
             label_occurence.Text = "# "+occ;
+            if(occ == 0) {
+                label_occurence.BackColor = Color.LightCoral;
+            }
             textBox_tag.Text = tag;
             OldTag = tag;
         }

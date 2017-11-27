@@ -1,6 +1,7 @@
 ﻿using PhotoManager.CustomControls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -57,154 +58,134 @@ namespace PhotoManager {
             }
         }
 
-        public static UpdateParameter[] checkInputTags(Image i, string _location, string _tags, string _dbtags, string _description, string _datetime, bool joinTags) {
-            UpdateParameter location = new UpdateParameter(_location, getWorkingLocation(new double[] { i.getLocation()[0], i.getLocation()[1] }));
-            UpdateParameter tags = new UpdateParameter(_tags, _dbtags);
-            UpdateParameter description = new UpdateParameter(_description, i.getDescription());
-            UpdateParameter datetime = new UpdateParameter(_datetime.Equals(" ") ? YEAR_STD : _datetime, i.getDate());
+    /*
+     * Parses the location string to fill into the database
+     */
+    public static double[] parseLocation(string location) {
+        if (location.Equals("")) {
+            return new double[] { 0, 0 };
+        }
+        string[] locsplit = location.Replace(" ", "").Split(',');
+        double[] loclatlng = new double[2];
+        bool parsed = false;
+        if (locsplit.Count() == 2) {
+            try {
+                loclatlng[0] = double.Parse(locsplit[0].Replace(".", ","));
+                loclatlng[1] = double.Parse(locsplit[1].Replace(".", ","));
+                parsed = true;
+            } catch { }
+        }
+        return (parsed == true) ? loclatlng : null;
+    }
 
-            UpdateParameter[] list = { location, tags, description, datetime };
-            foreach (UpdateParameter p in list) {
-                if (p.requestedChange()) {
-                    if (p == tags && joinTags) {
-                        p.setReturnValue(p.NewEntry + "," + p.OldEntry);
-                    } else {
-                        p.setReturnValue(p.NewEntry);
-                    }
+    /*
+     * Creates text showing in tooltip 
+     */
+    public static string getToolTipTextForImage(Image i) {
+        string location = i.getLocationString();
+        string s = i.getName() + i.getFileType() + "\n";
+        s += "Location: " + location.Replace("0,0", "") + "\n";
+        s += "Date: " + i.getDate().Replace(YEAR_STD, "") + "\n";
+        //s += "tags: " + i.getTags() + "\n";
+        s += "Description: " + i.getDescription();
+        return s;
+    }
+
+    /*
+     * Replaces , and . to match with Google Maps Styled Latitude/Longitude
+     */
+    public static string getWorkingLocation(double[] l) {
+        return l[0].ToString().Replace(",", ".") + "," + l[1].ToString().Replace(",", ".");
+    }
+
+    public static string getSQLLocation(double lat, double lng) {
+        return lat.ToString().Replace(".", ",") + "," + lng.ToString().Replace(".", ",");
+    }
+
+    /*
+  * Deletes files that are accidently not listed in Database
+  */
+    public static int deleteImagesNotInDB(string cwd, string dir_full, string dir_preview, List<Image> list, CustomControls.MessageBoxInfo mbinfo) {
+        int counter = 0;
+        string[] folderfiles = Directory.GetFiles(cwd + dir_full);
+        foreach (string s in folderfiles) {
+            string t = Path.GetFileNameWithoutExtension(s);
+            bool delete = true;
+            foreach (Image i in list) {
+                if (i.getName().Equals(t)) {
+                    delete = false;
                 }
             }
-
-            return list;
-        }
-
-        /*
-         * Parses the location string to fill into the database
-         */
-        public static double[] parseLocation(string location) {
-            if (location.Equals("")) {
-                return new double[] { 0, 0 };
-            }
-            string[] locsplit = location.Replace(" ", "").Split(',');
-            double[] loclatlng = new double[2];
-            bool parsed = false;
-            if (locsplit.Count() == 2) {
+            if (delete) {
                 try {
-                    loclatlng[0] = double.Parse(locsplit[0].Replace(".", ","));
-                    loclatlng[1] = double.Parse(locsplit[1].Replace(".", ","));
-                    parsed = true;
-                } catch { }
-            }
-            return (parsed == true) ? loclatlng : null;
-        }
-
-        /*
-         * Creates text showing in tooltip 
-         */
-        public static string getToolTipTextForImage(Image i) {
-            string location = i.getLocationString();
-            string s = i.getName() + i.getFileType() + "\n";
-            s += "Location: " + location.Replace("0,0", "") + "\n";
-            s += "Date: " + i.getDate().Replace(YEAR_STD, "") + "\n";
-            s += "tags: " + i.getTags() + "\n";
-            s += "Description: " + i.getDescription();
-            return s;
-        }
-
-        /*
-         * Replaces , and . to match with Google Maps Styled Latitude/Longitude
-         */
-        public static string getWorkingLocation(double[] l) {
-            return l[0].ToString().Replace(",", ".") + "," + l[1].ToString().Replace(",", ".");
-        }
-
-        public static string getSQLLocation(double lat, double lng) {
-            return lat.ToString().Replace(".", ",") + "," + lng.ToString().Replace(".", ",");
-        }
-
-        /*
-      * Deletes files that are accidently not listed in Database
-      */
-        public static int deleteImagesNotInDB(string cwd, string dir_full, string dir_preview, List<Image> list, CustomControls.MessageBoxInfo mbinfo) {
-            int counter = 0;
-            string[] folderfiles = Directory.GetFiles(cwd + dir_full);
-            foreach (string s in folderfiles) {
-                string t = Path.GetFileNameWithoutExtension(s);
-                bool delete = true;
-                foreach (Image i in list) {
-                    if (i.getName().Equals(t)) {
-                        delete = false;
-                    }
-                }
-                if (delete) {
-                    try {
-                        mbinfo.addText("Delete: " + dir_full + t);
-                        File.Delete(s);
-                        counter++;
-                    } catch {
-                        mbinfo.addText("      Error deleting: " + dir_full + t);
-                    }
+                    mbinfo.addText("Delete: " + dir_full + t);
+                    File.Delete(s);
+                    counter++;
+                } catch {
+                    mbinfo.addText("      Error deleting: " + dir_full + t);
                 }
             }
-            string[] folderfiles2 = Directory.GetFiles(cwd + dir_preview);
-            foreach (string s in folderfiles2) {
-                string t = Path.GetFileNameWithoutExtension(s);
-                bool delete = true;
-                foreach (Image i in list) {
-                    if (i.getName().Equals(t)) {
-                        delete = false;
-                    }
-                }
-                if (delete) {
-                    try {
-                        mbinfo.addText("Delete: " + dir_preview + t);
-                        File.Delete(s);
-                        counter++;
-                    } catch {
-                        mbinfo.addText("      Error deleting: " + dir_preview + t);
-                    }
-                }
-
-            }
-            mbinfo.addText("Deleted: " + counter + " files!");
-            return counter;
         }
+        string[] folderfiles2 = Directory.GetFiles(cwd + dir_preview);
+        foreach (string s in folderfiles2) {
+            string t = Path.GetFileNameWithoutExtension(s);
+            bool delete = true;
+            foreach (Image i in list) {
+                if (i.getName().Equals(t)) {
+                    delete = false;
+                }
+            }
+            if (delete) {
+                try {
+                    mbinfo.addText("Delete: " + dir_preview + t);
+                    File.Delete(s);
+                    counter++;
+                } catch {
+                    mbinfo.addText("      Error deleting: " + dir_preview + t);
+                }
+            }
 
-        /*
-         * Checks if directories exist
-         */
-        public static void createDirectories(string currentworkingdirectory, string dir_full, string dir_preview) {
-            if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
-                System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
-            }
-            if (!System.IO.Directory.Exists(currentworkingdirectory + dir_preview)) {
-                System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_preview);
-            }
         }
+        mbinfo.addText("Deleted: " + counter + " files!");
+        return counter;
+    }
 
-        /*
-         * Parses the input date set in tag edit page
-         */
-        public static string parseDate(string d, bool year) {
-            if (d.Equals("")) {
-                if (year == true) {
-                    return YEAR_STD.Substring(0, 4);
-                } else {
-                    return "00";
-                }
-            } else {
-                int n;
-                bool isNumeric = int.TryParse(d, out n);
-                if (!isNumeric) {
-                    return "ERRORERROR";
-                }
-                int fill = year == true ? 4 : 2;
-                while (d.Count() < fill) {
-                    d = "0" + d;
-                }
-                return d;
-            }
+    /*
+     * Checks if directories exist
+     */
+    public static void createDirectories(string currentworkingdirectory, string dir_full, string dir_preview) {
+        if (!System.IO.Directory.Exists(currentworkingdirectory + dir_full)) {
+            System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_full);
+        }
+        if (!System.IO.Directory.Exists(currentworkingdirectory + dir_preview)) {
+            System.IO.Directory.CreateDirectory(currentworkingdirectory + dir_preview);
         }
     }
+
+    /*
+     * Parses the input date set in tag edit page
+     */
+    public static string parseDate(string d, bool year) {
+        if (d.Equals("")) {
+            if (year == true) {
+                return YEAR_STD.Substring(0, 4);
+            } else {
+                return "00";
+            }
+        } else {
+            int n;
+            bool isNumeric = int.TryParse(d, out n);
+            if (!isNumeric) {
+                return "ERRORERROR";
+            }
+            int fill = year == true ? 4 : 2;
+            while (d.Count() < fill) {
+                d = "0" + d;
+            }
+            return d;
+        }
+    }
+}
 
 }
 
