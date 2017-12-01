@@ -10,11 +10,12 @@ using System.Windows.Forms;
 
 namespace PhotoManager.CustomControls {
     public partial class TagEditElement : UserControl {
+
         public TagEditElement(string tag, int occ) {
             InitializeComponent();
             label_occurence.Text = "# "+occ;
             if(occ == 0) {
-                label_occurence.BackColor = Color.LightCoral;
+                label_occurence.ForeColor = Color.Red;
             }
             textBox_tag.Text = tag;
             OldTag = tag;
@@ -32,14 +33,6 @@ namespace PhotoManager.CustomControls {
 
         public string getNewTag() {
             return textBox_tag.Text;
-        }
-
-        private void button_Edit_text_Click(object sender, EventArgs e) {
-
-        }
-
-        private void button_Delete_Click(object sender, EventArgs e) {
-
         }
     }
 }

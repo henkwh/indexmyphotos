@@ -36,6 +36,8 @@ namespace PhotoManager {
 
         private int lastWorker;
 
+        private Image lastChanged;
+
         public Form1() {
             InitializeComponent();
             this.AllowDrop = true;

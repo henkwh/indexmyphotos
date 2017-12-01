@@ -58,17 +58,17 @@
             this.textBox_tag.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox_tag.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_tag.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBox_tag.Location = new System.Drawing.Point(3, 3);
             this.textBox_tag.Name = "textBox_tag";
             this.textBox_tag.Size = new System.Drawing.Size(338, 24);
             this.textBox_tag.TabIndex = 0;
             this.textBox_tag.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
+            //
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 56F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.button_Delete, 2, 0);
@@ -85,31 +85,29 @@
             // button_Delete
             // 
             this.button_Delete.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button_Delete.Location = new System.Drawing.Point(129, 3);
+            this.button_Delete.Location = new System.Drawing.Point(137, 3);
             this.button_Delete.Name = "button_Delete";
-            this.button_Delete.Size = new System.Drawing.Size(80, 24);
+            this.button_Delete.Size = new System.Drawing.Size(72, 24);
             this.button_Delete.TabIndex = 1;
             this.button_Delete.Text = "Delete";
             this.button_Delete.UseVisualStyleBackColor = true;
-            this.button_Delete.Click += new System.EventHandler(this.button_Delete_Click);
             // 
             // button_Edit_text
             // 
             this.button_Edit_text.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button_Edit_text.Location = new System.Drawing.Point(43, 3);
+            this.button_Edit_text.Location = new System.Drawing.Point(59, 3);
             this.button_Edit_text.Name = "button_Edit_text";
-            this.button_Edit_text.Size = new System.Drawing.Size(80, 24);
+            this.button_Edit_text.Size = new System.Drawing.Size(72, 24);
             this.button_Edit_text.TabIndex = 0;
-            this.button_Edit_text.Text = "Edit Tag";
+            this.button_Edit_text.Text = "Save";
             this.button_Edit_text.UseVisualStyleBackColor = true;
-            this.button_Edit_text.Click += new System.EventHandler(this.button_Edit_text_Click);
             // 
             // label_occurence
             // 
             this.label_occurence.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label_occurence.Location = new System.Drawing.Point(3, 0);
             this.label_occurence.Name = "label_occurence";
-            this.label_occurence.Size = new System.Drawing.Size(34, 30);
+            this.label_occurence.Size = new System.Drawing.Size(50, 30);
             this.label_occurence.TabIndex = 2;
             this.label_occurence.Text = "#";
             this.label_occurence.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
