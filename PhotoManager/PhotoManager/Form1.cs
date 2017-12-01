@@ -381,6 +381,8 @@ namespace PhotoManager {
             panel_overview.Refresh();
             if (multiedit.Count == 1) {
                 tabControl1_SelectedIndexChanged(multiedit[0], null);
+            }else if (multiedit.Count() == 0) {
+                fillTags(null);
             }
         }
 
@@ -450,8 +452,9 @@ namespace PhotoManager {
         private void resetMultiedit() {
             foreach (Image i in multiedit) {
                 i.hideBorder();
-                panel_tagedit.Controls.Clear();
             }
+            panel_tagedit.Controls.Clear();
+            panel_tagedit.Refresh();
             multiedit.Clear();
             updateLabel(0);
             panel_overview.Refresh();
@@ -522,6 +525,7 @@ namespace PhotoManager {
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
+            fillTags(null);
         }
 
         private void tb_search_KeyDown(object sender, KeyEventArgs e) {
@@ -544,7 +548,9 @@ namespace PhotoManager {
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
             if (tabControl1.SelectedTab == tabPage_tags) {
-              
+              if(multiedit.Count() == 0) {
+                    fillTags(null);
+                }
             } else if (tabControl1.SelectedTab == tabPage_main) {
                 trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
                 tslabel_picturesof.Text = shown.Count() + "/" + db.getEntryCount();
@@ -775,7 +781,7 @@ namespace PhotoManager {
             updateLabel(multiedit.Count());
         }
 
-        private void updateLabel(int first) {               //THROWS THRAEDÜBERGREIFENDERZUGRIFF AUF TSLABEL_PIC...
+        private void updateLabel(int first) {
             try {
                 db.open();
                 string t = (first == 0) ? "" : first + "/";
