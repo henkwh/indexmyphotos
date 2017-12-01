@@ -36,8 +36,6 @@ namespace PhotoManager {
 
         private int lastWorker;
 
-        private Image lastChanged;
-
         public Form1() {
             InitializeComponent();
             this.AllowDrop = true;
@@ -342,16 +340,29 @@ namespace PhotoManager {
             foreach (Image i in multiedit) {
                 PictureBox tageditbox = new PictureBox();
                 tageditbox.Image = i.getPreview();
+                tageditbox.Tag = i;
                 tageditbox.SizeMode = PictureBoxSizeMode.AutoSize;
+                ToolTip tt = new ToolTip();
+                tt.SetToolTip(tageditbox, Utils.getToolTipTextForImage(i));
+                tt.Tag = i.getName();
                 ContextMenu cm = new ContextMenu();
-                MenuItemImage menuItem = new MenuItemImage("Remove");
-                menuItem.setParentPictureBox(i);
-                menuItem.Click += TagRemove_Click;
-                cm.MenuItems.Add(menuItem);
+                MenuItemImage[] milist = new MenuItemImage[] { new MenuItemImage("Remove"), new MenuItemImage("Fill") };
+                foreach (MenuItemImage mii in milist) {
+                    mii.setParentPictureBox(i);
+                    cm.MenuItems.Add(mii);
+                }
+                milist[0].Click += TagRemove_Click;
+                milist[1].Click += (sndr, evnt) => {
+                    fillTags(((MenuItemImage)sndr).getParentPictureBox());
+                };
                 tageditbox.ContextMenu = cm;
                 totaglist.Add(tageditbox);
             }
             panel_tagedit.Controls.AddRange(totaglist.ToArray());
+            fillTags(null);
+            if (multiedit.Count == 1) {
+                fillTags(multiedit[0]);
+            }
         }
 
 
@@ -526,29 +537,14 @@ namespace PhotoManager {
                 box.BackColor = Color.LightGray;
             } else {
                 box.BackColor = Color.White;
+                box.ForeColor = Color.Black;
             }
 
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
             if (tabControl1.SelectedTab == tabPage_tags) {
-                addImagestoTabPage();
-                foreach (TextBox tb in new TextBox[] { tb_dateday, tb_datemonth, tb_dateyear, tb_dateday, tb_tags, tb_description, tb_location }) {
-                    tb.BackColor = Color.LightGray;
-                    tb.Text = "";
-                }
-                if (multiedit.Count == 1) {
-                    if (multiedit[0].getLocation()[0] != 0 && multiedit[0].getLocation()[1] != 0) {
-                        tb_location.Text = multiedit[0].getLocationString();
-                    }
-                    tb_tags.Text = db.getConnectedTags(multiedit[0].getName());
-                    tb_description.Text = multiedit[0].getDescription();
-                    if (!multiedit[0].getDate().Equals(Utils.YEAR_STD)) {
-                        tb_dateyear.Text = multiedit[0].getDate().Substring(0, 4);
-                        tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2).Equals("00") ? "" : multiedit[0].getDate().Substring(4, 2);
-                        tb_dateday.Text = multiedit[0].getDate().Substring(6, 2).Equals("00") ? "" : multiedit[0].getDate().Substring(6, 2);
-                    }
-                }
+              
             } else if (tabControl1.SelectedTab == tabPage_main) {
                 trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
                 tslabel_picturesof.Text = shown.Count() + "/" + db.getEntryCount();
@@ -563,7 +559,6 @@ namespace PhotoManager {
             } else if (tabControl1.SelectedTab == tabPage_Taglist) {
                 flowLayoutPanel_tags.Controls.Clear();
                 TagEditElement[] tee = db.getTags();
-                flowLayoutPanel_tags.SuspendLayout();
                 foreach (TagEditElement t in tee) {
                     t.getEditButton().Click += (sndr, evnt) => {
                         db.updateTag(t.getNewTag(), t.OldTag);
@@ -577,12 +572,34 @@ namespace PhotoManager {
                         } else {
                             MessageBox.Show("Tag was changed - Save first");
                         }
-
                     };
-                    flowLayoutPanel_tags.Controls.Add(t);
                 }
-                flowLayoutPanel_tags.ResumeLayout();
+                flowLayoutPanel_tags.Controls.AddRange(tee);
                 flowLayoutPanel_tags.Refresh();
+            }
+        }
+
+        private void fillTags(Image i) {
+            foreach (TextBox b in new TextBox[] { tb_location, tb_tags, tb_description, tb_dateyear, tb_datemonth, tb_dateday }) {
+                if (i == null) {
+                    b.BackColor = Color.LightGray;
+                    b.Text = "";
+                } else {
+                    b.ForeColor = Color.Black;
+                }
+            }
+
+            if (i != null) {
+                if (i.getLocation()[0] != 0 && i.getLocation()[1] != 0) {
+                    tb_location.Text = i.getLocationString();
+                }
+                tb_tags.Text = db.getConnectedTags(i.getName());
+                tb_description.Text = i.getDescription();
+                if (!i.getDate().Equals(Utils.YEAR_STD)) {
+                    tb_dateyear.Text = i.getDate().Substring(0, 4);
+                    tb_datemonth.Text = i.getDate().Substring(4, 2).Equals("00") ? "" : i.getDate().Substring(4, 2);
+                    tb_dateday.Text = i.getDate().Substring(6, 2).Equals("00") ? "" : i.getDate().Substring(6, 2);
+                }
             }
         }
 

@@ -169,9 +169,13 @@ namespace PhotoManager {
             if (editmode) {
                 double lat = FromLocalToLatLng(e.X, e.Y).Lat;
                 double lng = FromLocalToLatLng(e.X, e.Y).Lng;
-                setEditMode(false);
                 form.setOnMapDone(Utils.getWorkingLocation(new double[] { lat, lng }));
+                setEditMode(false);
             }
+        }
+
+        public bool getEditMode() {
+            return editmode;
         }
 
         private void GMapInstance_Load(object sender, EventArgs e) {

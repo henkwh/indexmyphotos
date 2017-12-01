@@ -64,7 +64,7 @@
             this.textBox_tag.Size = new System.Drawing.Size(338, 24);
             this.textBox_tag.TabIndex = 0;
             this.textBox_tag.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            //
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
@@ -101,6 +101,7 @@
             this.button_Edit_text.TabIndex = 0;
             this.button_Edit_text.Text = "Save";
             this.button_Edit_text.UseVisualStyleBackColor = true;
+            this.button_Edit_text.Click += new System.EventHandler(this.button_Edit_text_Click);
             // 
             // label_occurence
             // 

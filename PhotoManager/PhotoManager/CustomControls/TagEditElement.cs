@@ -34,5 +34,9 @@ namespace PhotoManager.CustomControls {
         public string getNewTag() {
             return textBox_tag.Text;
         }
+
+        private void button_Edit_text_Click(object sender, EventArgs e) {
+
+        }
     }
 }
