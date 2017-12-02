@@ -418,49 +418,50 @@ namespace PhotoManager {
          */
         public string[] getFavs() {
             List<string> list = new List<string>();
-            //using (SQLiteConnection con = new SQLiteConnection(connection)) {
-            try {
-                using (SQLiteCommand command = new SQLiteCommand("SELECT search FROM Favs;", con)) {
-                    SQLiteDataReader reader = command.ExecuteReader();
-                    while (reader.Read()) {
-                        list.Add(reader[0] as string);
+            using (SQLiteConnection con = new SQLiteConnection(connection)) {
+                con.Open();
+                try {
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT search FROM Favs;", con)) {
+                        SQLiteDataReader reader = command.ExecuteReader();
+                        while (reader.Read()) {
+                            list.Add(reader[0] as string);
+                        }
                     }
+                } catch {
                 }
-            } catch {
             }
-            //}
             return list.ToArray();
         }
 
         public TagEditElement[] getTags() {
             List<TagEditElement> list = new List<TagEditElement>();
-            //try {
-            using (SQLiteConnection con = new SQLiteConnection(connection)) {
-                con.Open();
-                using (SQLiteCommand command = new SQLiteCommand("SELECT tag, COUNT(ft.TagID) as 'Cntr' FROM Tag t LEFT JOIN FotoTag ft on t.id = ft.TagID GROUP BY tag ORDER BY Cntr DESC;", con)) {
-                    SQLiteDataReader reader = command.ExecuteReader();
-                    while (reader.Read()) {
-                        list.Add(new TagEditElement(reader[0].ToString(), reader.GetInt32(1)));
+            try {
+                using (SQLiteConnection con = new SQLiteConnection(connection)) {
+                    con.Open();
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT tag, COUNT(ft.TagID) as 'Cntr' FROM Tag t LEFT JOIN FotoTag ft on t.id = ft.TagID GROUP BY tag ORDER BY Cntr DESC;", con)) {
+                        SQLiteDataReader reader = command.ExecuteReader();
+                        while (reader.Read()) {
+                            list.Add(new TagEditElement(reader[0].ToString(), reader.GetInt32(1)));
+                        }
                     }
                 }
+            } catch {
             }
-            //} catch {
-            // }
             return list.ToArray();
         }
 
         public void updateTag(string newtag, string oldtag) {
-            //try {
-            using (SQLiteConnection con = new SQLiteConnection(connection)) {
-                con.Open();
-                using (SQLiteCommand command = new SQLiteCommand("UPDATE Tag SET tag = @newtag WHERE tag LIKE @oldtag;", con)) {
-                    command.Parameters.AddWithValue("@newtag", newtag);
-                    command.Parameters.AddWithValue("@oldtag", oldtag);
-                    command.ExecuteNonQuery();
+            try {
+                using (SQLiteConnection con = new SQLiteConnection(connection)) {
+                    con.Open();
+                    using (SQLiteCommand command = new SQLiteCommand("UPDATE Tag SET tag = @newtag WHERE tag LIKE @oldtag;", con)) {
+                        command.Parameters.AddWithValue("@newtag", newtag);
+                        command.Parameters.AddWithValue("@oldtag", oldtag);
+                        command.ExecuteNonQuery();
+                    }
                 }
+            } catch {
             }
-            //} catch {
-            //}
         }
 
         /*
@@ -468,7 +469,6 @@ namespace PhotoManager {
          */
         public bool addFav(string f) {
             bool ret = false;
-            //using (SQLiteConnection con = new SQLiteConnection(connection)) {
             try {
                 using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Favs (search) VALUES (@f)", con)) {
                     command.Parameters.AddWithValue("@f", f);
@@ -478,7 +478,6 @@ namespace PhotoManager {
             } catch {
 
             }
-            // }
             return ret;
         }
 
@@ -486,15 +485,32 @@ namespace PhotoManager {
          * Removes search string
          */
         public void removeFav(string t) {
-            //using (SQLiteConnection con = new SQLiteConnection(connection)) {
-            try {
-                using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Favs WHERE search = @t", con)) {
-                    command.Parameters.AddWithValue("@t", t);
-                    command.ExecuteNonQuery();
+            using (SQLiteConnection con = new SQLiteConnection(connection)) {
+                try {
+                    using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Favs WHERE search = @t", con)) {
+                        command.Parameters.AddWithValue("@t", t);
+                        command.ExecuteNonQuery();
+                    }
+                } catch {
                 }
-            } catch {
             }
-            //}
+        }
+
+        public bool favExists(string text) {
+            bool ret = false;
+            using (SQLiteConnection con = new SQLiteConnection(connection)) {
+                con.Open();
+                try {
+                    using (SQLiteCommand command = new SQLiteCommand("SELECT count(search) FROM Favs WHERE search = @text;", con)) {
+                        command.Parameters.AddWithValue("@text", text);
+                        long scalar = command.ExecuteScalar() == null ? 0 : (Int64)command.ExecuteScalar();
+                        ret = (scalar > 0) ? true : false;
+                    }
+                } catch {
+                    Debug.WriteLine("Error: favExists");
+                }
+            }
+            return ret;
         }
 
         /*

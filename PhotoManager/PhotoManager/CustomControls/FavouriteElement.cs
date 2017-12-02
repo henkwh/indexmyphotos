@@ -5,7 +5,7 @@ namespace PhotoManager.CustomControls {
 
         public FavouriteElement(string text) {
             InitializeComponent();
-            lb_fav.Text = text;
+            tb_searchstring.Text = text;
         }
 
         public void resize(int width) {
@@ -17,7 +17,7 @@ namespace PhotoManager.CustomControls {
         }
 
         public string getText() {
-            return lb_fav.Text;
+            return tb_searchstring.Text;
         }
 
         public Button copyButton() {

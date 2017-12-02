@@ -30,12 +30,13 @@ namespace PhotoManager {
         public void addBrowser() {
             MouseDown += new MouseEventHandler(myMap_Click);
             MouseUp += new MouseEventHandler(myMap_Up);
-            KeyDown += new KeyEventHandler(myMap_ButtonClick);
+            PreviewKeyDown += GMapInstance_PreviewKeyDown;
             Dock = System.Windows.Forms.DockStyle.Fill;
             DragButton = MouseButtons.Left;
             IgnoreMarkerOnMouseWheel = true;
             ShowCenter = false;
             MapProvider = GMap.NET.MapProviders.GoogleMapProvider.Instance;
+            //MapProvider = GMap.NET.MapProviders.OpenCycleMapProvider.Instance;
             GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
             CanDragMap = true;
             MouseWheelZoomType = MouseWheelZoomType.MousePositionWithoutCenter;
@@ -47,6 +48,21 @@ namespace PhotoManager {
             Position = new PointLatLng(48.8617774, 2.349272);
         }
 
+        private void GMapInstance_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
+            PointLatLng mypos = Position;
+            if (e.KeyCode == Keys.Up) {
+                mypos.Lat += 1;
+            } else if (e.KeyCode == Keys.Down) {
+                mypos.Lat -= 1;
+            } else if (e.KeyCode == Keys.Right) {
+                mypos.Lng += 1;
+            } else if (e.KeyCode == Keys.Left) {
+                mypos.Lng -= 1;
+            }
+            Position = mypos;
+            Update();
+        }
+
         private void myMap_Up(object sender, MouseEventArgs e) {
             if (Environment.TickCount - lastClick < 200) {
                 double lat = FromLocalToLatLng(e.X, e.Y).Lat;
@@ -54,22 +70,6 @@ namespace PhotoManager {
                 setEditMode(false);
                 form.setOnMapDone(Utils.getWorkingLocation(new double[] { lat, lng }));
             }
-        }
-
-        private void myMap_ButtonClick(object sender, KeyEventArgs e) {
-            PointLatLng mypos = Position;
-
-            if (e.KeyCode == Keys.W) {
-                mypos.Lat += 1;
-            } else if (e.KeyCode == Keys.S) {
-                mypos.Lat -= 1;
-            } else if (e.KeyCode == Keys.D) {
-                mypos.Lng += 1;
-            } else if (e.KeyCode == Keys.A) {
-                mypos.Lng -= 1;
-            }
-            Position = mypos;
-            Update();
         }
 
         public void removeMarkers() {
@@ -85,6 +85,9 @@ namespace PhotoManager {
             } else {
                 Cursor = Cursors.Default;
                 editmode = false;
+            }
+            foreach (GMarkerElement gm in overlay.Markers) {
+                gm.IsVisible = !editmode;
             }
         }
 

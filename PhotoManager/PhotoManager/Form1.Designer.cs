@@ -26,9 +26,7 @@
             this.tb_search = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_main = new System.Windows.Forms.TabPage();
-            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.tabPage_viewer = new System.Windows.Forms.TabPage();
-            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabPage_tags = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -79,14 +77,15 @@
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.tslabel_picturesof = new System.Windows.Forms.Label();
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
-            this.trackBar_scale = new PhotoManager.TrackBarControl();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.btn_fav = new System.Windows.Forms.Button();
+            this.trackBar_scale = new PhotoManager.TrackBarControl();
+            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
+            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.tabPage_tags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -114,12 +113,13 @@
             this.tabPage_Taglist.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_search
@@ -162,17 +162,8 @@
             this.tabPage_main.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_main.Size = new System.Drawing.Size(788, 300);
             this.tabPage_main.TabIndex = 0;
-            this.tabPage_main.Text = "Main";
+            this.tabPage_main.Text = "Overview";
             this.tabPage_main.UseVisualStyleBackColor = true;
-            // 
-            // panel_overview
-            // 
-            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_overview.Location = new System.Drawing.Point(3, 3);
-            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
-            this.panel_overview.Name = "panel_overview";
-            this.panel_overview.Size = new System.Drawing.Size(782, 294);
-            this.panel_overview.TabIndex = 0;
             // 
             // tabPage_viewer
             // 
@@ -183,17 +174,6 @@
             this.tabPage_viewer.Size = new System.Drawing.Size(788, 300);
             this.tabPage_viewer.TabIndex = 5;
             this.tabPage_viewer.Text = "View";
-            // 
-            // pictureBox_viewer
-            // 
-            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox_viewer.Name = "pictureBox_viewer";
-            this.pictureBox_viewer.ShownImage = null;
-            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
-            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox_viewer.TabIndex = 0;
-            this.pictureBox_viewer.TabStop = false;
             // 
             // tabPage_tags
             // 
@@ -209,6 +189,7 @@
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(3, 3);
             this.splitContainer2.Name = "splitContainer2";
@@ -241,6 +222,7 @@
             this.tableLayoutPanel2.Controls.Add(this.splitContainer3, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.btn_tagtodefault, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.splitContainer1, 0, 2);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 5;
@@ -249,7 +231,7 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(327, 294);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(335, 294);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // tableLayoutPanel3
@@ -262,11 +244,11 @@
             this.tableLayoutPanel3.Controls.Add(this.tb_datemonth, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.tb_dateyear, 2, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(86, 73);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(88, 73);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(238, 34);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(244, 34);
             this.tableLayoutPanel3.TabIndex = 0;
             // 
             // tb_dateday
@@ -276,7 +258,7 @@
             this.tb_dateday.Location = new System.Drawing.Point(3, 3);
             this.tb_dateday.MaxLength = 2;
             this.tb_dateday.Name = "tb_dateday";
-            this.tb_dateday.Size = new System.Drawing.Size(53, 23);
+            this.tb_dateday.Size = new System.Drawing.Size(55, 23);
             this.tb_dateday.TabIndex = 0;
             this.tb_dateday.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
@@ -284,10 +266,10 @@
             // 
             this.tb_datemonth.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tb_datemonth.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_datemonth.Location = new System.Drawing.Point(62, 3);
+            this.tb_datemonth.Location = new System.Drawing.Point(64, 3);
             this.tb_datemonth.MaxLength = 2;
             this.tb_datemonth.Name = "tb_datemonth";
-            this.tb_datemonth.Size = new System.Drawing.Size(53, 23);
+            this.tb_datemonth.Size = new System.Drawing.Size(55, 23);
             this.tb_datemonth.TabIndex = 0;
             this.tb_datemonth.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
@@ -295,10 +277,10 @@
             // 
             this.tb_dateyear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tb_dateyear.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_dateyear.Location = new System.Drawing.Point(121, 3);
+            this.tb_dateyear.Location = new System.Drawing.Point(125, 3);
             this.tb_dateyear.MaxLength = 4;
             this.tb_dateyear.Name = "tb_dateyear";
-            this.tb_dateyear.Size = new System.Drawing.Size(114, 23);
+            this.tb_dateyear.Size = new System.Drawing.Size(116, 23);
             this.tb_dateyear.TabIndex = 0;
             this.tb_dateyear.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
@@ -307,7 +289,7 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 70);
+            this.label1.Size = new System.Drawing.Size(79, 70);
             this.label1.TabIndex = 1;
             this.label1.Text = "Location";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -318,7 +300,7 @@
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.Location = new System.Drawing.Point(3, 70);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 40);
+            this.label2.Size = new System.Drawing.Size(79, 40);
             this.label2.TabIndex = 1;
             this.label2.Text = "Date";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -329,7 +311,7 @@
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label4.Location = new System.Drawing.Point(3, 184);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(77, 74);
+            this.label4.Size = new System.Drawing.Size(79, 74);
             this.label4.TabIndex = 1;
             this.label4.Text = "Description";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -338,10 +320,10 @@
             // 
             this.tb_tags.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tb_tags.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_tags.Location = new System.Drawing.Point(86, 113);
+            this.tb_tags.Location = new System.Drawing.Point(88, 113);
             this.tb_tags.Multiline = true;
             this.tb_tags.Name = "tb_tags";
-            this.tb_tags.Size = new System.Drawing.Size(238, 68);
+            this.tb_tags.Size = new System.Drawing.Size(244, 68);
             this.tb_tags.TabIndex = 0;
             this.tb_tags.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
@@ -349,19 +331,19 @@
             // 
             this.tb_description.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tb_description.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_description.Location = new System.Drawing.Point(86, 187);
+            this.tb_description.Location = new System.Drawing.Point(88, 187);
             this.tb_description.Multiline = true;
             this.tb_description.Name = "tb_description";
-            this.tb_description.Size = new System.Drawing.Size(238, 68);
+            this.tb_description.Size = new System.Drawing.Size(244, 68);
             this.tb_description.TabIndex = 2;
             this.tb_description.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // btn_applytag
             // 
             this.btn_applytag.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_applytag.Location = new System.Drawing.Point(86, 261);
+            this.btn_applytag.Location = new System.Drawing.Point(88, 261);
             this.btn_applytag.Name = "btn_applytag";
-            this.btn_applytag.Size = new System.Drawing.Size(238, 30);
+            this.btn_applytag.Size = new System.Drawing.Size(244, 30);
             this.btn_applytag.TabIndex = 3;
             this.btn_applytag.Text = "OK";
             this.btn_applytag.UseVisualStyleBackColor = true;
@@ -370,7 +352,7 @@
             // splitContainer3
             // 
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.Location = new System.Drawing.Point(86, 3);
+            this.splitContainer3.Location = new System.Drawing.Point(88, 3);
             this.splitContainer3.Name = "splitContainer3";
             this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -381,7 +363,7 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.btn_showonMap);
-            this.splitContainer3.Size = new System.Drawing.Size(238, 64);
+            this.splitContainer3.Size = new System.Drawing.Size(244, 64);
             this.splitContainer3.SplitterDistance = 31;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -391,7 +373,7 @@
             this.tb_location.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tb_location.Location = new System.Drawing.Point(0, 8);
             this.tb_location.Name = "tb_location";
-            this.tb_location.Size = new System.Drawing.Size(238, 23);
+            this.tb_location.Size = new System.Drawing.Size(244, 23);
             this.tb_location.TabIndex = 0;
             this.tb_location.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
@@ -400,7 +382,7 @@
             this.btn_showonMap.Dock = System.Windows.Forms.DockStyle.Top;
             this.btn_showonMap.Location = new System.Drawing.Point(0, 0);
             this.btn_showonMap.Name = "btn_showonMap";
-            this.btn_showonMap.Size = new System.Drawing.Size(238, 23);
+            this.btn_showonMap.Size = new System.Drawing.Size(244, 23);
             this.btn_showonMap.TabIndex = 0;
             this.btn_showonMap.Text = "Select from Map";
             this.btn_showonMap.UseVisualStyleBackColor = true;
@@ -411,7 +393,7 @@
             this.btn_tagtodefault.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btn_tagtodefault.Location = new System.Drawing.Point(3, 261);
             this.btn_tagtodefault.Name = "btn_tagtodefault";
-            this.btn_tagtodefault.Size = new System.Drawing.Size(77, 30);
+            this.btn_tagtodefault.Size = new System.Drawing.Size(79, 30);
             this.btn_tagtodefault.TabIndex = 5;
             this.btn_tagtodefault.Text = "Default Tag";
             this.btn_tagtodefault.UseVisualStyleBackColor = true;
@@ -420,8 +402,6 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(3, 113);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -433,8 +413,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.checkBox_JoinTags);
-            this.splitContainer1.Size = new System.Drawing.Size(77, 68);
-            this.splitContainer1.SplitterDistance = 39;
+            this.splitContainer1.Size = new System.Drawing.Size(79, 68);
+            this.splitContainer1.SplitterDistance = 31;
             this.splitContainer1.TabIndex = 6;
             // 
             // label3
@@ -442,17 +422,18 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Location = new System.Drawing.Point(0, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 39);
+            this.label3.Size = new System.Drawing.Size(79, 31);
             this.label3.TabIndex = 1;
             this.label3.Text = "Tags";
             this.label3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
             // checkBox_JoinTags
             // 
-            this.checkBox_JoinTags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBox_JoinTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBox_JoinTags.Location = new System.Drawing.Point(16, 0);
             this.checkBox_JoinTags.Name = "checkBox_JoinTags";
-            this.checkBox_JoinTags.Size = new System.Drawing.Size(61, 25);
+            this.checkBox_JoinTags.Size = new System.Drawing.Size(63, 25);
             this.checkBox_JoinTags.TabIndex = 0;
             this.checkBox_JoinTags.Text = "Join";
             this.checkBox_JoinTags.UseVisualStyleBackColor = true;
@@ -673,7 +654,7 @@
             this.trackBar_scale_gap.Location = new System.Drawing.Point(0, 0);
             this.trackBar_scale_gap.Maximum = 6;
             this.trackBar_scale_gap.Name = "trackBar_scale_gap";
-            this.trackBar_scale_gap.Size = new System.Drawing.Size(123, 29);
+            this.trackBar_scale_gap.Size = new System.Drawing.Size(123, 45);
             this.trackBar_scale_gap.TabIndex = 0;
             this.trackBar_scale_gap.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
             // 
@@ -720,7 +701,7 @@
             this.tabPage_favs.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_favs.Size = new System.Drawing.Size(788, 300);
             this.tabPage_favs.TabIndex = 7;
-            this.tabPage_favs.Text = "★";
+            this.tabPage_favs.Text = "★ Bookmarks";
             this.tabPage_favs.UseVisualStyleBackColor = true;
             // 
             // panel_favs
@@ -831,17 +812,6 @@
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
-            // trackBar_scale
-            // 
-            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar_scale.LargeChange = 1;
-            this.trackBar_scale.Location = new System.Drawing.Point(646, 3);
-            this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(153, 17);
-            this.trackBar_scale.TabIndex = 2;
-            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
             // panel_tabHolder
             // 
             this.panel_tabHolder.Controls.Add(this.tabControl1);
@@ -885,6 +855,37 @@
             this.btn_fav.UseVisualStyleBackColor = true;
             this.btn_fav.Click += new System.EventHandler(this.btn_fav_Click);
             // 
+            // trackBar_scale
+            // 
+            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar_scale.LargeChange = 1;
+            this.trackBar_scale.Location = new System.Drawing.Point(646, 3);
+            this.trackBar_scale.Name = "trackBar_scale";
+            this.trackBar_scale.Size = new System.Drawing.Size(153, 17);
+            this.trackBar_scale.TabIndex = 2;
+            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
+            // panel_overview
+            // 
+            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_overview.Location = new System.Drawing.Point(3, 3);
+            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_overview.Name = "panel_overview";
+            this.panel_overview.Size = new System.Drawing.Size(782, 294);
+            this.panel_overview.TabIndex = 0;
+            // 
+            // pictureBox_viewer
+            // 
+            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox_viewer.Name = "pictureBox_viewer";
+            this.pictureBox_viewer.ShownImage = null;
+            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 294);
+            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_viewer.TabIndex = 0;
+            this.pictureBox_viewer.TabStop = false;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -899,7 +900,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage_main.ResumeLayout(false);
             this.tabPage_viewer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.tabPage_tags.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -934,13 +934,14 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel1.PerformLayout();
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.ResumeLayout(false);
 
         }

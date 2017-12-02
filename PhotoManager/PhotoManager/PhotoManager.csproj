@@ -89,6 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\ColorSetting.cs" />
+    <Compile Include="CustomControls\ComboBoxControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\FavouriteElement.cs">
       <SubType>UserControl</SubType>
     </Compile>

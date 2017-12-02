@@ -36,6 +36,8 @@ namespace PhotoManager {
 
         private int lastWorker;
 
+        private bool changedEditlist;
+
         public Form1() {
             InitializeComponent();
             this.AllowDrop = true;
@@ -263,9 +265,7 @@ namespace PhotoManager {
                         updateMultiedit(i, EDITOPERATION.SWITCH);
                         panel_overview.Refresh();
                     } else {
-                        pictureBox_viewer.ShownImage = i;
-                        tabControl1.SelectedTab = tabPage_viewer;
-                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
+                        loadViewerImage(i);
                     }
                 }
             }
@@ -331,7 +331,6 @@ namespace PhotoManager {
         */
         private void TagEdit_Click(object sender, EventArgs e) {
             tabControl1.SelectedTab = tabPage_tags;
-            addImagestoTabPage();
         }
 
         private void addImagestoTabPage() {
@@ -381,7 +380,7 @@ namespace PhotoManager {
             panel_overview.Refresh();
             if (multiedit.Count == 1) {
                 tabControl1_SelectedIndexChanged(multiedit[0], null);
-            }else if (multiedit.Count() == 0) {
+            } else if (multiedit.Count() == 0) {
                 fillTags(null);
             }
         }
@@ -532,6 +531,13 @@ namespace PhotoManager {
             if (e.KeyCode == Keys.Return) {
                 newWorker();
                 multiedit.Clear();
+
+                if (db.favExists(tb_search.Text)) {
+                    btn_fav.Text = "★";
+                } else {
+                    btn_fav.Text = "☆";
+                }
+
             }
         }
 
@@ -548,7 +554,12 @@ namespace PhotoManager {
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
             if (tabControl1.SelectedTab == tabPage_tags) {
-              if(multiedit.Count() == 0) {
+                if (changedEditlist) {
+                    addImagestoTabPage();
+                    changedEditlist = false;
+                }
+
+                if (multiedit.Count() == 0) {
                     fillTags(null);
                 }
             } else if (tabControl1.SelectedTab == tabPage_main) {
@@ -561,6 +572,8 @@ namespace PhotoManager {
             } else if (tabControl1.SelectedTab == tabPage_viewer) {
                 if (pictureBox_viewer.ShownImage != null) {
                     tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
+                } else if (shown.Count() != 0) {
+                    loadViewerImage(shown[0]);
                 }
             } else if (tabControl1.SelectedTab == tabPage_Taglist) {
                 flowLayoutPanel_tags.Controls.Clear();
@@ -583,6 +596,12 @@ namespace PhotoManager {
                 flowLayoutPanel_tags.Controls.AddRange(tee);
                 flowLayoutPanel_tags.Refresh();
             }
+        }
+
+        private void loadViewerImage(Image i) {
+            pictureBox_viewer.ShownImage = i;
+            tabControl1.SelectedTab = tabPage_viewer;
+            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
         }
 
         private void fillTags(Image i) {
@@ -778,6 +797,7 @@ namespace PhotoManager {
                     updateMultiedit(i, multiedit.Contains(i) ? EDITOPERATION.REMOVE : EDITOPERATION.ADD);
                     return;
             }
+            changedEditlist = true;
             updateLabel(multiedit.Count());
         }
 

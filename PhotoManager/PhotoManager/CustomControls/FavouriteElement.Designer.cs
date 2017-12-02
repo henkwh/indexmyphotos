@@ -24,9 +24,9 @@
         /// </summary>
         private void InitializeComponent() {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.lb_fav = new System.Windows.Forms.Label();
             this.btn_delete = new System.Windows.Forms.Button();
             this.btn_copy = new System.Windows.Forms.Button();
+            this.tb_searchstring = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -36,9 +36,9 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 34F));
-            this.tableLayoutPanel1.Controls.Add(this.lb_fav, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.btn_delete, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.btn_copy, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tb_searchstring, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -46,17 +46,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(756, 34);
             this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // lb_fav
-            // 
-            this.lb_fav.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lb_fav.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lb_fav.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.lb_fav.Location = new System.Drawing.Point(3, 0);
-            this.lb_fav.Name = "lb_fav";
-            this.lb_fav.Size = new System.Drawing.Size(684, 34);
-            this.lb_fav.TabIndex = 0;
-            this.lb_fav.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // btn_delete
             // 
@@ -78,6 +67,16 @@
             this.btn_copy.Text = "C";
             this.btn_copy.UseVisualStyleBackColor = true;
             // 
+            // tb_searchstring
+            // 
+            this.tb_searchstring.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_searchstring.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_searchstring.Location = new System.Drawing.Point(3, 3);
+            this.tb_searchstring.Name = "tb_searchstring";
+            this.tb_searchstring.ReadOnly = true;
+            this.tb_searchstring.Size = new System.Drawing.Size(684, 26);
+            this.tb_searchstring.TabIndex = 3;
+            // 
             // FavouriteElement
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -86,6 +85,7 @@
             this.Name = "FavouriteElement";
             this.Size = new System.Drawing.Size(756, 34);
             this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -93,8 +93,8 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label lb_fav;
         private System.Windows.Forms.Button btn_delete;
         private System.Windows.Forms.Button btn_copy;
+        private System.Windows.Forms.TextBox tb_searchstring;
     }
 }
