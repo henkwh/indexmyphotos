@@ -872,6 +872,33 @@ namespace PhotoManager {
             }
         }
 
+        private void btn_help_Click(object sender, EventArgs e) {
+            MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
+            mbi.Show();
+            mbi.addText("Start by drag'n'droppin' *.jpg, *.jpeg or *.png files into the window");
+            mbi.addText("They are automatically copied into the internal program folder and into the database");
+            mbi.addText("So now, you can click them to view them in a full perspective by doing a leftclick");
+            mbi.addText("A rightclick offers different options: 'Delete', 'Edit tags', 'Select all' and 'Show in explorer'.");
+            mbi.addText("You can also select photos by pressing the Ctrl-key and clicking onto the preview image.");
+            mbi.addText("The textbox at the top can hanlde various search queries.");
+            mbi.addText("");
+            mbi.addText("Tag editor");
+            mbi.addText("The Tageditor offers the posibillity to assign tags to your files. Be aware that these informations are only connected to the file via the database, no local EXIF, IPCT etc. information is assigned directly to the imge.");
+            mbi.addText("You can set the location, that consists out of two numeric values: latitude and longitude, separated by a comma. You can either copy them from your map service or select the location directly on the map.");
+            mbi.addText("The date fields have the following pattern: DD-MM-YYYY, you can set either only the year, month and year or al three of them.");
+            mbi.addText("Tags are keywords thar are separated by a comma (e.g. \"vacances,paris,france,centerpampidou\"). Tags are important for filtering your files. There's no limitation on how many tags you can assign");
+            mbi.addText("The description field stores more personal information, e.g. text from postcards or dedications. They are also shown in the viewer at the bottom.");
+            mbi.addText("If you want to edit only some of the values, you can keep them empty, they are then greyed out - and won't be changed then. If you want to clear a value, you can fill it with an empty bracket - the value will then be removed.");
+            mbi.addText("If you want to add tags to existing ones, you can check the checkbox 'join'.");
+            mbi.addText("");
+            mbi.addText("Seraching");
+            mbi.addText("You can type keywords into the textbox to search for tags - seperated by 'AND' or 'OR'");
+            mbi.addText("If you want to search for datevalues you can use 'date=DDMMYYYY' or 'date=MMYYYY' or 'date=YYYY'. You can also use '>', '<' or '>=' and '<='");
+            mbi.addText("If you want to search for locationvalues, you can type 'location:' followed by two numeric values seperated by a comma.");
+            mbi.addText("If you want to search only for valued that are already set, type 'location:set' or 'date=set'");
+            mbi.addText("You can exclude tags, dates and locations by adding '-' in front of the expression");
+        }
+
         public void ClickedMap(string location) {
             tb_search.Text = "Location:" + location;
             tabControl1.SelectedTab = tabPage_main;

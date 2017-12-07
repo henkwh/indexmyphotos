@@ -85,6 +85,7 @@
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.label9 = new System.Windows.Forms.Label();
+            this.btn_help = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
@@ -520,6 +521,7 @@
             this.tableLayoutPanel5.Controls.Add(this.splitContainer5, 1, 3);
             this.tableLayoutPanel5.Controls.Add(this.label8, 0, 6);
             this.tableLayoutPanel5.Controls.Add(this.checkBox_Quickinfo, 1, 6);
+            this.tableLayoutPanel5.Controls.Add(this.btn_help, 0, 4);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 22);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 8;
@@ -916,6 +918,17 @@
             this.label9.Size = new System.Drawing.Size(1, 20);
             this.label9.TabIndex = 7;
             // 
+            // btn_help
+            // 
+            this.btn_help.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_help.Location = new System.Drawing.Point(3, 123);
+            this.btn_help.Name = "btn_help";
+            this.btn_help.Size = new System.Drawing.Size(221, 29);
+            this.btn_help.TabIndex = 16;
+            this.btn_help.Text = "Help";
+            this.btn_help.UseVisualStyleBackColor = true;
+            this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -1040,6 +1053,7 @@
         private TrackBarControl trackBar_scale;
         private System.Windows.Forms.ComboBox combobox_sorting;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btn_help;
     }
 }
 
