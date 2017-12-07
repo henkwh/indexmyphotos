@@ -110,6 +110,9 @@
     <Compile Include="CustomControls\PictureBoxViewer.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomControls\TableLayoutInfoElement.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="CustomControls\TagEditElement.cs">
       <SubType>UserControl</SubType>
     </Compile>

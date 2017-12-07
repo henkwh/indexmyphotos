@@ -1,12 +1,11 @@
 ﻿using System.Windows.Forms;
 
 namespace PhotoManager {
-    class TrackBarControl : TrackBar {
+    public class TrackBarControl : TrackBar {
 
         /*
          * Main panel and map panel are using different scale values. To match the Trackbar on the bottom, each specific values are stored and selecting the other panel causes a switching of the Trackbars values.
          */
-
         private TrackBarSetting main, map;
         public enum tabPage { MAIN, MAP };
 

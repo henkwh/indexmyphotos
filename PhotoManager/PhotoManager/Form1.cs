@@ -38,6 +38,8 @@ namespace PhotoManager {
 
         private bool changedEditlist;
 
+        public TableLayoutInfoElement NavigationBarViewerPanel;
+
         public Form1() {
             InitializeComponent();
             this.AllowDrop = true;
@@ -45,6 +47,7 @@ namespace PhotoManager {
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
             currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
             Utils.createDirectories(currentworkingdirectory, dir_full, dir_preview);
+            NavigationBarViewerPanel = new TableLayoutInfoElement();
 
             //Ititialize BAckgroundworker
             worker = new BackgroundWorker();
@@ -86,6 +89,12 @@ namespace PhotoManager {
             panel_overview.Scroll += Panel_overview_Scroll;
             panel_overview.MouseClick += Panel_overview_MouseClick;
             panel_overview.ContextMenu = addMenuItems();
+
+
+            //tableLayoutPanel4.Controls.Add(new Label { Text = "Type:", Anchor = AnchorStyles.Left, AutoSize = true }, 3, 0);
+
+            //tableLayoutPanel4.Controls.Remove(combobox_sorting);
+            //tableLayoutPanel4.Controls.Add(combobox_sorting, 2, 0);
 
             //Load
             newWorker();
@@ -203,7 +212,7 @@ namespace PhotoManager {
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
                 img.setPreview(bmp);
                 img.setImage(bmp, frame);
-                if (temp != null && temp.Contains(img.getName())) { selectImage(img);}
+                if (temp != null && temp.Contains(img.getName())) { selectImage(img); }
                 img.setSize(imagescale);
 
                 if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {
@@ -432,8 +441,9 @@ namespace PhotoManager {
                         index = index > 0 ? index : shown.Count();
                         pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + shown[index - 1].getName() + shown[index - 1].getFileType());
                         pictureBox_viewer.ShownImage = shown[index - 1];
+                        NavigationBarViewerPanel.setDescription(shown[index - 1].getDescription());
+                        NavigationBarViewerPanel.setDate(shown[index - 1].getDate());
                         updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
-
                     }
                     break;
                 case Keys.Right:
@@ -443,6 +453,8 @@ namespace PhotoManager {
                         pictureBox_viewer.Image = new Bitmap(currentworkingdirectory
                             + dir_full + shown[index + 1].getName() + shown[index + 1].getFileType());
                         pictureBox_viewer.ShownImage = shown[index + 1];
+                        NavigationBarViewerPanel.setDescription(shown[index + 1].getDescription());
+                        NavigationBarViewerPanel.setDate(shown[index + 1].getDate());
                         tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
                     }
                     break;
@@ -570,13 +582,27 @@ namespace PhotoManager {
                 tslabel_picturesof.Text = map.getPinCount() + "/" + shown.Count() + "/" + db.getEntryCount();
                 map.setEditMode(false);
                 trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
-            } else if (tabControl1.SelectedTab == tabPage_viewer) {
+            }
+            if (tabControl1.SelectedTab == tabPage_viewer) {
                 if (pictureBox_viewer.ShownImage != null) {
                     tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
                 } else if (shown.Count() != 0) {
                     loadViewerImage(shown[0]);
                 }
-            } else if (tabControl1.SelectedTab == tabPage_Taglist) {
+                tableLayoutPanel4.Controls.Remove(tableLayoutPanel6);
+                tableLayoutPanel4.Controls.Add(NavigationBarViewerPanel, 2, 0);
+                tableLayoutPanel4.Height = 10;
+                if (pictureBox_viewer.ShownImage != null) {
+                    NavigationBarViewerPanel.setDescription(pictureBox_viewer.ShownImage.getDescription());
+                    NavigationBarViewerPanel.setDate(pictureBox_viewer.ShownImage.getDate());
+                }
+            } else {
+                if (!tableLayoutPanel4.Contains(tableLayoutPanel6)) {
+                    tableLayoutPanel4.Controls.Remove(NavigationBarViewerPanel);
+                    tableLayoutPanel4.Controls.Add(tableLayoutPanel6, 2, 0);
+                }
+            }
+            if (tabControl1.SelectedTab == tabPage_Taglist) {
                 flowLayoutPanel_tags.Controls.Clear();
                 TagEditElement[] tee = db.getTags();
                 foreach (TagEditElement t in tee) {
