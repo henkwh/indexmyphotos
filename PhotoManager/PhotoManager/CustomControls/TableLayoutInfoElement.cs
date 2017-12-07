@@ -48,7 +48,7 @@ namespace PhotoManager.CustomControls {
                     t = s + "." + t;
                 }
             }
-            date.Text = t.Substring(0, t.Count() - 1);
+            date.Text = t.Substring(0, Math.Max(0, t.Count() - 1));
         }
 
         private static Label newLabel(System.Drawing.ContentAlignment alignment) {
