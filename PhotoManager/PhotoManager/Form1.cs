@@ -203,7 +203,7 @@ namespace PhotoManager {
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
                 img.setPreview(bmp);
                 img.setImage(bmp, frame);
-                if (temp != null && temp.Contains(img.getName())) { selectImage(img); }
+                if (temp != null && temp.Contains(img.getName())) { selectImage(img);}
                 img.setSize(imagescale);
 
                 if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {
@@ -423,27 +423,27 @@ namespace PhotoManager {
             switch (e.KeyCode) {
                 case Keys.Escape:
                     resetMultiedit();
+                    justDragDropped = new List<string>();
                     panel_overview.Refresh();
                     break;
                 case Keys.Left:
                     if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
                         int index = shown.IndexOf(pictureBox_viewer.ShownImage);
-                        if (index > 0) {
-                            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + shown[index - 1].getName() + shown[index - 1].getFileType());
-                            pictureBox_viewer.ShownImage = shown[index - 1];
-                            updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
-                        }
+                        index = index > 0 ? index : shown.Count();
+                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + shown[index - 1].getName() + shown[index - 1].getFileType());
+                        pictureBox_viewer.ShownImage = shown[index - 1];
+                        updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
+
                     }
                     break;
                 case Keys.Right:
                     if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
                         int index = shown.IndexOf(pictureBox_viewer.ShownImage);
-                        if (index < shown.Count - 1) {
-                            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory
-                                + dir_full + shown[index + 1].getName() + shown[index + 1].getFileType());
-                            pictureBox_viewer.ShownImage = shown[index + 1];
-                            tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
-                        }
+                        index = index < shown.Count - 1 ? index : -1;
+                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory
+                            + dir_full + shown[index + 1].getName() + shown[index + 1].getFileType());
+                        pictureBox_viewer.ShownImage = shown[index + 1];
+                        tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
                     }
                     break;
             }
