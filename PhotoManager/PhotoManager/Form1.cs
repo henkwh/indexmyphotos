@@ -23,7 +23,7 @@ namespace PhotoManager {
         private GMapInstance map;
 
         private List<Image> multiedit = new List<Image>();
-        private List<string> justDragDropped;
+        private List<string> justDragDropped = new List<string>();
         private List<Image> shown = new List<Image>();
 
         private DBHandler db;
@@ -174,7 +174,6 @@ namespace PhotoManager {
          */
         private void worker_finished(object sender, RunWorkerCompletedEventArgs e) {
             tsprogressbar.Value = shown.Count();
-            justDragDropped = null;
             panel_overview.Refresh();
             ThreadRunning = false;
             if (newWorkerRequested == true) {
@@ -198,11 +197,13 @@ namespace PhotoManager {
             panel_overview.MouseMove += Panel_overview_MouseMove1;
             int ticks = Environment.TickCount + 700;            //Delay after refresh()
             bool frame = Properties.Settings.Default.BORDERSTYLE_FRAME;
+            List<string> temp = justDragDropped;
+            justDragDropped = new List<string>();
             foreach (Image img in shown) {
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
                 img.setPreview(bmp);
                 img.setImage(bmp, frame);
-                if (justDragDropped != null && justDragDropped.Contains(img.getName())) { selectImage(img); }
+                if (temp != null && temp.Contains(img.getName())) { selectImage(img); }
                 img.setSize(imagescale);
 
                 if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {
@@ -784,12 +785,16 @@ namespace PhotoManager {
                 case EDITOPERATION.ADD:
                     if (!multiedit.Contains(i)) {
                         multiedit.Add(i);
+                        justDragDropped.Add(i.getName());
                         i.showBorder(Properties.Settings.Default.BORDERSTYLE_FRAME);
                     }
                     break;
                 case EDITOPERATION.REMOVE:
                     if (multiedit.Contains(i)) {
                         multiedit.Remove(i);
+                        if (justDragDropped.Contains(i.getName())) {
+                            justDragDropped.Remove(i.getName());
+                        }
                         i.hideBorder();
                     }
                     break;
