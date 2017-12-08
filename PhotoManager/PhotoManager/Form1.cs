@@ -82,7 +82,7 @@ namespace PhotoManager {
             trackBar_scale_gap.Value = Math.Min(Math.Max((Properties.Settings.Default.GAPSCALE - 10) / 2, 0), trackBar_scale_gap.Maximum);
             Properties.Settings.Default.Upgrade();
             checkBox_autoScale.Checked = Properties.Settings.Default.AUTOSCALE;
-            Utils.addSelectionObects(combobox_sorting, comboBox_bgColor, comboBox_selectionColor);
+            Utils.addSelectionObects(combobox_sorting, comboBox_MapProvider, comboBox_bgColor, comboBox_selectionColor);
 
             //Add event handlers
             panel_overview.Paint += Panel_overview_Paint;
@@ -897,6 +897,17 @@ namespace PhotoManager {
             mbi.addText("If you want to search for locationvalues, you can type 'location:' followed by two numeric values seperated by a comma.");
             mbi.addText("If you want to search only for valued that are already set, type 'location:set' or 'date=set'");
             mbi.addText("You can exclude tags, dates and locations by adding '-' in front of the expression");
+        }
+
+        private void comboBox_MapProvider_SelectedIndexChanged(object sender, EventArgs e) {
+            if (map.MapProvider != ((OrderElement)comboBox_MapProvider.SelectedItem).Provider) {
+                map.MapProvider = ((OrderElement)comboBox_MapProvider.SelectedItem).Provider;
+                Properties.Settings.Default.MAPPROVIDER = ((OrderElement)comboBox_MapProvider.SelectedItem).ToString();
+            }
+        }
+
+        private void tableLayoutPanel4_Paint(object sender, PaintEventArgs e) {
+
         }
 
         public void ClickedMap(string location) {

@@ -1,4 +1,6 @@
-﻿namespace PhotoManager {
+﻿using GMap.NET.WindowsForms;
+
+namespace PhotoManager {
     class OrderElement {
 
         public OrderElement(string text, string query) {
@@ -6,9 +8,9 @@
             this.Query = query;
         }
 
-        public OrderElement(string text, GMap.NET.MapProviders.GMapProvider provider) {
+        public OrderElement(string text, GMap.NET.MapProviders.GMapProvider mapprovider) {
             this.Text = text;
-            this.Provider = provider;
+            this.Provider = mapprovider;
         }
 
         override

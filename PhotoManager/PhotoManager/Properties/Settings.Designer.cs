@@ -130,5 +130,17 @@ namespace PhotoManager.Properties {
                 this["QUICKINFO"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MAPPROVIDER {
+            get {
+                return ((string)(this["MAPPROVIDER"]));
+            }
+            set {
+                this["MAPPROVIDER"] = value;
+            }
+        }
     }
 }
