@@ -116,6 +116,7 @@ namespace PhotoManager {
             GMarkerElement marker = new GMarkerElement(point, ImageGenerator.resizeImage(preview, pinscale));
             marker.Bitmap_DefSize = preview;
             foreach (GMarkerElement ie in overlay.Markers) {
+                System.Diagnostics.Debug.WriteLine(ie.Position.Lat+" : "+point.Lat+" ; "+ ie.Position.Lng+" : "+point.Lng);
                 if (ie.Position.Lat == point.Lat && ie.Position.Lng == point.Lng) {
                     ie.IncrementToolTipCounter();
                     return;

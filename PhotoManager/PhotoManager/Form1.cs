@@ -90,12 +90,6 @@ namespace PhotoManager {
             panel_overview.MouseClick += Panel_overview_MouseClick;
             panel_overview.ContextMenu = addMenuItems();
 
-
-            //tableLayoutPanel4.Controls.Add(new Label { Text = "Type:", Anchor = AnchorStyles.Left, AutoSize = true }, 3, 0);
-
-            //tableLayoutPanel4.Controls.Remove(combobox_sorting);
-            //tableLayoutPanel4.Controls.Add(combobox_sorting, 2, 0);
-
             //Load
             newWorker();
         }
@@ -397,7 +391,7 @@ namespace PhotoManager {
 
 
         /*
-        * Removes all references to an image coomnpletely - in database, preview/full directory and the object
+        * Removes all references to an image completely - in database, preview/full directory and the object
         */
         private void Delete_Click(Object sender, EventArgs e) {
             while (multiedit.Count != 0) {
@@ -487,7 +481,7 @@ namespace PhotoManager {
             bool tagjoin = checkBox_JoinTags.Checked;
             string location = tb_location.Text;
             string dtin = Utils.parseDate(tb_dateyear.Text, true) + Utils.parseDate(tb_datemonth.Text, false) + Utils.parseDate(tb_dateday.Text, false);
-            if (dtin.Count() != 8) {
+            if (dtin.Count() != 8 || dtin[0] == '0') {
                 MessageBox.Show("Invalid Date");
                 return;
             }
@@ -907,6 +901,10 @@ namespace PhotoManager {
         }
 
         private void tableLayoutPanel4_Paint(object sender, PaintEventArgs e) {
+
+        }
+
+        private void panel_overview_Paint_1(object sender, PaintEventArgs e) {
 
         }
 
