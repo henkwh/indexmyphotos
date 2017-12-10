@@ -71,8 +71,6 @@ namespace PhotoManager {
             //Initialize GMap
             map = new GMapInstance(this, currentworkingdirectory);
             tabPage_Map.Controls.Add(map);
-            trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAIN, 0);
-            imagescale = trackBar_scale.scrollEvent(TrackBarControl.tabPage.MAIN);
 
             //Initialize quickinfo tooltip
             toolTip = new ToolTip();
@@ -89,6 +87,8 @@ namespace PhotoManager {
             Properties.Settings.Default.Upgrade();
             checkBox_autoScale.Checked = Properties.Settings.Default.AUTOSCALE;
             Utils.addSelectionObects(combobox_sorting, comboBox_MapProvider, comboBox_bgColor, comboBox_selectionColor);
+            trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAIN, Properties.Settings.Default.SCALE_MAIN);
+            imagescale = trackBar_scale.scrollEvent(TrackBarControl.tabPage.MAIN);
 
             //Add event handlers
             panel_overview.Paint += Panel_overview_Paint;

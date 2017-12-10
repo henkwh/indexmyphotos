@@ -23,10 +23,10 @@ namespace PhotoManager {
             }
             Maximum = tbs.Ticks;
             Minimum = 0;
-            Value = (int)((tbs.Value - tbs.Min) * (1.0 * tbs.Ticks / (1.0 * tbs.Max - tbs.Min)));
+            Value = (int)((tbs.Value + 1 - tbs.Min) * (1.0 * tbs.Ticks / (1.0 * tbs.Max - tbs.Min)));
         }
 
-        public int scrollEvent(tabPage tp) {   // 50 150 100 5
+        public int scrollEvent(tabPage tp) {
             TrackBarSetting tbs = null;
             if (tp == tabPage.MAIN) {
                 tbs = main;
