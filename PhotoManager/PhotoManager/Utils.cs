@@ -16,6 +16,7 @@ namespace PhotoManager {
         //Identify extended commands in search
         public const string KEYWORD_LOC = "location:";
         public const string KEYWORD_DATE = "date";
+        public const string KEYWORD_DESCRIPTION = "description:";
 
 
         /*
@@ -23,8 +24,9 @@ namespace PhotoManager {
          */
         public static string getHash(string filepath) {
             FileStream fop = File.OpenRead(filepath);
-            return BitConverter.ToString(System.Security.Cryptography.SHA1.Create().ComputeHash(fop));
-
+            string s = BitConverter.ToString(System.Security.Cryptography.SHA1.Create().ComputeHash(fop));
+            fop.Dispose();
+            return s;
         }
 
         /*
@@ -205,11 +207,9 @@ namespace PhotoManager {
             }
         }
 
-        public static string getDateFromFile(string path) {
-            DateTime dt = new DateTime(Math.Min(File.GetCreationTime(path).Ticks, Math.Min(File.GetLastWriteTime(path).Ticks, File.GetLastAccessTime(path).Ticks)));
-            return dt.Year + Utils.parseDate(dt.Month + "", false) + Utils.parseDate(dt.Day + "", false);
+        public static string parseDate(int d, bool year) {
+            return parseDate(d.ToString(), year);
         }
-
     }
 }
 

@@ -85,6 +85,10 @@ namespace PhotoManager {
                         s += " f.date " + connective + "'" + keyword + "'";
                     }
 
+                } else if (keyword.StartsWith(Utils.KEYWORD_DESCRIPTION)) {
+                    keyword = keyword.Substring(Utils.KEYWORD_DESCRIPTION.Count());
+                    s += "f.description " + (not == true ? "NOT " : "") + "LIKE '%" + keyword + "%'";
+
                 } else if (not == true) {
                     s += " f.id NOT IN(SELECT DISTINCT f.id FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE t.tag LIKE '" + keyword + "')";
                 } else {

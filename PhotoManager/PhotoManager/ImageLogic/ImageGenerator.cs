@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PhotoManager.CustomControls;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace PhotoManager {
     static class ImageGenerator {
@@ -32,12 +34,26 @@ namespace PhotoManager {
                 if (!File.Exists(complete)) {
                     return null;
                 }
+                int orientation = 1;
                 Bitmap tempBmp;
                 try {
                     tempBmp = new Bitmap(complete);
                 } catch {
                     return null;
                 }
+                if (tempBmp.PropertyIdList.Contains(0x112)) {
+                    orientation = tempBmp.GetPropertyItem(0x112).Value[0];
+                }
+                if (tempBmp.PropertyIdList.Contains(0x0132)) {
+                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x0132).Value)+"_1");
+                }
+                if (tempBmp.PropertyIdList.Contains(0x9286)) {
+                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9286).Value) + "_2");
+                }
+                if (tempBmp.PropertyIdList.Contains(0x9003)) {
+                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9003).Value) + "_3");
+                }
+
                 Size ret = new Size(PREVIEWSIZE, PREVIEWSIZE);
                 if (tempBmp.Height > tempBmp.Width) {
                     ret.Height = PREVIEWSIZE;
@@ -47,8 +63,9 @@ namespace PhotoManager {
                     ret.Height = PREVIEWSIZE * tempBmp.Height / tempBmp.Width;
                 }
                 Bitmap bmp = new Bitmap(tempBmp, ret);
-                Bitmap bmp2 = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), PixelFormat.Format16bppRgb565);
-                tempBmp.Dispose();//Format16bppRgb555
+                Bitmap bmp2 = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), PixelFormat.Format16bppRgb565);//Format16bppRgb555
+                bmp2 = doFlip(bmp2, orientation);
+                tempBmp.Dispose();
                 bmp2.Save(cwd + preview + filepath);
                 return bmp;
             } else {
@@ -56,6 +73,20 @@ namespace PhotoManager {
             }
         }
 
+
+        public static Bitmap doFlip(Bitmap bmp, int id) {
+            switch (id) {
+                case 1: return bmp;
+                case 2: bmp.RotateFlip(RotateFlipType.RotateNoneFlipX); break;
+                case 3: bmp.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
+                case 4: bmp.RotateFlip(RotateFlipType.Rotate180FlipX); break;
+                case 5: bmp.RotateFlip(RotateFlipType.Rotate90FlipX); break;
+                case 6: bmp.RotateFlip(RotateFlipType.Rotate90FlipNone); break;
+                case 7: bmp.RotateFlip(RotateFlipType.Rotate270FlipX); break;
+                case 8: bmp.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
+            }
+            return bmp;
+        }
         public static Bitmap resizeImage(Bitmap imgToResize, int size) {
             return new Bitmap(imgToResize, genSize(size, imgToResize.Width, imgToResize.Height));
         }
@@ -104,6 +135,40 @@ namespace PhotoManager {
                 return new int[] { gap, c };
             }
 
+        }
+
+        public static MetadataElement getMetaData(string path, bool getComment, bool getDate) {
+            long parsedate = Math.Min(File.GetCreationTime(path).Ticks, Math.Min(File.GetLastWriteTime(path).Ticks, File.GetLastAccessTime(path).Ticks));
+            DateTime dt = new DateTime(parsedate);
+            string[] year = new string[] { Utils.parseDate(dt.Year, true), Utils.parseDate(dt.Month, false), Utils.parseDate(dt.Day, false) };
+
+            BitmapDecoder decoder;
+            BitmapMetadata metadata = null;
+            try {
+                using (Stream jpegStreamIn = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)) {
+                    decoder = new JpegBitmapDecoder(jpegStreamIn, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+                    jpegStreamIn.Dispose();
+                }
+                BitmapFrame frame = decoder.Frames[0];
+                metadata = (BitmapMetadata)frame.Metadata;
+            } catch { }
+
+            if (metadata != null && getDate) {
+
+                try {
+                    string datetmp = metadata.DateTaken;
+                    if (datetmp != null && datetmp.Count() >= 10 && datetmp[0] != '0') {
+                        string[] year2 = new string[] { Utils.parseDate(datetmp.ToString().Substring(6, 4), true), Utils.parseDate(datetmp.ToString().Substring(3, 2), false), Utils.parseDate(datetmp.ToString().Substring(0, 2), false) };
+                        if (Int32.Parse(year2[0] + year2[1] + year2[2]) < Int32.Parse(year[0] + year[1] + year[2])) {
+                            year = year2;
+                        }
+                    }
+                } catch { }
+                int date = getDate ? Int32.Parse(year[0] + year[1] + year[2]) : Int32.Parse(Utils.YEAR_STD);
+                return new MetadataElement(!getComment || metadata.Comment == null ? "" : metadata.Comment, date);
+            }
+            int date2 = getDate ? Int32.Parse(year[0] + year[1] + year[2]) : Int32.Parse(Utils.YEAR_STD);
+            return new MetadataElement("", date2);
         }
     }
 }

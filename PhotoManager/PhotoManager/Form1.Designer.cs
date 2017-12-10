@@ -32,6 +32,8 @@
             this.tabPage_tags = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.btn_showonMap = new System.Windows.Forms.Button();
+            this.tb_location = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tb_dateday = new System.Windows.Forms.TextBox();
@@ -41,16 +43,17 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tb_tags = new System.Windows.Forms.TextBox();
             this.tb_description = new System.Windows.Forms.TextBox();
-            this.btn_applytag = new System.Windows.Forms.Button();
-            this.tb_location = new System.Windows.Forms.TextBox();
-            this.btn_showonMap = new System.Windows.Forms.Button();
-            this.btn_tagtodefault = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label3 = new System.Windows.Forms.Label();
             this.checkBox_JoinTags = new System.Windows.Forms.CheckBox();
+            this.btn_applytag = new System.Windows.Forms.Button();
+            this.btn_tagtodefault = new System.Windows.Forms.Button();
+            this.label12 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.btn_loadfromFile = new System.Windows.Forms.Button();
+            this.btn_loadcommentfromfile = new System.Windows.Forms.Button();
             this.btn_clearlist = new System.Windows.Forms.Button();
             this.panel_tagedit = new System.Windows.Forms.FlowLayoutPanel();
-            this.btn_loadfromFile = new System.Windows.Forms.Button();
             this.tabPage_Map = new System.Windows.Forms.TabPage();
             this.tabPage_Settings = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
@@ -72,15 +75,17 @@
             this.checkBox_Quickinfo = new System.Windows.Forms.CheckBox();
             this.btn_help = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.checkBox_autoinsertdate = new System.Windows.Forms.CheckBox();
+            this.checkBox_autoinsertcomment = new System.Windows.Forms.CheckBox();
             this.tabPage_favs = new System.Windows.Forms.TabPage();
             this.panel_favs = new System.Windows.Forms.FlowLayoutPanel();
             this.tabPage_Taglist = new System.Windows.Forms.TabPage();
             this.flowLayoutPanel_tags = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.bottomNaviBar = new System.Windows.Forms.TableLayoutPanel();
             this.tslabel_picturesof = new System.Windows.Forms.Label();
-            this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
+            this.bottomNaviSettings = new System.Windows.Forms.TableLayoutPanel();
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
             this.comboBox_MapProvider = new System.Windows.Forms.ComboBox();
@@ -105,6 +110,7 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tableLayoutPanel8.SuspendLayout();
             this.tabPage_Settings.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -113,11 +119,12 @@
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale_gap)).BeginInit();
+            this.tableLayoutPanel7.SuspendLayout();
             this.tabPage_favs.SuspendLayout();
             this.tabPage_Taglist.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel4.SuspendLayout();
-            this.tableLayoutPanel6.SuspendLayout();
+            this.bottomNaviBar.SuspendLayout();
+            this.bottomNaviSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
@@ -238,7 +245,6 @@
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25.45455F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 74.54545F));
-            this.tableLayoutPanel2.Controls.Add(this.btn_loadfromFile, 1, 5);
             this.tableLayoutPanel2.Controls.Add(this.btn_showonMap, 1, 4);
             this.tableLayoutPanel2.Controls.Add(this.tb_location, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
@@ -250,6 +256,8 @@
             this.tableLayoutPanel2.Controls.Add(this.splitContainer1, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.btn_applytag, 1, 6);
             this.tableLayoutPanel2.Controls.Add(this.btn_tagtodefault, 0, 6);
+            this.tableLayoutPanel2.Controls.Add(this.label12, 0, 5);
+            this.tableLayoutPanel2.Controls.Add(this.tableLayoutPanel8, 1, 5);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -263,6 +271,28 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(335, 290);
             this.tableLayoutPanel2.TabIndex = 0;
+            // 
+            // btn_showonMap
+            // 
+            this.btn_showonMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_showonMap.Location = new System.Drawing.Point(88, 198);
+            this.btn_showonMap.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btn_showonMap.Name = "btn_showonMap";
+            this.btn_showonMap.Size = new System.Drawing.Size(244, 25);
+            this.btn_showonMap.TabIndex = 0;
+            this.btn_showonMap.Text = "Select location from Map";
+            this.btn_showonMap.UseVisualStyleBackColor = true;
+            this.btn_showonMap.Click += new System.EventHandler(this.btn_showonMap_Click);
+            // 
+            // tb_location
+            // 
+            this.tb_location.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tb_location.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_location.Location = new System.Drawing.Point(88, 3);
+            this.tb_location.Name = "tb_location";
+            this.tb_location.Size = new System.Drawing.Size(244, 23);
+            this.tb_location.TabIndex = 0;
+            this.tb_location.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
             // label1
             // 
@@ -369,50 +399,6 @@
             this.tb_description.TabIndex = 2;
             this.tb_description.TextChanged += new System.EventHandler(this.tb_TextChanged);
             // 
-            // btn_applytag
-            // 
-            this.btn_applytag.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_applytag.Location = new System.Drawing.Point(88, 257);
-            this.btn_applytag.Name = "btn_applytag";
-            this.btn_applytag.Size = new System.Drawing.Size(244, 30);
-            this.btn_applytag.TabIndex = 3;
-            this.btn_applytag.Text = "OK";
-            this.btn_applytag.UseVisualStyleBackColor = true;
-            this.btn_applytag.Click += new System.EventHandler(this.btn_applytag_Click);
-            // 
-            // tb_location
-            // 
-            this.tb_location.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tb_location.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_location.Location = new System.Drawing.Point(88, 3);
-            this.tb_location.Name = "tb_location";
-            this.tb_location.Size = new System.Drawing.Size(244, 23);
-            this.tb_location.TabIndex = 0;
-            this.tb_location.TextChanged += new System.EventHandler(this.tb_TextChanged);
-            // 
-            // btn_showonMap
-            // 
-            this.btn_showonMap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_showonMap.Location = new System.Drawing.Point(88, 198);
-            this.btn_showonMap.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btn_showonMap.Name = "btn_showonMap";
-            this.btn_showonMap.Size = new System.Drawing.Size(244, 25);
-            this.btn_showonMap.TabIndex = 0;
-            this.btn_showonMap.Text = "Select location from Map";
-            this.btn_showonMap.UseVisualStyleBackColor = true;
-            this.btn_showonMap.Click += new System.EventHandler(this.btn_showonMap_Click);
-            // 
-            // btn_tagtodefault
-            // 
-            this.btn_tagtodefault.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_tagtodefault.Location = new System.Drawing.Point(3, 257);
-            this.btn_tagtodefault.Name = "btn_tagtodefault";
-            this.btn_tagtodefault.Size = new System.Drawing.Size(79, 30);
-            this.btn_tagtodefault.TabIndex = 5;
-            this.btn_tagtodefault.Text = "Default Tag";
-            this.btn_tagtodefault.UseVisualStyleBackColor = true;
-            this.btn_tagtodefault.Click += new System.EventHandler(this.btn_tagtodefault_Click);
-            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -453,6 +439,79 @@
             this.checkBox_JoinTags.UseVisualStyleBackColor = true;
             this.checkBox_JoinTags.CheckedChanged += new System.EventHandler(this.checkBox_JoinTags_CheckedChanged);
             // 
+            // btn_applytag
+            // 
+            this.btn_applytag.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_applytag.Location = new System.Drawing.Point(88, 257);
+            this.btn_applytag.Name = "btn_applytag";
+            this.btn_applytag.Size = new System.Drawing.Size(244, 30);
+            this.btn_applytag.TabIndex = 3;
+            this.btn_applytag.Text = "OK";
+            this.btn_applytag.UseVisualStyleBackColor = true;
+            this.btn_applytag.Click += new System.EventHandler(this.btn_applytag_Click);
+            // 
+            // btn_tagtodefault
+            // 
+            this.btn_tagtodefault.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_tagtodefault.Location = new System.Drawing.Point(3, 257);
+            this.btn_tagtodefault.Name = "btn_tagtodefault";
+            this.btn_tagtodefault.Size = new System.Drawing.Size(79, 30);
+            this.btn_tagtodefault.TabIndex = 5;
+            this.btn_tagtodefault.Text = "Default Tag";
+            this.btn_tagtodefault.UseVisualStyleBackColor = true;
+            this.btn_tagtodefault.Click += new System.EventHandler(this.btn_tagtodefault_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label12.Location = new System.Drawing.Point(3, 225);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(79, 29);
+            this.label12.TabIndex = 7;
+            this.label12.Text = "Import from File(s)";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel8
+            // 
+            this.tableLayoutPanel8.ColumnCount = 2;
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Controls.Add(this.btn_loadfromFile, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.btn_loadcommentfromfile, 1, 0);
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(85, 225);
+            this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel8.Name = "tableLayoutPanel8";
+            this.tableLayoutPanel8.RowCount = 1;
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(250, 29);
+            this.tableLayoutPanel8.TabIndex = 8;
+            // 
+            // btn_loadfromFile
+            // 
+            this.btn_loadfromFile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_loadfromFile.Location = new System.Drawing.Point(3, 2);
+            this.btn_loadfromFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btn_loadfromFile.Name = "btn_loadfromFile";
+            this.btn_loadfromFile.Size = new System.Drawing.Size(119, 25);
+            this.btn_loadfromFile.TabIndex = 0;
+            this.btn_loadfromFile.Text = "Date";
+            this.btn_loadfromFile.UseVisualStyleBackColor = true;
+            this.btn_loadfromFile.Click += new System.EventHandler(this.btn_loadfromFile_Click);
+            // 
+            // btn_loadcommentfromfile
+            // 
+            this.btn_loadcommentfromfile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btn_loadcommentfromfile.Location = new System.Drawing.Point(128, 2);
+            this.btn_loadcommentfromfile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btn_loadcommentfromfile.Name = "btn_loadcommentfromfile";
+            this.btn_loadcommentfromfile.Size = new System.Drawing.Size(119, 25);
+            this.btn_loadcommentfromfile.TabIndex = 0;
+            this.btn_loadcommentfromfile.Text = "Description";
+            this.btn_loadcommentfromfile.UseVisualStyleBackColor = true;
+            this.btn_loadcommentfromfile.Click += new System.EventHandler(this.btn_loadfromFile_Click);
+            // 
             // btn_clearlist
             // 
             this.btn_clearlist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -467,23 +526,12 @@
             // panel_tagedit
             // 
             this.panel_tagedit.AutoScroll = true;
+            this.panel_tagedit.Cursor = System.Windows.Forms.Cursors.Default;
             this.panel_tagedit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_tagedit.Location = new System.Drawing.Point(0, 0);
             this.panel_tagedit.Name = "panel_tagedit";
             this.panel_tagedit.Size = new System.Drawing.Size(443, 290);
             this.panel_tagedit.TabIndex = 0;
-            // 
-            // btn_loadfromFile
-            // 
-            this.btn_loadfromFile.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_loadfromFile.Location = new System.Drawing.Point(88, 227);
-            this.btn_loadfromFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.btn_loadfromFile.Name = "btn_loadfromFile";
-            this.btn_loadfromFile.Size = new System.Drawing.Size(244, 25);
-            this.btn_loadfromFile.TabIndex = 0;
-            this.btn_loadfromFile.Text = "Load date from File(s)";
-            this.btn_loadfromFile.UseVisualStyleBackColor = true;
-            this.btn_loadfromFile.Click += new System.EventHandler(this.btn_loadfromFile_Click);
             // 
             // tabPage_Map
             // 
@@ -525,7 +573,7 @@
             this.tableLayoutPanel5.Controls.Add(this.checkBox_Quickinfo, 1, 6);
             this.tableLayoutPanel5.Controls.Add(this.btn_help, 0, 7);
             this.tableLayoutPanel5.Controls.Add(this.label11, 0, 4);
-            this.tableLayoutPanel5.Controls.Add(this.checkBox_autoinsertdate, 1, 4);
+            this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel7, 1, 4);
             this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 22);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 8;
@@ -742,21 +790,47 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(221, 35);
             this.label11.TabIndex = 17;
-            this.label11.Text = "Auto insert Date from file attributes";
+            this.label11.Text = "Auto insert information from file attributes";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // tableLayoutPanel7
+            // 
+            this.tableLayoutPanel7.ColumnCount = 2;
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.Controls.Add(this.checkBox_autoinsertdate, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.checkBox_autoinsertcomment, 1, 0);
+            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(230, 123);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            this.tableLayoutPanel7.RowCount = 1;
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(221, 29);
+            this.tableLayoutPanel7.TabIndex = 19;
             // 
             // checkBox_autoinsertdate
             // 
             this.checkBox_autoinsertdate.AutoSize = true;
             this.checkBox_autoinsertdate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBox_autoinsertdate.Location = new System.Drawing.Point(265, 123);
-            this.checkBox_autoinsertdate.Margin = new System.Windows.Forms.Padding(38, 3, 3, 3);
+            this.checkBox_autoinsertdate.Location = new System.Drawing.Point(3, 3);
             this.checkBox_autoinsertdate.Name = "checkBox_autoinsertdate";
-            this.checkBox_autoinsertdate.Size = new System.Drawing.Size(186, 29);
+            this.checkBox_autoinsertdate.Size = new System.Drawing.Size(104, 23);
             this.checkBox_autoinsertdate.TabIndex = 18;
-            this.checkBox_autoinsertdate.Text = "Auto insert date";
+            this.checkBox_autoinsertdate.Text = "Date";
             this.checkBox_autoinsertdate.UseVisualStyleBackColor = true;
             this.checkBox_autoinsertdate.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
+            // 
+            // checkBox_autoinsertcomment
+            // 
+            this.checkBox_autoinsertcomment.AutoSize = true;
+            this.checkBox_autoinsertcomment.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBox_autoinsertcomment.Location = new System.Drawing.Point(113, 3);
+            this.checkBox_autoinsertcomment.Name = "checkBox_autoinsertcomment";
+            this.checkBox_autoinsertcomment.Size = new System.Drawing.Size(105, 23);
+            this.checkBox_autoinsertcomment.TabIndex = 19;
+            this.checkBox_autoinsertcomment.Text = "Comment";
+            this.checkBox_autoinsertcomment.UseVisualStyleBackColor = true;
+            this.checkBox_autoinsertcomment.CheckedChanged += new System.EventHandler(this.checkBox_autoinsertcomment_CheckedChanged);
             // 
             // tabPage_favs
             // 
@@ -807,7 +881,7 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.bottomNaviBar, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.panel_tabHolder, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.splitContainer4, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -820,24 +894,23 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(802, 405);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
-            // tableLayoutPanel4
+            // bottomNaviBar
             // 
-            this.tableLayoutPanel4.ColumnCount = 3;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.04348F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 4F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 86.95652F));
-            this.tableLayoutPanel4.Controls.Add(this.tslabel_picturesof, 0, 0);
-            this.tableLayoutPanel4.Controls.Add(this.tableLayoutPanel6, 2, 0);
-            this.tableLayoutPanel4.Controls.Add(this.label9, 1, 0);
-            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 378);
-            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 1;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(802, 27);
-            this.tableLayoutPanel4.TabIndex = 4;
-            this.tableLayoutPanel4.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel4_Paint);
+            this.bottomNaviBar.ColumnCount = 3;
+            this.bottomNaviBar.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 13.04348F));
+            this.bottomNaviBar.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 4F));
+            this.bottomNaviBar.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 86.95652F));
+            this.bottomNaviBar.Controls.Add(this.tslabel_picturesof, 0, 0);
+            this.bottomNaviBar.Controls.Add(this.bottomNaviSettings, 2, 0);
+            this.bottomNaviBar.Controls.Add(this.label9, 1, 0);
+            this.bottomNaviBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bottomNaviBar.Location = new System.Drawing.Point(0, 378);
+            this.bottomNaviBar.Margin = new System.Windows.Forms.Padding(0);
+            this.bottomNaviBar.Name = "bottomNaviBar";
+            this.bottomNaviBar.RowCount = 1;
+            this.bottomNaviBar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.bottomNaviBar.Size = new System.Drawing.Size(802, 27);
+            this.bottomNaviBar.TabIndex = 4;
             // 
             // tslabel_picturesof
             // 
@@ -851,27 +924,27 @@
             this.tslabel_picturesof.Text = "0/0";
             this.tslabel_picturesof.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // tableLayoutPanel6
+            // bottomNaviSettings
             // 
-            this.tableLayoutPanel6.ColumnCount = 5;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.57143F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.71429F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.71429F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 4F));
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 183F));
-            this.tableLayoutPanel6.Controls.Add(this.tsprogressbar, 0, 0);
-            this.tableLayoutPanel6.Controls.Add(this.combobox_sorting, 1, 0);
-            this.tableLayoutPanel6.Controls.Add(this.comboBox_MapProvider, 2, 0);
-            this.tableLayoutPanel6.Controls.Add(this.trackBar_scale, 4, 0);
-            this.tableLayoutPanel6.Controls.Add(this.label10, 3, 0);
-            this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(108, 0);
-            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel6.Name = "tableLayoutPanel6";
-            this.tableLayoutPanel6.RowCount = 1;
-            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(694, 27);
-            this.tableLayoutPanel6.TabIndex = 6;
+            this.bottomNaviSettings.ColumnCount = 5;
+            this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28.57143F));
+            this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.71429F));
+            this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.71429F));
+            this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 4F));
+            this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 275F));
+            this.bottomNaviSettings.Controls.Add(this.tsprogressbar, 0, 0);
+            this.bottomNaviSettings.Controls.Add(this.combobox_sorting, 1, 0);
+            this.bottomNaviSettings.Controls.Add(this.comboBox_MapProvider, 2, 0);
+            this.bottomNaviSettings.Controls.Add(this.trackBar_scale, 4, 0);
+            this.bottomNaviSettings.Controls.Add(this.label10, 3, 0);
+            this.bottomNaviSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bottomNaviSettings.Location = new System.Drawing.Point(108, 0);
+            this.bottomNaviSettings.Margin = new System.Windows.Forms.Padding(0);
+            this.bottomNaviSettings.Name = "bottomNaviSettings";
+            this.bottomNaviSettings.RowCount = 1;
+            this.bottomNaviSettings.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.bottomNaviSettings.Size = new System.Drawing.Size(694, 27);
+            this.bottomNaviSettings.TabIndex = 6;
             // 
             // tsprogressbar
             // 
@@ -879,7 +952,7 @@
             this.tsprogressbar.Location = new System.Drawing.Point(5, 0);
             this.tsprogressbar.Margin = new System.Windows.Forms.Padding(5, 0, 0, 4);
             this.tsprogressbar.Name = "tsprogressbar";
-            this.tsprogressbar.Size = new System.Drawing.Size(139, 23);
+            this.tsprogressbar.Size = new System.Drawing.Size(113, 23);
             this.tsprogressbar.TabIndex = 1;
             // 
             // combobox_sorting
@@ -890,10 +963,10 @@
             this.combobox_sorting.FormattingEnabled = true;
             this.combobox_sorting.IntegralHeight = false;
             this.combobox_sorting.ItemHeight = 15;
-            this.combobox_sorting.Location = new System.Drawing.Point(149, 0);
+            this.combobox_sorting.Location = new System.Drawing.Point(123, 0);
             this.combobox_sorting.Margin = new System.Windows.Forms.Padding(5, 0, 2, 0);
             this.combobox_sorting.Name = "combobox_sorting";
-            this.combobox_sorting.Size = new System.Drawing.Size(174, 23);
+            this.combobox_sorting.Size = new System.Drawing.Size(141, 23);
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
@@ -905,10 +978,10 @@
             this.comboBox_MapProvider.FormattingEnabled = true;
             this.comboBox_MapProvider.IntegralHeight = false;
             this.comboBox_MapProvider.ItemHeight = 15;
-            this.comboBox_MapProvider.Location = new System.Drawing.Point(331, 0);
+            this.comboBox_MapProvider.Location = new System.Drawing.Point(272, 0);
             this.comboBox_MapProvider.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.comboBox_MapProvider.Name = "comboBox_MapProvider";
-            this.comboBox_MapProvider.Size = new System.Drawing.Size(172, 23);
+            this.comboBox_MapProvider.Size = new System.Drawing.Size(139, 23);
             this.comboBox_MapProvider.TabIndex = 5;
             this.comboBox_MapProvider.SelectedIndexChanged += new System.EventHandler(this.comboBox_MapProvider_SelectedIndexChanged);
             this.comboBox_MapProvider.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
@@ -918,10 +991,10 @@
             this.trackBar_scale.Cursor = System.Windows.Forms.Cursors.Default;
             this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trackBar_scale.LargeChange = 1;
-            this.trackBar_scale.Location = new System.Drawing.Point(512, 2);
+            this.trackBar_scale.Location = new System.Drawing.Point(420, 2);
             this.trackBar_scale.Margin = new System.Windows.Forms.Padding(2);
             this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(180, 23);
+            this.trackBar_scale.Size = new System.Drawing.Size(272, 23);
             this.trackBar_scale.TabIndex = 2;
             this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
@@ -929,7 +1002,7 @@
             // label10
             // 
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label10.Location = new System.Drawing.Point(509, 0);
+            this.label10.Location = new System.Drawing.Point(417, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(1, 24);
             this.label10.TabIndex = 6;
@@ -1013,6 +1086,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.tableLayoutPanel8.ResumeLayout(false);
             this.tabPage_Settings.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
@@ -1024,12 +1098,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale_gap)).EndInit();
+            this.tableLayoutPanel7.ResumeLayout(false);
+            this.tableLayoutPanel7.PerformLayout();
             this.tabPage_favs.ResumeLayout(false);
             this.tabPage_Taglist.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel4.ResumeLayout(false);
-            this.tableLayoutPanel6.ResumeLayout(false);
-            this.tableLayoutPanel6.PerformLayout();
+            this.bottomNaviBar.ResumeLayout(false);
+            this.bottomNaviSettings.ResumeLayout(false);
+            this.bottomNaviSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
@@ -1069,7 +1145,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label tslabel_picturesof;
         private System.Windows.Forms.Panel panel_tabHolder;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        private System.Windows.Forms.TableLayoutPanel bottomNaviBar;
         private CustomControls.PictureBoxViewer pictureBox_viewer;
         private CustomControls.FlowLayoutOverview panel_overview;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -1098,7 +1174,7 @@
         private System.Windows.Forms.CheckBox checkBox_Quickinfo;
         private System.Windows.Forms.TabPage tabPage_Taglist;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_tags;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
+        private System.Windows.Forms.TableLayoutPanel bottomNaviSettings;
         private System.Windows.Forms.ProgressBar tsprogressbar;
         private TrackBarControl trackBar_scale;
         private System.Windows.Forms.ComboBox combobox_sorting;
@@ -1109,6 +1185,11 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.CheckBox checkBox_autoinsertdate;
         private System.Windows.Forms.Button btn_loadfromFile;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
+        private System.Windows.Forms.CheckBox checkBox_autoinsertcomment;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
+        private System.Windows.Forms.Button btn_loadcommentfromfile;
     }
 }
 

@@ -128,30 +128,18 @@ namespace PhotoManager {
          * Inserts a new entry
          */
         public Image addImage(string hash, string filetype) {
-            Image f = null;
-            try {
-                using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foto (id, filetype, loclat, loclng, date, description) VALUES(@id, @filetype, 0, 0, @stddate, '')", con)) {
-                    command.Parameters.AddWithValue("@id", hash);
-                    command.Parameters.AddWithValue("@filetype", filetype);
-                    command.Parameters.AddWithValue("@stddate", Utils.YEAR_STD);
-                    SQLiteDataReader reader = command.ExecuteReader();
-                    f = new Image(hash.ToString(), filetype);
-                }
-                Debug.WriteLine("Added: " + hash);
-            } catch {
-                Debug.WriteLine("Error: addEntry()");
-            }
-            entryCount = countEntrys();
+            Image f = addImage(hash, filetype, Utils.YEAR_STD, "");
             return f;
         }
 
-        public Image addImage(string hash, string filetype, string date) {
+        public Image addImage(string hash, string filetype, string date, string comment) {
             Image f = null;
             try {
-                using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foto (id, filetype, loclat, loclng, date, description) VALUES(@id, @filetype, 0, 0, @date, '')", con)) {
+                using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foto (id, filetype, loclat, loclng, date, description) VALUES(@id, @filetype, 0, 0, @date, @comment)", con)) {
                     command.Parameters.AddWithValue("@id", hash);
                     command.Parameters.AddWithValue("@filetype", filetype);
                     command.Parameters.AddWithValue("@date", date);
+                    command.Parameters.AddWithValue("@comment", comment);
                     SQLiteDataReader reader = command.ExecuteReader();
                     f = new Image(hash.ToString(), filetype);
                 }
@@ -292,17 +280,25 @@ namespace PhotoManager {
         /*
          * Deletes an entry from table Foto
          */
-        public void deleteEntry(string id) {
-            removeTags(new string[] { id });
+        public void deleteEntry(string[] ids) {
+            removeTags(ids);
             SQLiteConnection.ClearAllPools();
+            string comm = "DELETE FROM Foto WHERE ";
+            int c = 0;
+            foreach (string s in ids) {
+                comm += "id LIKE @id" + (c++) + " OR ";
+            }
+            comm = comm.Substring(0, comm.Count() - 3);
             try {
-                using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Foto WHERE id LIKE @id", con)) {
-                    command.Parameters.AddWithValue("@id", id);
+                using (SQLiteCommand command = new SQLiteCommand(comm, con)) {
+                    for (int i = 0; i < ids.Count(); i++) {
+                        command.Parameters.AddWithValue("@id" + i, ids[i]);
+                    }
                     command.ExecuteNonQuery();
-                    Debug.WriteLine("Deleted: " + id);
+                    Debug.WriteLine(comm);
                 }
             } catch {
-                MessageBox.Show("Error deleting Foto " + id);
+                MessageBox.Show("Error deleting Foto");
             }
             entryCount = countEntrys();
         }

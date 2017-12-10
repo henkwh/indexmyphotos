@@ -25,7 +25,7 @@ namespace PhotoManager.CustomControls {
             //Add separator
             Label separator= new Label();
             separator.AutoSize = false;
-            separator.Height = 20;
+            separator.Height = 24;
             separator.BorderStyle = BorderStyle.Fixed3D;
             Controls.Add(separator, 1, 0);
 

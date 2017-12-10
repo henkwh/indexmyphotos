@@ -49,7 +49,7 @@ namespace PhotoManager {
             Utils.createDirectories(currentworkingdirectory, dir_full, dir_preview);
             NavigationBarViewerPanel = new TableLayoutInfoElement();
             NavigationBarViewerPanel.getLabel().Click += (sndr, evnt) => {
-                tb_search.Text = "Date=" + ((Label) sndr).Text;
+                tb_search.Text = "Date=" + ((Label)sndr).Text;
                 tabControl1.SelectedTab = tabPage_main;
                 newWorker();
             };
@@ -81,6 +81,7 @@ namespace PhotoManager {
             //Load settings from Properties.Settings.Default
             checkBox_Quickinfo.Checked = Properties.Settings.Default.QUICKINFO;
             checkBox_autoinsertdate.Checked = Properties.Settings.Default.AUTOINSERTDATE;
+            checkBox_autoinsertcomment.Checked = Properties.Settings.Default.AUTOINSERTCOMMENT;
             RadioButton btn = Properties.Settings.Default.BORDERSTYLE_FRAME ? radioButton_Frame : radioButton_Edge;
             btn.Checked = true;
             trackBar_scale_gap.Value = Math.Min(Math.Max((Properties.Settings.Default.GAPSCALE - 10) / 2, 0), trackBar_scale_gap.Maximum);
@@ -147,7 +148,9 @@ namespace PhotoManager {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             justDragDropped.Clear();
             multiedit.Clear();
-            DragandDropWorker dnd = new DragandDropWorker(files, currentworkingdirectory, dir_full, dir_preview, imagescale, db, new MessageBoxInfo(Location.X, Location.Y, Width, Height));
+            DragandDropWorker dnd = new DragandDropWorker(files, currentworkingdirectory, dir_full, dir_preview, imagescale, db, new MessageBoxInfo(Location.X, Location.Y, Width, Height), tsprogressbar);
+            tabControl1.SelectedTab = tabPage_main;
+            Enabled = false;
             dnd.RunWorkerCompleted += Dnd_RunWorkerCompleted;
             dnd.RunWorkerAsync();
         }
@@ -156,6 +159,7 @@ namespace PhotoManager {
             justDragDropped = ((DragandDropWorker)sender).getjustDragDropped();
             MessageBoxInfo mbi = ((DragandDropWorker)sender).getMessgageBox();
             mbi.BringToFront();
+            Enabled = true;
             newWorker();
         }
 
@@ -203,6 +207,7 @@ namespace PhotoManager {
                     tsprogressbar.Maximum = shown.Count();
                     tsprogressbar.Value = 0;
                     updateLabel(0);
+                    changedEditlist = true;
                 });
             }
             panel_overview.MouseMove += Panel_overview_MouseMove1;
@@ -214,7 +219,11 @@ namespace PhotoManager {
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
                 img.setPreview(bmp);
                 img.setImage(bmp, frame);
-                if (temp != null && temp.Contains(img.getName())) { selectImage(img); }
+                if (temp != null && temp.Contains(img.getName())) {
+                    if (justDragDropped.Count() != 0) {
+                        selectImage(img);
+                    }
+                }
                 img.setSize(imagescale);
 
                 if (img.getLocation()[0] != 0 && img.getLocation()[1] != 0) {
@@ -357,7 +366,7 @@ namespace PhotoManager {
                 tt.SetToolTip(tageditbox, Utils.getToolTipTextForImage(i));
                 tt.Tag = i.getName();
                 ContextMenu cm = new ContextMenu();
-                MenuItemImage[] milist = new MenuItemImage[] { new MenuItemImage("Remove"), new MenuItemImage("Fill") };
+                MenuItemImage[] milist = new MenuItemImage[] { new MenuItemImage("Remove"), new MenuItemImage("Fill textboxes") };
                 foreach (MenuItemImage mii in milist) {
                     mii.setParentPictureBox(i);
                     cm.MenuItems.Add(mii);
@@ -402,46 +411,55 @@ namespace PhotoManager {
         * Removes all references to an image completely - in database, preview/full directory and the object
         */
         private void Delete_Click(Object sender, EventArgs e) {
-            while (multiedit.Count != 0) {
-                Debug.WriteLine("Deleting: " + multiedit[0].getName());
+            DialogResult dialogResult = MessageBox.Show("Do you want to delete " + multiedit.Count() + " files?", "Critical Operation", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes) {
+                Enabled = false;
+                List<string> dbdelete = new List<string>();
+                while (multiedit.Count != 0) {
+                    Debug.WriteLine("Deleting: " + multiedit[0].getName());
+                    db.open();
+                    dbdelete.Add(multiedit[0].getName());
+                    db.close();
+                    map.removeMarkers();
+                    if (multiedit[0] == pictureBox_viewer.ShownImage) {
+                        pictureBox_viewer.ShownImage.Dispose();
+                        pictureBox_viewer.Image.Dispose();
+                    }
+                    string name = multiedit[0].getName();
+                    string type = multiedit[0].getFileType();
+                    multiedit[0].setPreview(null);
+                    if (multiedit[0].Image != null) {
+                        multiedit[0].Image.Dispose();
+                    }
+                    multiedit[0].Dispose();
+                    multiedit.RemoveAt(0);
+                    try {
+                        File.Delete(currentworkingdirectory + dir_full + name + type);
+                        File.Delete(currentworkingdirectory + dir_preview + name + type);
+                    } catch {
+                    }
+                }
                 db.open();
-                db.deleteEntry(multiedit[0].getName());
+                db.deleteEntry(dbdelete.ToArray());
                 db.close();
-                map.removeMarkers();
-                if (multiedit[0] == pictureBox_viewer.ShownImage) {
-                    pictureBox_viewer.ShownImage.Dispose();
-                    pictureBox_viewer.Image.Dispose();
-                }
-                string name = multiedit[0].getName();
-                string type = multiedit[0].getFileType();
-                multiedit[0].setPreview(null);
-                if (multiedit[0].Image != null) {
-                    multiedit[0].Image.Dispose();
-                }
-                multiedit[0].Dispose();
-                multiedit.RemoveAt(0);
-                try {
-                    File.Delete(currentworkingdirectory + dir_full + name + type);
-                    File.Delete(currentworkingdirectory + dir_preview + name + type);
-                } catch {
-                }
+                multiedit.Clear();
+                Enabled = true;
+                newWorker();
             }
-            multiedit.Clear();
-            newWorker();
         }
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
             switch (e.KeyCode) {
                 case Keys.Escape:
-                    resetMultiedit();
                     justDragDropped = new List<string>();
+                    resetMultiedit();
                     panel_overview.Refresh();
                     break;
                 case Keys.Left:
                     if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
                         int index = shown.IndexOf(pictureBox_viewer.ShownImage);
                         index = index > 0 ? index : shown.Count();
-                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + shown[index - 1].getName() + shown[index - 1].getFileType());
+                        loadViewerImage(shown[index - 1]);
                         pictureBox_viewer.ShownImage = shown[index - 1];
                         NavigationBarViewerPanel.setDescription(shown[index - 1].getDescription());
                         NavigationBarViewerPanel.setDate(shown[index - 1].getDate());
@@ -452,8 +470,7 @@ namespace PhotoManager {
                     if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
                         int index = shown.IndexOf(pictureBox_viewer.ShownImage);
                         index = index < shown.Count - 1 ? index : -1;
-                        pictureBox_viewer.Image = new Bitmap(currentworkingdirectory
-                            + dir_full + shown[index + 1].getName() + shown[index + 1].getFileType());
+                        loadViewerImage(shown[index + 1]);
                         pictureBox_viewer.ShownImage = shown[index + 1];
                         NavigationBarViewerPanel.setDescription(shown[index + 1].getDescription());
                         NavigationBarViewerPanel.setDate(shown[index + 1].getDate());
@@ -479,6 +496,8 @@ namespace PhotoManager {
                 MessageBox.Show("No items selected!");
                 return;
             }
+            Enabled = false;
+            Cursor.Current = Cursors.WaitCursor;
             tsprogressbar.Maximum = multiedit.Count();
             tsprogressbar.Value = 0;
             string desc = tb_description.Text;
@@ -533,6 +552,7 @@ namespace PhotoManager {
             }
             db.close();
             tsprogressbar.Value = tsprogressbar.Maximum;
+            Enabled = true;
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
@@ -570,7 +590,6 @@ namespace PhotoManager {
                     addImagestoTabPage();
                     changedEditlist = false;
                 }
-
                 if (multiedit.Count() == 0) {
                     fillTags(null);
                 }
@@ -583,22 +602,29 @@ namespace PhotoManager {
                 trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
             }
             if (tabControl1.SelectedTab == tabPage_viewer) {
+                if (changedEditlist) {
+                    pictureBox_viewer.ShownImage = null;
+                    pictureBox_viewer.Image = null;
+                    NavigationBarViewerPanel.setDescription("");
+                    NavigationBarViewerPanel.setDate(Utils.YEAR_STD);
+
+                }
                 if (pictureBox_viewer.ShownImage != null) {
                     updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
                 } else if (shown.Count() != 0) {
                     loadViewerImage(shown[0]);
                 }
-                tableLayoutPanel4.Controls.Remove(tableLayoutPanel6);
-                tableLayoutPanel4.Controls.Add(NavigationBarViewerPanel, 2, 0);
-                tableLayoutPanel4.Height = 10;
+                bottomNaviBar.Controls.Remove(bottomNaviSettings);
+                bottomNaviBar.Controls.Add(NavigationBarViewerPanel, 2, 0);
+                bottomNaviBar.Height = 10;
                 if (pictureBox_viewer.ShownImage != null) {
                     NavigationBarViewerPanel.setDescription(pictureBox_viewer.ShownImage.getDescription());
                     NavigationBarViewerPanel.setDate(pictureBox_viewer.ShownImage.getDate());
                 }
             } else {
-                if (!tableLayoutPanel4.Contains(tableLayoutPanel6)) {
-                    tableLayoutPanel4.Controls.Remove(NavigationBarViewerPanel);
-                    tableLayoutPanel4.Controls.Add(tableLayoutPanel6, 2, 0);
+                if (!bottomNaviBar.Contains(bottomNaviSettings)) {
+                    bottomNaviBar.Controls.Remove(NavigationBarViewerPanel);
+                    bottomNaviBar.Controls.Add(bottomNaviSettings, 2, 0);
                 }
             }
             if (tabControl1.SelectedTab == tabPage_Taglist) {
@@ -628,6 +654,11 @@ namespace PhotoManager {
             pictureBox_viewer.ShownImage = i;
             tabControl1.SelectedTab = tabPage_viewer;
             pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
+            if (pictureBox_viewer.Image.PropertyIdList.Contains(0x112)) {
+                int orientation = pictureBox_viewer.Image.GetPropertyItem(0x112).Value[0];
+                pictureBox_viewer.Image = ImageGenerator.doFlip((Bitmap)pictureBox_viewer.Image, orientation);
+            }
+
         }
 
         private void fillTags(Image i) {
@@ -679,6 +710,7 @@ namespace PhotoManager {
             if (dialogResult != DialogResult.Yes) {
                 return;
             }
+            Enabled = false;
             db.open();
             List<string> ids = new List<string>();
             foreach (Image i in multiedit) {
@@ -693,6 +725,7 @@ namespace PhotoManager {
             db.updateEntry(ids.ToArray(), "date", Utils.YEAR_STD);
             db.close();
             fillTags(null);
+            Enabled = true;
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e) {
@@ -805,6 +838,7 @@ namespace PhotoManager {
          * Handles change requests in multieditlist
          */
         private void updateMultiedit(Image i, EDITOPERATION op) {
+            if (i == null || i.getPreview() == null) { return; }
             switch (op) {
                 case EDITOPERATION.ADD:
                     if (!multiedit.Contains(i)) {
@@ -832,12 +866,13 @@ namespace PhotoManager {
 
         private void updateLabel(int first) {
             try {
-                db.open();
                 string t = (first == 0) ? "" : first + "/";
                 t += shown.Count() + "/" + db.getEntryCount();
-                db.close();
+                tslabel_picturesof.SuspendLayout();
+                tslabel_picturesof.TextAlign = ContentAlignment.MiddleCenter;
                 tslabel_picturesof.Text = t;
             } catch { }
+            tslabel_picturesof.ResumeLayout();
         }
 
         private void radioButton_SelectionMarker_CheckedChanged(object sender, EventArgs e) {
@@ -904,50 +939,72 @@ namespace PhotoManager {
             }
         }
 
-        private void tableLayoutPanel4_Paint(object sender, PaintEventArgs e) {
-
-        }
-
-        private void panel_overview_Paint_1(object sender, PaintEventArgs e) {
-
-        }
-
         private void checkBox1_CheckedChanged_1(object sender, EventArgs e) {
             Properties.Settings.Default.AUTOINSERTDATE = checkBox_autoinsertdate.Checked;
         }
 
         private void btn_loadfromFile_Click(object sender, EventArgs e) {
+            tsprogressbar.Maximum = multiedit.Count();
+            tsprogressbar.Value = 0;
+            int counter = 0;
+            bool[] commentordate = sender == btn_loadcommentfromfile ? new bool[] { true, false } : new bool
+                [] { false, true };
+
             db.open();
-            if (multiedit.Count() > 1) {
+            if (multiedit.Count() != 0) {
                 DialogResult dialogResult = MessageBox.Show("Date information for each image in list will be updated and overwritten - Do you want to proceed?", "Critical Operation", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes) {
+                    Enabled = false;
                     MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
                     mbi.Show();
                     foreach (Image i in multiedit) {
-                        string date = Utils.getDateFromFile(currentworkingdirectory + "\\" + dir_full + "\\" + i.getName() + i.getFileType());
-                        if (date.Count() == 8 && date[0] != '0') {
-                            db.updateEntry(new string[] { i.getName() }, "date", date);
-                            mbi.addText("Set date " + date + " to " + i.getName());
+                        MetadataElement mde = ImageGenerator.getMetaData(currentworkingdirectory + "\\" + dir_full + "\\" + i.getName() + i.getFileType(), commentordate[0], commentordate[1]);
+                        string date = mde.Date.ToString();
+                        string comment = mde.Description;
+                        if (commentordate[0] == true) {//Description field
+                            if (!comment.Equals("")) {
+                                db.updateEntry(new string[] { i.getName() }, "description", comment);
+                                mbi.addText("Update description " + comment + " for " + i.getName() + ", overwrite: " + i.getDescription());
+                                i.setDescription(comment);
+                            } else {
+                                mbi.addText("Comment empty - no changes done");
+                            }
+                        } else {    //Date field
+                            if (date.Count() == 8 && date[0] != '0') {
+                                db.updateEntry(new string[] { i.getName() }, "date", date);
+                                mbi.addText("Set date " + date + " for " + i.getName() + ", overwrite: " + i.getDate());
+                                i.setDate(date);
+                                counter++;
+                            } else {
+                                mbi.addText("Invalid date: " + date + " for " + i.getName());
+                            }
+                        }
+                        tsprogressbar.Value++;
+                    }
+                    mbi.addText("");
+                    mbi.addText("Updated " + counter + " of " + multiedit.Count() + " files");
+                    if (multiedit.Count() == 1) {
+                        if (commentordate[0] == true) {
+                            tb_description.Text = multiedit[0].getDescription();
                         } else {
-                            mbi.addText("Invalid date: " + date + " for " + i.getName());
+                            tb_dateyear.Text = multiedit[0].getDate().Substring(0, 4);
+                            tb_datemonth.Text = multiedit[0].getDate().Substring(4, 2);
+                            tb_dateday.Text = multiedit[0].getDate().Substring(6, 2);
                         }
                     }
+
                 }
-            } else if (multiedit.Count == 1) {
-                Image i = multiedit[0];
-                string date = Utils.getDateFromFile(currentworkingdirectory + "\\" + dir_full + "\\" + i.getName() + i.getFileType());
-                if (date.Count() == 8 && date[0] != '0') {
-                    db.updateEntry(new string[] { i.getName() }, "date", date);
-                    tb_dateyear.Text = date.Substring(0, 4);
-                    tb_datemonth.Text = date.Substring(4, 2);
-                    tb_dateday.Text = date.Substring(6, 2);
-                } else {
-                    MessageBox.Show("Failed: Date " + date + " is invalid!");
-                }
-            } else {
-                MessageBox.Show("List empty!");
             }
             db.close();
+            Enabled = true;
+        }
+
+        private void checkBox_autoinsertcomment_CheckedChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.AUTOINSERTCOMMENT = checkBox_autoinsertcomment.Checked;
+        }
+
+        private void panel_overview_Paint_1(object sender, PaintEventArgs e) {
+
         }
 
         public void ClickedMap(string location) {

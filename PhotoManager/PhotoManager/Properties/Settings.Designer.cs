@@ -154,5 +154,17 @@ namespace PhotoManager.Properties {
                 this["AUTOINSERTDATE"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AUTOINSERTCOMMENT {
+            get {
+                return ((bool)(this["AUTOINSERTCOMMENT"]));
+            }
+            set {
+                this["AUTOINSERTCOMMENT"] = value;
+            }
+        }
     }
 }
