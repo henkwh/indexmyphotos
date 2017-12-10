@@ -36,7 +36,7 @@ namespace PhotoManager.CustomControls {
         }
 
         public void setDescription(string d) {
-            description.Text = d;
+            description.Text = d.Replace("\n"," ");
         }
 
         public Label getLabel() {

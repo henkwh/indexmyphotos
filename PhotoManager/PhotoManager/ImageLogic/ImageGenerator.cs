@@ -45,7 +45,7 @@ namespace PhotoManager {
                     orientation = tempBmp.GetPropertyItem(0x112).Value[0];
                 }
                 if (tempBmp.PropertyIdList.Contains(0x0132)) {
-                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x0132).Value)+"_1");
+                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x0132).Value) + "_1");
                 }
                 if (tempBmp.PropertyIdList.Contains(0x9286)) {
                     System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9286).Value) + "_2");
@@ -142,33 +142,29 @@ namespace PhotoManager {
             DateTime dt = new DateTime(parsedate);
             string[] year = new string[] { Utils.parseDate(dt.Year, true), Utils.parseDate(dt.Month, false), Utils.parseDate(dt.Day, false) };
 
-            BitmapDecoder decoder;
-            BitmapMetadata metadata = null;
-            try {
-                using (Stream jpegStreamIn = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)) {
-                    decoder = new JpegBitmapDecoder(jpegStreamIn, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-                    jpegStreamIn.Dispose();
-                }
-                BitmapFrame frame = decoder.Frames[0];
-                metadata = (BitmapMetadata)frame.Metadata;
-            } catch { }
-
-            if (metadata != null && getDate) {
-
-                try {
-                    string datetmp = metadata.DateTaken;
-                    if (datetmp != null && datetmp.Count() >= 10 && datetmp[0] != '0') {
-                        string[] year2 = new string[] { Utils.parseDate(datetmp.ToString().Substring(6, 4), true), Utils.parseDate(datetmp.ToString().Substring(3, 2), false), Utils.parseDate(datetmp.ToString().Substring(0, 2), false) };
-                        if (Int32.Parse(year2[0] + year2[1] + year2[2]) < Int32.Parse(year[0] + year[1] + year[2])) {
-                            year = year2;
+            Bitmap tempBmp = new Bitmap(path);
+            string date1 = "", date2 = "", comment = "";
+            if (tempBmp.PropertyIdList.Contains(0x0132)) {
+                date1 = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x0132).Value));
+            }
+            if (tempBmp.PropertyIdList.Contains(0x9003)) {
+                date2 = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9003).Value));
+            }
+            if (tempBmp.PropertyIdList.Contains(0x9286)) {
+                comment = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9286).Value));
+            }
+            if (getDate) {
+                foreach (string s in new string[] { date1, date2 }) {
+                    if (s != null && s.Count() >= 10) {
+                        string[] compare = new string[] { Utils.parseDate(s.Substring(0, 4), true), Utils.parseDate(s.Substring(5, 2), false), Utils.parseDate(s.Substring(8, 2), false) };
+                        if (Int32.Parse(compare[0] + compare[1] + compare[2]) < Int32.Parse(year[0] + year[1] + year[2])) {
+                            year = compare;
                         }
                     }
-                } catch { }
-                int date = getDate ? Int32.Parse(year[0] + year[1] + year[2]) : Int32.Parse(Utils.YEAR_STD);
-                return new MetadataElement(!getComment || metadata.Comment == null ? "" : metadata.Comment, date);
+                }
             }
-            int date2 = getDate ? Int32.Parse(year[0] + year[1] + year[2]) : Int32.Parse(Utils.YEAR_STD);
-            return new MetadataElement("", date2);
+            int date = getDate ? Int32.Parse(year[0] + year[1] + year[2]) : Int32.Parse(Utils.YEAR_STD);
+            return new MetadataElement(getComment && comment != null ? comment : "", date);
         }
     }
 }
