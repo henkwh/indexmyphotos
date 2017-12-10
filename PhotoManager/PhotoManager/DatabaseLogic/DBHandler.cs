@@ -145,6 +145,24 @@ namespace PhotoManager {
             return f;
         }
 
+        public Image addImage(string hash, string filetype, string date) {
+            Image f = null;
+            try {
+                using (SQLiteCommand command = new SQLiteCommand("INSERT INTO Foto (id, filetype, loclat, loclng, date, description) VALUES(@id, @filetype, 0, 0, @date, '')", con)) {
+                    command.Parameters.AddWithValue("@id", hash);
+                    command.Parameters.AddWithValue("@filetype", filetype);
+                    command.Parameters.AddWithValue("@date", date);
+                    SQLiteDataReader reader = command.ExecuteReader();
+                    f = new Image(hash.ToString(), filetype);
+                }
+                Debug.WriteLine("Added: " + hash);
+            } catch {
+                Debug.WriteLine("Error: addEntry()");
+            }
+            entryCount = countEntrys();
+            return f;
+        }
+
         public bool ImageExists(string hash) {
             bool ret = false;
             try {

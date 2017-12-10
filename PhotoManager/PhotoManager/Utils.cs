@@ -101,8 +101,12 @@ namespace PhotoManager {
             string location = i.getLocationString();
             string s = i.getName() + i.getFileType() + "\n";
             s += "Location: " + location.Replace("0,0", "") + "\n";
-            s += "Date: " + i.getDate().Replace(YEAR_STD, "") + "\n";
-            //s += "tags: " + i.getTags() + "\n";
+            if (i.getDate().Equals(YEAR_STD)) {
+                s += "Date:\n";
+            } else {
+                s += "Date: " + i.getDate().Substring(6, 2) + "." + i.getDate().Substring(4, 2) + "." + i.getDate().Substring(0, 4) + "\n";
+            }
+            s += "tags: " + i.getTags() + "\n";
             s += "Description: " + i.getDescription();
             return s;
         }
@@ -160,7 +164,6 @@ namespace PhotoManager {
                         mbinfo.addText("      Error deleting: " + dir_preview + t);
                     }
                 }
-
             }
             mbinfo.addText("Deleted: " + counter + " files!");
             return counter;
@@ -201,7 +204,12 @@ namespace PhotoManager {
                 return d;
             }
         }
-    }
 
+        public static string getDateFromFile(string path) {
+            DateTime dt = new DateTime(Math.Min(File.GetCreationTime(path).Ticks, Math.Min(File.GetLastWriteTime(path).Ticks, File.GetLastAccessTime(path).Ticks)));
+            return dt.Year + Utils.parseDate(dt.Month + "", false) + Utils.parseDate(dt.Day + "", false);
+        }
+
+    }
 }
 

@@ -48,8 +48,13 @@ namespace PhotoManager {
             currentworkingdirectory = System.IO.Directory.GetCurrentDirectory();
             Utils.createDirectories(currentworkingdirectory, dir_full, dir_preview);
             NavigationBarViewerPanel = new TableLayoutInfoElement();
+            NavigationBarViewerPanel.getLabel().Click += (sndr, evnt) => {
+                tb_search.Text = "Date=" + ((Label) sndr).Text;
+                tabControl1.SelectedTab = tabPage_main;
+                newWorker();
+            };
 
-            //Ititialize BAckgroundworker
+            //Ititialize Backgroundworker
             worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
@@ -77,6 +82,7 @@ namespace PhotoManager {
 
             //Load settings from Properties.Settings.Default
             checkBox_Quickinfo.Checked = Properties.Settings.Default.QUICKINFO;
+            checkBox_autoinsertdate.Checked = Properties.Settings.Default.AUTOINSERTDATE;
             RadioButton btn = Properties.Settings.Default.BORDERSTYLE_FRAME ? radioButton_Frame : radioButton_Edge;
             btn.Checked = true;
             trackBar_scale_gap.Value = Math.Min(Math.Max((Properties.Settings.Default.GAPSCALE - 10) / 2, 0), trackBar_scale_gap.Maximum);
@@ -139,6 +145,8 @@ namespace PhotoManager {
          */
         void Form1_DragDrop(object sender, DragEventArgs e) {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            justDragDropped.Clear();
+            multiedit.Clear();
             DragandDropWorker dnd = new DragandDropWorker(files, currentworkingdirectory, dir_full, dir_preview, imagescale, db, new MessageBoxInfo(Location.X, Location.Y, Width, Height));
             dnd.RunWorkerCompleted += Dnd_RunWorkerCompleted;
             dnd.RunWorkerAsync();
@@ -203,7 +211,7 @@ namespace PhotoManager {
             List<string> temp = justDragDropped;
             justDragDropped = new List<string>();
             foreach (Image img in shown) {
-                Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale);
+                Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
                 img.setPreview(bmp);
                 img.setImage(bmp, frame);
                 if (temp != null && temp.Contains(img.getName())) { selectImage(img); }
@@ -229,9 +237,9 @@ namespace PhotoManager {
             if (Properties.Settings.Default.QUICKINFO) {
                 Image i = getClickedImage(Cursor.Position);
                 if (i != null && !i.getName().Equals((string)toolTip.Tag)) {
+                    i.setTags(db.getConnectedTags(i.getName()));
                     toolTip.SetToolTip(panel_overview, Utils.getToolTipTextForImage(i));
                     toolTip.Tag = i.getName();
-                    //toolTip.Active = false;
                     toolTip.Active = true;
                 } else if (i == null) {
                     toolTip.Active = false;
@@ -449,7 +457,7 @@ namespace PhotoManager {
                         pictureBox_viewer.ShownImage = shown[index + 1];
                         NavigationBarViewerPanel.setDescription(shown[index + 1].getDescription());
                         NavigationBarViewerPanel.setDate(shown[index + 1].getDate());
-                        tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
+                        updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
                     }
                     break;
             }
@@ -467,15 +475,12 @@ namespace PhotoManager {
         }
 
         private void btn_applytag_Click(object sender, EventArgs e) {
-
             if (multiedit.Count() == 0) {
                 MessageBox.Show("No items selected!");
                 return;
             }
-
             tsprogressbar.Maximum = multiedit.Count();
             tsprogressbar.Value = 0;
-
             string desc = tb_description.Text;
             string tags = tb_tags.Text.Equals(" ") ? " " : tb_tags.Text.Replace(" ", "").Replace("\r\n", "");
             bool tagjoin = checkBox_JoinTags.Checked;
@@ -502,29 +507,29 @@ namespace PhotoManager {
                     db.connectTag(i.getName(), tagssplit, i == multiedit[0]);
                 }
             }
-
             tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, tsprogressbar.Maximum / 2);
             if (desc.Equals(" ")) {
                 db.updateEntry(idarr, "description", "");
-                Debug.WriteLine("reset desc");
+                foreach (Image i in multiedit) { i.setDescription(""); }
             } else if (!desc.Equals("")) {
-                Debug.WriteLine("set desc");
                 db.updateEntry(idarr, "description", desc);
+                foreach (Image i in multiedit) { i.setDescription(desc); }
             }
             if (location.Equals(" ")) {
-                Debug.WriteLine("reset loc");
                 db.updateEntry(idarr, new double[] { 0, 0 });
+                foreach (Image i in multiedit) { i.setLocation(new double[] { 0, 0 }); }
             } else if (!location.Equals("")) {
-                Debug.WriteLine("set loc");
-                db.updateEntry(idarr, Utils.parseLocation(location));
+                double[] loc = Utils.parseLocation(location);
+                db.updateEntry(idarr, loc);
+                foreach (Image i in multiedit) { i.setLocation(loc); }
             }
             tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, (tsprogressbar.Maximum * 3) / 4);
             if ((tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals(" ")) {
                 db.updateEntry(idarr, "date", Utils.YEAR_STD);
-                Debug.WriteLine("reset date");
+                foreach (Image i in multiedit) { i.setDate(Utils.YEAR_STD); }
             } else if (!(tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals("")) {
                 db.updateEntry(idarr, "date", dtin);
-                Debug.WriteLine("set date");
+                foreach (Image i in multiedit) { i.setDate(dtin); }
             }
             db.close();
             tsprogressbar.Value = tsprogressbar.Maximum;
@@ -571,15 +576,15 @@ namespace PhotoManager {
                 }
             } else if (tabControl1.SelectedTab == tabPage_main) {
                 trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAIN, imagescale);
-                tslabel_picturesof.Text = shown.Count() + "/" + db.getEntryCount();
+                updateLabel(multiedit.Count());
             } else if (tabControl1.SelectedTab == tabPage_Map) {
-                tslabel_picturesof.Text = map.getPinCount() + "/" + shown.Count() + "/" + db.getEntryCount();
+                updateLabel(map.getPinCount());
                 map.setEditMode(false);
                 trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
             }
             if (tabControl1.SelectedTab == tabPage_viewer) {
                 if (pictureBox_viewer.ShownImage != null) {
-                    tslabel_picturesof.Text = (shown.IndexOf(pictureBox_viewer.ShownImage) + 1) + "/" + shown.Count() + "/" + db.getEntryCount();
+                    updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
                 } else if (shown.Count() != 0) {
                     loadViewerImage(shown[0]);
                 }
@@ -678,7 +683,7 @@ namespace PhotoManager {
             List<string> ids = new List<string>();
             foreach (Image i in multiedit) {
                 ids.Add(i.getName());
-                i.setTags(Utils.YEAR_STD, null, "", "");
+                i.setTags(Utils.YEAR_STD, new double[] { 0, 0 }, "", "");
                 tsprogressbar.Value++;
                 tabControl1_SelectedIndexChanged(multiedit[0], null);
             }
@@ -687,6 +692,7 @@ namespace PhotoManager {
             db.updateEntry(ids.ToArray(), "description", "");
             db.updateEntry(ids.ToArray(), "date", Utils.YEAR_STD);
             db.close();
+            fillTags(null);
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e) {
@@ -906,6 +912,44 @@ namespace PhotoManager {
 
         private void panel_overview_Paint_1(object sender, PaintEventArgs e) {
 
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e) {
+            Properties.Settings.Default.AUTOINSERTDATE = checkBox_autoinsertdate.Checked;
+        }
+
+        private void btn_loadfromFile_Click(object sender, EventArgs e) {
+            db.open();
+            if (multiedit.Count() > 1) {
+                DialogResult dialogResult = MessageBox.Show("Date information for each image in list will be updated and overwritten - Do you want to proceed?", "Critical Operation", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes) {
+                    MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
+                    mbi.Show();
+                    foreach (Image i in multiedit) {
+                        string date = Utils.getDateFromFile(currentworkingdirectory + "\\" + dir_full + "\\" + i.getName() + i.getFileType());
+                        if (date.Count() == 8 && date[0] != '0') {
+                            db.updateEntry(new string[] { i.getName() }, "date", date);
+                            mbi.addText("Set date " + date + " to " + i.getName());
+                        } else {
+                            mbi.addText("Invalid date: " + date + " for " + i.getName());
+                        }
+                    }
+                }
+            } else if (multiedit.Count == 1) {
+                Image i = multiedit[0];
+                string date = Utils.getDateFromFile(currentworkingdirectory + "\\" + dir_full + "\\" + i.getName() + i.getFileType());
+                if (date.Count() == 8 && date[0] != '0') {
+                    db.updateEntry(new string[] { i.getName() }, "date", date);
+                    tb_dateyear.Text = date.Substring(0, 4);
+                    tb_datemonth.Text = date.Substring(4, 2);
+                    tb_dateday.Text = date.Substring(6, 2);
+                } else {
+                    MessageBox.Show("Failed: Date " + date + " is invalid!");
+                }
+            } else {
+                MessageBox.Show("List empty!");
+            }
+            db.close();
         }
 
         public void ClickedMap(string location) {

@@ -39,6 +39,9 @@ namespace PhotoManager.CustomControls {
             description.Text = d;
         }
 
+        public Label getLabel() {
+            return date;
+        }
 
         public void setDate(string d) {
             string t = "";

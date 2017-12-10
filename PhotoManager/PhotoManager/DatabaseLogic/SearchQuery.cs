@@ -58,10 +58,33 @@ namespace PhotoManager {
                         connective += negate(not) + keyword[0].ToString();
                         keyword = keyword.Substring(1);
                     }
-                    while (keyword.Count() < 8) {
-                        keyword += "0";
+
+                    string[] dottedformat = keyword.Split('.');
+                    for (int indx = 0; indx < dottedformat.Count() - 1; indx++) { dottedformat[indx] = (dottedformat[indx].Count() == 1) ? "0" + dottedformat[indx] : dottedformat[indx]; }
+                    if (dottedformat.Count() == 3) {
+                        string temp = dottedformat[2] + dottedformat[1] + dottedformat[0];
+                        keyword = temp;
+                    } else if (dottedformat.Count() == 2) {
+                        string temp = dottedformat[1] + dottedformat[0];
+                        keyword = temp;
                     }
-                    s += " f.date " + connective + "'" + keyword + "'";
+
+                    bool filled = false;
+                    string keywordtemp = keyword;
+                    while (keyword.Count() < 8) {
+                        keyword += ((connective.Contains('>') && !connective.Contains("=")) || connective.Contains("<=")) ? "9" : "0";
+                        filled = true;
+                    }
+
+                    if (filled && !connective.Contains('>') && !connective.Contains('<')) { //Date from X..X0..0 to X..X9..9
+                        while (keywordtemp.Count() < 8) {
+                            keywordtemp += "9";
+                        }
+                        s += " f.date >= '" + keyword + "' AND f.date <= '" + keywordtemp + "'";
+                    } else {
+                        s += " f.date " + connective + "'" + keyword + "'";
+                    }
+
                 } else if (not == true) {
                     s += " f.id NOT IN(SELECT DISTINCT f.id FROM Foto f LEFT JOIN FotoTag ft ON f.id = ft.FotoID LEFT JOIN Tag t ON t.id = ft.TagID WHERE t.tag LIKE '" + keyword + "')";
                 } else {

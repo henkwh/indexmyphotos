@@ -17,6 +17,8 @@ namespace PhotoManager {
 
         public const int FRAME_SIZE = 10;
 
+        private const int PREVIEWSIZE = 200;
+
         public static bool autoscale = true;
 
         public static Color selectionColor = Color.White;
@@ -24,7 +26,7 @@ namespace PhotoManager {
         /*
          * Creates preview image and places it in preview folder
          */
-        public static Bitmap genPreview(string cwd, string full, string preview, string filepath, int scale) {
+        public static Bitmap genPreview(string cwd, string full, string preview, string filepath) {
             if (!File.Exists(cwd + preview + filepath)) {
                 string complete = cwd + full + filepath;
                 if (!File.Exists(complete)) {
@@ -36,17 +38,17 @@ namespace PhotoManager {
                 } catch {
                     return null;
                 }
-                Size ret = new Size(scale, scale);
+                Size ret = new Size(PREVIEWSIZE, PREVIEWSIZE);
                 if (tempBmp.Height > tempBmp.Width) {
-                    ret.Height = scale;
-                    ret.Width = scale * tempBmp.Width / tempBmp.Height;
+                    ret.Height = PREVIEWSIZE;
+                    ret.Width = PREVIEWSIZE * tempBmp.Width / tempBmp.Height;
                 } else {
-                    ret.Width = scale;
-                    ret.Height = scale * tempBmp.Height / tempBmp.Width;
+                    ret.Width = PREVIEWSIZE;
+                    ret.Height = PREVIEWSIZE * tempBmp.Height / tempBmp.Width;
                 }
                 Bitmap bmp = new Bitmap(tempBmp, ret);
-                Bitmap bmp2 = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), PixelFormat.Format16bppArgb1555);
-                tempBmp.Dispose(); //get our memory back
+                Bitmap bmp2 = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), PixelFormat.Format16bppRgb565);
+                tempBmp.Dispose();//Format16bppRgb555
                 bmp2.Save(cwd + preview + filepath);
                 return bmp;
             } else {

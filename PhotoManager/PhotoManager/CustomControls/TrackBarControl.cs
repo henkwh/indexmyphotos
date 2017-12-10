@@ -10,8 +10,8 @@ namespace PhotoManager {
         public enum tabPage { MAIN, MAP };
 
         public TrackBarControl() {
-            main = new TrackBarSetting(50, 150, Properties.Settings.Default.SCALE_MAIN, 5);
-            map = new TrackBarSetting(40, 90, Properties.Settings.Default.SCALE_MAP, 15);
+            main = new TrackBarSetting(50, 300, Properties.Settings.Default.SCALE_MAIN, 6);
+            map = new TrackBarSetting(40, 100, Properties.Settings.Default.SCALE_MAP, 15);
         }
 
         public void updateTabPage(tabPage tp, int value) {

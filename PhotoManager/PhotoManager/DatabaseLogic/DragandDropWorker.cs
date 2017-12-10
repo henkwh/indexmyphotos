@@ -39,18 +39,19 @@ namespace PhotoManager.DatabaseLogic {
             db.open();
             int counter = 0;
             int maxcntr = 0;
+            bool addDate = Properties.Settings.Default.AUTOINSERTDATE;
             foreach (string file in files) {
                 Console.WriteLine(file);
                 FileAttributes attr = File.GetAttributes(file);
                 if ((attr & FileAttributes.Directory) == FileAttributes.Directory) {
                     string[] fileEntries = Directory.GetFiles(file);
                     foreach (string fileName in fileEntries) {
-                        string n = loadFile(fileName, mbi);
+                        string n = loadFile(fileName, mbi, addDate);
                         if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
                         maxcntr++;
                     }
                 } else {
-                    string n = loadFile(file, mbi);
+                    string n = loadFile(file, mbi, addDate);
                     if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
                     maxcntr++;
                 }
@@ -64,7 +65,7 @@ namespace PhotoManager.DatabaseLogic {
             return mbi;
         }
 
-        private string loadFile(string path, MessageBoxInfo mbi) {
+        private string loadFile(string path, MessageBoxInfo mbi, bool addDate) {
             string filetype = Path.GetExtension(path).ToLower();
             if (filetype.Equals(".png") || filetype.Equals(".jpg") || filetype.Equals(".jpeg")) {
                 string hash = Utils.getHash(path);
@@ -72,10 +73,23 @@ namespace PhotoManager.DatabaseLogic {
                     mbi.addText("File " + path + " already exists. Skipping...");
                     return "";
                 }
-                Image img = db.addImage(hash, filetype);
-                bool check = true; ;
+                string date = null;
+                if (addDate) {
+                    date = Utils.getDateFromFile(path);
+                    if (date.Count() != 8 || date[0] == '0') {
+                        addDate = false;
+                    }
+                }
+                Image img;
+                if (addDate) {
+                    img = db.addImage(hash, filetype, date);
+                } else {
+                    img = db.addImage(hash, filetype);
+                }
+
+                bool check = true;
                 try { File.Copy(path, currentworkingdirectory + dir_full + img.getName() + filetype, true); } catch { check = false; }
-                check = (ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType(), imagescale) == null || check == false) ? false : true;
+                check = (ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType()) == null || check == false) ? false : true;
                 if (check == false) {
                     db.deleteEntry(hash);
                     mbi.addText("Broken file: " + img.getName() + " was now removed from DB");
