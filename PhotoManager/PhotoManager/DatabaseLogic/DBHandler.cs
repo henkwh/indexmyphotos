@@ -504,6 +504,7 @@ namespace PhotoManager {
          */
         public void removeFav(string t) {
             using (SQLiteConnection con = new SQLiteConnection(connection)) {
+                con.Open();
                 try {
                     using (SQLiteCommand command = new SQLiteCommand("DELETE FROM Favs WHERE search = @t", con)) {
                         command.Parameters.AddWithValue("@t", t);

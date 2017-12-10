@@ -788,9 +788,7 @@ namespace PhotoManager {
         private void favDel_Click(object sender, EventArgs e) {
             FavouriteElement fe = (FavouriteElement)(((Button)sender).Parent).Parent;
             panel_favs.Controls.Remove(fe);
-            db.open();
             db.removeFav(fe.getText());
-            db.close();
         }
 
         private void panel_favs_Resize(object sender, EventArgs e) {
