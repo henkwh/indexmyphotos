@@ -74,7 +74,7 @@ namespace PhotoManager {
 
             //Initialize quickinfo tooltip
             toolTip = new ToolTip();
-            toolTip.AutomaticDelay = 1000;
+            toolTip.AutomaticDelay = 750;
             toolTip.UseFading = true;
             toolTip.UseAnimation = true;
 
@@ -139,8 +139,6 @@ namespace PhotoManager {
             }
             panel.AutoScrollMinSize = new Size(panel.AutoScrollMinSize.Width, Properties.Settings.Default.GAPSCALE + imagescale + y);
         }
-
-
 
         /*
          * Handles Drag-and-Drop of Files
