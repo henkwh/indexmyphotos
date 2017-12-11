@@ -574,7 +574,7 @@
             this.tableLayoutPanel5.Controls.Add(this.btn_help, 0, 7);
             this.tableLayoutPanel5.Controls.Add(this.label11, 0, 4);
             this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel7, 1, 4);
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 22);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(154, 14);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 8;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
@@ -585,7 +585,7 @@
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(454, 260);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(454, 268);
             this.tableLayoutPanel5.TabIndex = 0;
             // 
             // btn_deleteUnusedFiles
@@ -755,7 +755,7 @@
             this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label8.Location = new System.Drawing.Point(3, 195);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(221, 33);
+            this.label8.Size = new System.Drawing.Size(221, 41);
             this.label8.TabIndex = 14;
             this.label8.Text = "Enable Quickinfo";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -765,7 +765,7 @@
             this.checkBox_Quickinfo.Dock = System.Windows.Forms.DockStyle.Right;
             this.checkBox_Quickinfo.Location = new System.Drawing.Point(309, 198);
             this.checkBox_Quickinfo.Name = "checkBox_Quickinfo";
-            this.checkBox_Quickinfo.Size = new System.Drawing.Size(142, 27);
+            this.checkBox_Quickinfo.Size = new System.Drawing.Size(142, 35);
             this.checkBox_Quickinfo.TabIndex = 15;
             this.checkBox_Quickinfo.Text = "Quickinfo";
             this.checkBox_Quickinfo.UseVisualStyleBackColor = true;
@@ -774,7 +774,7 @@
             // btn_help
             // 
             this.btn_help.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btn_help.Location = new System.Drawing.Point(3, 231);
+            this.btn_help.Location = new System.Drawing.Point(3, 239);
             this.btn_help.Name = "btn_help";
             this.btn_help.Size = new System.Drawing.Size(221, 26);
             this.btn_help.TabIndex = 16;
@@ -790,7 +790,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(221, 35);
             this.label11.TabIndex = 17;
-            this.label11.Text = "Auto insert information from file attributes";
+            this.label11.Text = "Auto import data from file attributes and Exif";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel7
@@ -931,7 +931,7 @@
             this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.71429F));
             this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.71429F));
             this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 4F));
-            this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 275F));
+            this.bottomNaviSettings.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 276F));
             this.bottomNaviSettings.Controls.Add(this.tsprogressbar, 0, 0);
             this.bottomNaviSettings.Controls.Add(this.combobox_sorting, 1, 0);
             this.bottomNaviSettings.Controls.Add(this.comboBox_MapProvider, 2, 0);
@@ -966,7 +966,7 @@
             this.combobox_sorting.Location = new System.Drawing.Point(123, 0);
             this.combobox_sorting.Margin = new System.Windows.Forms.Padding(5, 0, 2, 0);
             this.combobox_sorting.Name = "combobox_sorting";
-            this.combobox_sorting.Size = new System.Drawing.Size(141, 23);
+            this.combobox_sorting.Size = new System.Drawing.Size(140, 23);
             this.combobox_sorting.TabIndex = 5;
             this.combobox_sorting.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
             // 
@@ -978,10 +978,10 @@
             this.comboBox_MapProvider.FormattingEnabled = true;
             this.comboBox_MapProvider.IntegralHeight = false;
             this.comboBox_MapProvider.ItemHeight = 15;
-            this.comboBox_MapProvider.Location = new System.Drawing.Point(272, 0);
+            this.comboBox_MapProvider.Location = new System.Drawing.Point(271, 0);
             this.comboBox_MapProvider.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
             this.comboBox_MapProvider.Name = "comboBox_MapProvider";
-            this.comboBox_MapProvider.Size = new System.Drawing.Size(139, 23);
+            this.comboBox_MapProvider.Size = new System.Drawing.Size(138, 23);
             this.comboBox_MapProvider.TabIndex = 5;
             this.comboBox_MapProvider.SelectedIndexChanged += new System.EventHandler(this.comboBox_MapProvider_SelectedIndexChanged);
             this.comboBox_MapProvider.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
@@ -991,10 +991,10 @@
             this.trackBar_scale.Cursor = System.Windows.Forms.Cursors.Default;
             this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trackBar_scale.LargeChange = 1;
-            this.trackBar_scale.Location = new System.Drawing.Point(420, 2);
+            this.trackBar_scale.Location = new System.Drawing.Point(418, 2);
             this.trackBar_scale.Margin = new System.Windows.Forms.Padding(2);
             this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(272, 23);
+            this.trackBar_scale.Size = new System.Drawing.Size(274, 23);
             this.trackBar_scale.TabIndex = 2;
             this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
@@ -1002,7 +1002,7 @@
             // label10
             // 
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label10.Location = new System.Drawing.Point(417, 0);
+            this.label10.Location = new System.Drawing.Point(415, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(1, 24);
             this.label10.TabIndex = 6;

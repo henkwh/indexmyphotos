@@ -415,32 +415,27 @@ namespace PhotoManager {
             if (dialogResult == DialogResult.Yes) {
                 Enabled = false;
                 List<string> dbdelete = new List<string>();
-                while (multiedit.Count != 0) {
-                    Debug.WriteLine("Deleting: " + multiedit[0].getName());
-                    db.open();
+                while (multiedit.Count != 0) {              //get files to delete
                     dbdelete.Add(multiedit[0].getName());
-                    db.close();
+
+                    //dispose all references to file
                     map.removeMarkers();
                     if (multiedit[0] == pictureBox_viewer.ShownImage) {
-                        pictureBox_viewer.ShownImage.Dispose();
-                        pictureBox_viewer.Image.Dispose();
+                        pictureBox_viewer.ShownImage.Dispose(); pictureBox_viewer.Image.Dispose();
                     }
-                    string name = multiedit[0].getName();
-                    string type = multiedit[0].getFileType();
-                    multiedit[0].setPreview(null);
-                    if (multiedit[0].Image != null) {
-                        multiedit[0].Image.Dispose();
-                    }
-                    multiedit[0].Dispose();
+                    string filenametype = multiedit[0].getName() + multiedit[0].getFileType();
+                    multiedit[0].setPreview(null); multiedit[0].Dispose();
+                    shown.Remove(multiedit[0]);
                     multiedit.RemoveAt(0);
+                    panel_overview.Refresh();
                     try {
-                        File.Delete(currentworkingdirectory + dir_full + name + type);
-                        File.Delete(currentworkingdirectory + dir_preview + name + type);
+                        File.Delete(currentworkingdirectory + dir_full + filenametype);
+                        File.Delete(currentworkingdirectory + dir_preview + filenametype);
                     } catch {
                     }
                 }
                 db.open();
-                db.deleteEntry(dbdelete.ToArray());
+                db.deleteEntry(dbdelete.ToArray()); //delete all at once
                 db.close();
                 multiedit.Clear();
                 Enabled = true;
@@ -556,11 +551,10 @@ namespace PhotoManager {
         }
 
         private void tb_search_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.Return) {
+            if (e.KeyCode == Keys.Return) {             //start new worker and query
                 newWorker();
                 multiedit.Clear();
-
-                if (db.favExists(tb_search.Text)) {
+                if (db.favExists(tb_search.Text)) {     //search if query exists in favourites
                     btn_fav.Text = "★";
                 } else {
                     btn_fav.Text = "☆";
@@ -577,7 +571,6 @@ namespace PhotoManager {
                 box.BackColor = Color.White;
                 box.ForeColor = Color.Black;
             }
-
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
@@ -599,27 +592,30 @@ namespace PhotoManager {
             }
             if (tabControl1.SelectedTab == tabPage_viewer) {
                 bool resetviewer = false;
-                if (shown.IndexOf(pictureBox_viewer.ShownImage) == -1) {
+                if (shown.IndexOf(pictureBox_viewer.ShownImage) == -1) {    //Shown image not found in list -> reset
                     pictureBox_viewer.ShownImage = null;
                     pictureBox_viewer.Image = null;
                     NavigationBarViewerPanel.setDescription("");
                     NavigationBarViewerPanel.setDate(Utils.YEAR_STD);
                     resetviewer = true;
                 }
-                if (pictureBox_viewer.ShownImage != null) {
+                if (pictureBox_viewer.ShownImage != null) {     //set label for existing image
                     updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
-                } else if (shown.Count() != 0) {
+                } else if (shown.Count() != 0) {                //try to load new image from list
                     loadViewerImage(shown[0]);
+                } else {                                        //no image in list -> show empty image
+                    pictureBox_viewer.Image = pictureBox_viewer.ErrorImage;
+                    NavigationBarViewerPanel.setDescription("No files to show!");
                 }
                 bottomNaviBar.Controls.Remove(bottomNaviSettings);
                 bottomNaviBar.Controls.Add(NavigationBarViewerPanel, 2, 0);
                 bottomNaviBar.Height = 10;
-                if (resetviewer) {
+                if (resetviewer && pictureBox_viewer.ShownImage != null) {  //update label description and date
                     NavigationBarViewerPanel.setDescription(pictureBox_viewer.ShownImage.getDescription());
                     NavigationBarViewerPanel.setDate(pictureBox_viewer.ShownImage.getDate());
                 }
             } else {
-                if (!bottomNaviBar.Contains(bottomNaviSettings)) {
+                if (!bottomNaviBar.Contains(bottomNaviSettings)) {          //switch navigation bar
                     bottomNaviBar.Controls.Remove(NavigationBarViewerPanel);
                     bottomNaviBar.Controls.Add(bottomNaviSettings, 2, 0);
                 }
@@ -648,16 +644,20 @@ namespace PhotoManager {
         }
 
         private void loadViewerImage(Image i) {
-            pictureBox_viewer.ShownImage = i;
-            pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
-            if (pictureBox_viewer.Image.PropertyIdList.Contains(0x112)) {
-                int orientation = pictureBox_viewer.Image.GetPropertyItem(0x112).Value[0];
-                pictureBox_viewer.Image = ImageGenerator.doFlip((Bitmap)pictureBox_viewer.Image, orientation);
+            if (shown.IndexOf(i) != -1) {   //Not changed list shown when looking at viewer
+                pictureBox_viewer.ShownImage = i;
+                pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
+                if (pictureBox_viewer.Image.PropertyIdList.Contains(0x112)) {
+                    int orientation = pictureBox_viewer.Image.GetPropertyItem(0x112).Value[0];
+                    pictureBox_viewer.Image = ImageGenerator.doFlip((Bitmap)pictureBox_viewer.Image, orientation);
+                }
+                if (tabControl1.SelectedTab != tabPage_viewer) { tabControl1.SelectedTab = tabPage_viewer; }
+                updateLabel((shown.IndexOf(i) + 1));
+                NavigationBarViewerPanel.setDescription(i.getDescription());
+                NavigationBarViewerPanel.setDate(i.getDate());
+            } else {    //Changed list shown -> viewer resets list
+                tabControl1.SelectedTab = tabPage_viewer;
             }
-            if (tabControl1.SelectedTab != tabPage_viewer) { tabControl1.SelectedTab = tabPage_viewer; }
-            updateLabel((shown.IndexOf(i) + 1));
-            NavigationBarViewerPanel.setDescription(i.getDescription());
-            NavigationBarViewerPanel.setDate(i.getDate());
         }
 
         private void fillTags(Image i) {
