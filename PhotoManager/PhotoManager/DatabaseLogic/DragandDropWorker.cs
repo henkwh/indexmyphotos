@@ -56,22 +56,22 @@ namespace PhotoManager.DatabaseLogic {
                     foreach (string fileName in fileEntries) {
                         string n = loadFile(fileName, mbi, addDate, addComment);
                         if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
-                        pb.BeginInvoke((MethodInvoker)delegate {
-                            pb.Value++;
-                        });
+                        //pb.BeginInvoke((MethodInvoker)delegate {
+                        //    pb.Value++;
+                        //});
                     }
                 } else {
                     string n = loadFile(file, mbi, addDate, addComment);
                     if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
-                    pb.BeginInvoke((MethodInvoker)delegate {
-                        pb.Value++;
-                    });
+                    //pb.BeginInvoke((MethodInvoker)delegate {
+                    //    pb.Value++;
+                    //});
                 }
             }
             db.close();
             mbi.addText("");
             mbi.addText(counter + " of " + maxcntr + " Files added.");
-            mbi.addText(counter + " Files selected.");
+            mbi.addText(justDragDropped.Count() + " Files selected.");
         }
 
         private int countMax(string[] files) {
@@ -109,20 +109,15 @@ namespace PhotoManager.DatabaseLogic {
                 if (comment.Contains(".") && comment.Count() == 10) {      //Description IS date
                     date = comment.Substring(6, 4) + comment.Substring(3, 2) + comment.Substring(0, 2);
                     comment = "";
-                    mbi.addText("switched: " + date + " und " + comment);
                 } else if (comment.Count() > 10) {  //Description CONTAINS date at the END
                     string sub = comment.Substring(comment.Count() - 10, 10);
                     string tempdate = sub.Substring(6, 4) + sub.Substring(3, 2) + sub.Substring(0, 2);
                     try {
                         int i = Int32.Parse(tempdate);
                         date = tempdate;
-                        comment = comment.Substring(0, comment.Count() - 10);
-                        mbi.addText("Substring: " + date + " und " + comment);
                     } catch {
-                        mbi.addText("failed parsing: " + comment + " date: " + date);
                     }
                 }
-
                 Image img;
                 img = db.addImage(hash, filetype, date, comment);
                 bool check = true;
@@ -132,9 +127,13 @@ namespace PhotoManager.DatabaseLogic {
                     db.deleteEntry(new string[] { hash });
                     mbi.addText("FAIL: Broken file: " + img.getName() + " was now removed from DB");
                 } else {
-                    mbi.addText("OK:  Added " + img.getName());
-                    if (addDate && !date.Equals(Utils.YEAR_STD)) { mbi.addText("          set date to " + date); }
-                    if (addComment && !comment.Equals("")) { mbi.addText("          set description to " + comment); }
+                    mbi.addText("OK:  Added " + img.getName()+", date: "+date+", description: "+comment);
+                    if (addDate && !date.Equals(Utils.YEAR_STD)) {
+                        mbi.addText("          set date to " + date);
+                    }
+                    if (addComment && !comment.Equals("")) {
+                        mbi.addText("          set description to " + comment);
+                    }
                 }
                 return img.getName();
             } else {

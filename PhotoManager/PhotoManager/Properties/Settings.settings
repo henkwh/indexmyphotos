@@ -12,7 +12,7 @@
       <Value Profile="(Default)">Red</Value>
     </Setting>
     <Setting Name="JOIN" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SCALE_MAIN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">100</Value>

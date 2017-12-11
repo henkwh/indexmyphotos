@@ -34,26 +34,13 @@ namespace PhotoManager {
                 if (!File.Exists(complete)) {
                     return null;
                 }
-                int orientation = 1;
                 Bitmap tempBmp;
                 try {
                     tempBmp = new Bitmap(complete);
                 } catch {
                     return null;
                 }
-                if (tempBmp.PropertyIdList.Contains(0x112)) {
-                    orientation = tempBmp.GetPropertyItem(0x112).Value[0];
-                }
-                if (tempBmp.PropertyIdList.Contains(0x0132)) {
-                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x0132).Value) + "_1");
-                }
-                if (tempBmp.PropertyIdList.Contains(0x9286)) {
-                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9286).Value) + "_2");
-                }
-                if (tempBmp.PropertyIdList.Contains(0x9003)) {
-                    System.Windows.Forms.MessageBox.Show(System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9003).Value) + "_3");
-                }
-
+                System.Diagnostics.Debug.WriteLine("SIZE");
                 Size ret = new Size(PREVIEWSIZE, PREVIEWSIZE);
                 if (tempBmp.Height > tempBmp.Width) {
                     ret.Height = PREVIEWSIZE;
@@ -64,10 +51,11 @@ namespace PhotoManager {
                 }
                 Bitmap bmp = new Bitmap(tempBmp, ret);
                 Bitmap bmp2 = bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), PixelFormat.Format16bppRgb565);//Format16bppRgb555
-                bmp2 = doFlip(bmp2, orientation);
+                int orient = getOrientation(tempBmp);
+                bmp2 = doFlip(bmp2, orient);
                 tempBmp.Dispose();
                 bmp2.Save(cwd + preview + filepath);
-                return bmp;
+                return bmp2;
             } else {
                 return new Bitmap(cwd + preview + filepath);
             }
@@ -91,7 +79,12 @@ namespace PhotoManager {
             return new Bitmap(imgToResize, genSize(size, imgToResize.Width, imgToResize.Height));
         }
 
-
+        private static int getOrientation(Bitmap bmp) {
+            if (bmp.PropertyIdList.Contains(0x0112)) {
+                return bmp.GetPropertyItem(0x0112).Value[0];
+            }
+            return 1;
+        }
         public static Bitmap drawFrame(Bitmap bm, bool frame) {
             Bitmap b = new Bitmap(bm);
             Graphics g = Graphics.FromImage(b);
@@ -144,14 +137,19 @@ namespace PhotoManager {
 
             Bitmap tempBmp = new Bitmap(path);
             string date1 = "", date2 = "", comment = "";
-            if (tempBmp.PropertyIdList.Contains(0x0132)) {
-                date1 = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x0132).Value));
+            if (getDate) {
+                if (tempBmp.PropertyIdList.Contains(0x0132)) {
+                    date1 = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x0132).Value));
+                }
+                if (tempBmp.PropertyIdList.Contains(0x9003)) {
+                    date2 = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9003).Value));
+                }
             }
-            if (tempBmp.PropertyIdList.Contains(0x9003)) {
-                date2 = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9003).Value));
-            }
-            if (tempBmp.PropertyIdList.Contains(0x9286)) {
-                comment = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9286).Value));
+            if (getComment) {
+                if (tempBmp.PropertyIdList.Contains(0x9286)) {
+                    comment = (System.Text.Encoding.UTF8.GetString(tempBmp.GetPropertyItem(0x9286).Value)).Replace("\0", "");
+                    if (comment.Equals("Created with GIMP")) { comment = ""; }
+                }
             }
             if (getDate) {
                 foreach (string s in new string[] { date1, date2 }) {

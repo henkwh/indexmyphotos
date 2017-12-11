@@ -79,6 +79,7 @@ namespace PhotoManager {
             toolTip.UseAnimation = true;
 
             //Load settings from Properties.Settings.Default
+            checkBox_JoinTags.Checked = Properties.Settings.Default.JOIN;
             checkBox_Quickinfo.Checked = Properties.Settings.Default.QUICKINFO;
             checkBox_autoinsertdate.Checked = Properties.Settings.Default.AUTOINSERTDATE;
             checkBox_autoinsertcomment.Checked = Properties.Settings.Default.AUTOINSERTCOMMENT;
@@ -214,7 +215,6 @@ namespace PhotoManager {
             int ticks = Environment.TickCount + 700;            //Delay after refresh()
             bool frame = Properties.Settings.Default.BORDERSTYLE_FRAME;
             List<string> temp = justDragDropped;
-            justDragDropped = new List<string>();
             foreach (Image img in shown) {
                 Bitmap bmp = ImageGenerator.genPreview(currentworkingdirectory, dir_full, dir_preview, img.getName() + img.getFileType());
                 img.setPreview(bmp);
@@ -280,12 +280,12 @@ namespace PhotoManager {
             Image i = getClickedImage(Cursor.Position);
             if (i != null) {
                 if (a.Button == MouseButtons.Right) {
-
                 } else if (a.Button == MouseButtons.Left) {
                     if (ModifierKeys == Keys.Control) {
                         updateMultiedit(i, EDITOPERATION.SWITCH);
                         panel_overview.Refresh();
                     } else {
+                        Debug.WriteLine("index clicked: " + shown.IndexOf(i));
                         loadViewerImage(i);
                     }
                 }
@@ -366,7 +366,7 @@ namespace PhotoManager {
                 tt.SetToolTip(tageditbox, Utils.getToolTipTextForImage(i));
                 tt.Tag = i.getName();
                 ContextMenu cm = new ContextMenu();
-                MenuItemImage[] milist = new MenuItemImage[] { new MenuItemImage("Remove"), new MenuItemImage("Fill textboxes") };
+                MenuItemImage[] milist = new MenuItemImage[] { new MenuItemImage("Remove"), new MenuItemImage("Fill") };
                 foreach (MenuItemImage mii in milist) {
                     mii.setParentPictureBox(i);
                     cm.MenuItems.Add(mii);
@@ -458,23 +458,19 @@ namespace PhotoManager {
                 case Keys.Left:
                     if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
                         int index = shown.IndexOf(pictureBox_viewer.ShownImage);
+                        Debug.WriteLine("index: " + index);
                         index = index > 0 ? index : shown.Count();
+                        Debug.WriteLine("now: " + (index - 1));
                         loadViewerImage(shown[index - 1]);
-                        pictureBox_viewer.ShownImage = shown[index - 1];
-                        NavigationBarViewerPanel.setDescription(shown[index - 1].getDescription());
-                        NavigationBarViewerPanel.setDate(shown[index - 1].getDate());
-                        updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
                     }
                     break;
                 case Keys.Right:
                     if (tabControl1.SelectedTab == tabPage_viewer && pictureBox_viewer.ShownImage != null) {
                         int index = shown.IndexOf(pictureBox_viewer.ShownImage);
+                        Debug.WriteLine("index: " + index);
                         index = index < shown.Count - 1 ? index : -1;
+                        Debug.WriteLine("now: " + (index + 1));
                         loadViewerImage(shown[index + 1]);
-                        pictureBox_viewer.ShownImage = shown[index + 1];
-                        NavigationBarViewerPanel.setDescription(shown[index + 1].getDescription());
-                        NavigationBarViewerPanel.setDate(shown[index + 1].getDate());
-                        updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
                     }
                     break;
             }
@@ -602,12 +598,13 @@ namespace PhotoManager {
                 trackBar_scale.updateTabPage(TrackBarControl.tabPage.MAP, map.getPinScale());
             }
             if (tabControl1.SelectedTab == tabPage_viewer) {
-                if (changedEditlist) {
+                bool resetviewer = false;
+                if (shown.IndexOf(pictureBox_viewer.ShownImage) == -1) {
                     pictureBox_viewer.ShownImage = null;
                     pictureBox_viewer.Image = null;
                     NavigationBarViewerPanel.setDescription("");
                     NavigationBarViewerPanel.setDate(Utils.YEAR_STD);
-
+                    resetviewer = true;
                 }
                 if (pictureBox_viewer.ShownImage != null) {
                     updateLabel((shown.IndexOf(pictureBox_viewer.ShownImage) + 1));
@@ -617,7 +614,7 @@ namespace PhotoManager {
                 bottomNaviBar.Controls.Remove(bottomNaviSettings);
                 bottomNaviBar.Controls.Add(NavigationBarViewerPanel, 2, 0);
                 bottomNaviBar.Height = 10;
-                if (pictureBox_viewer.ShownImage != null) {
+                if (resetviewer) {
                     NavigationBarViewerPanel.setDescription(pictureBox_viewer.ShownImage.getDescription());
                     NavigationBarViewerPanel.setDate(pictureBox_viewer.ShownImage.getDate());
                 }
@@ -652,13 +649,15 @@ namespace PhotoManager {
 
         private void loadViewerImage(Image i) {
             pictureBox_viewer.ShownImage = i;
-            tabControl1.SelectedTab = tabPage_viewer;
             pictureBox_viewer.Image = new Bitmap(currentworkingdirectory + dir_full + i.getName() + i.getFileType());
             if (pictureBox_viewer.Image.PropertyIdList.Contains(0x112)) {
                 int orientation = pictureBox_viewer.Image.GetPropertyItem(0x112).Value[0];
                 pictureBox_viewer.Image = ImageGenerator.doFlip((Bitmap)pictureBox_viewer.Image, orientation);
             }
-
+            if (tabControl1.SelectedTab != tabPage_viewer) { tabControl1.SelectedTab = tabPage_viewer; }
+            updateLabel((shown.IndexOf(i) + 1));
+            NavigationBarViewerPanel.setDescription(i.getDescription());
+            NavigationBarViewerPanel.setDate(i.getDate());
         }
 
         private void fillTags(Image i) {

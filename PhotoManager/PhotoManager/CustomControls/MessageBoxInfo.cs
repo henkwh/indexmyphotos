@@ -24,14 +24,14 @@ namespace PhotoManager.CustomControls {
         public void addText(string t) {
             if (tb_text.InvokeRequired) {
                 tb_text.BeginInvoke((MethodInvoker)delegate {
-                    tb_text.Text += t + "\r\n";
+                    tb_text.Text += (t + "\r\n");
                     tb_text.SelectionStart = tb_text.Text.Length;
                     tb_text.ScrollToCaret();
                     tb_text.Refresh();
                     this.Refresh();
                 });
             } else {
-                tb_text.Text += t + "\r\n";
+                tb_text.Text += t + ("\r\n");
                 tb_text.SelectionStart = tb_text.Text.Length;
                 tb_text.ScrollToCaret();
                 tb_text.Refresh();
