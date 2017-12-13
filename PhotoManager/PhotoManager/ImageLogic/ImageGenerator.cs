@@ -112,13 +112,19 @@ namespace PhotoManager {
             }
         }
 
-        public static int[] calculateGap(int gap, int imagescale, int panelwidth) {
-            if (autoscale) {
-                double factor = (panelwidth - gap * 1.5f) * 1.0f / (imagescale + gap * 1.5f);
-                int round = (int)Math.Round(factor);
+        public static int[] calculateGap(int percentgap, int imagescale, int panelwidth, int imagecounter) {
+            int gap = (int)(1.0 * percentgap / 100 * imagescale);
+            bool overfull = imagecounter * imagescale + (imagecounter + 1) * gap < panelwidth;
+            bool nospace = (2 * gap + imagescale > panelwidth);
+            if (autoscale && !overfull && !nospace) {
+                double factor = (panelwidth - gap) * 1.0f / (imagescale + gap);
+                int round = (int)Math.Floor(factor);
                 double retgap = (panelwidth - (round) * imagescale) * 1.0f / (round + 1);
                 return new int[] { (int)Math.Round(retgap), round - 1 };
             } else {
+                if (nospace) {
+                    gap = (panelwidth - imagescale) / 2;
+                }
                 double factor = (panelwidth - gap) * 1.0f / (imagescale + gap);
                 int round = (int)Math.Floor(factor);
                 return new int[] { gap, (round - 1) };

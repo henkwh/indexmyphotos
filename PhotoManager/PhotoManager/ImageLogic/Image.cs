@@ -122,5 +122,11 @@ namespace PhotoManager {
             Image = preview;
             borderShown = false;
         }
+
+        override
+        public string ToString() {
+            return name;
+        }
+
     }
 }

@@ -24,7 +24,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="GAPSCALE" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">15</Value>
+      <Value Profile="(Default)">20</Value>
     </Setting>
     <Setting Name="QUICKINFO" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

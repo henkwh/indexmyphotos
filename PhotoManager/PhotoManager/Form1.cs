@@ -85,7 +85,7 @@ namespace PhotoManager {
             checkBox_autoinsertcomment.Checked = Properties.Settings.Default.AUTOINSERTCOMMENT;
             RadioButton btn = Properties.Settings.Default.BORDERSTYLE_FRAME ? radioButton_Frame : radioButton_Edge;
             btn.Checked = true;
-            trackBar_scale_gap.Value = Math.Min(Math.Max((Properties.Settings.Default.GAPSCALE - 10) / 2, 0), trackBar_scale_gap.Maximum);
+            trackBar_scale_gap.Value = Math.Min(trackBar_scale.Maximum, Math.Max(0, Properties.Settings.Default.GAPSCALE - 5) / 5);
             Properties.Settings.Default.Upgrade();
             checkBox_autoScale.Checked = Properties.Settings.Default.AUTOSCALE;
             Utils.addSelectionObects(combobox_sorting, comboBox_MapProvider, comboBox_bgColor, comboBox_selectionColor);
@@ -111,13 +111,11 @@ namespace PhotoManager {
             Graphics g = panel.CreateGraphics();
             g.TranslateTransform(0, panel.AutoScrollPosition.Y);
             int panelwidth = panel.VerticalScroll.Visible ? panel.Width - SystemInformation.VerticalScrollBarWidth : panel.Width;
-            int[] tmp = ImageGenerator.calculateGap(Properties.Settings.Default.GAPSCALE, imagescale, panelwidth);
+            int gappercentage = Properties.Settings.Default.GAPSCALE;
+            int[] tmp = ImageGenerator.calculateGap(gappercentage, imagescale, panelwidth, shown.Count());
             int gap = tmp[0];
-            int rtrn = tmp[1];
-            int x = gap;
-            Debug.WriteLine(Properties.Settings.Default.GAPSCALE);
-            int y = Properties.Settings.Default.GAPSCALE;
-            int max = panel.Width - gap - imagescale;
+            double ygap = ((gappercentage * 1.0) / 100) * imagescale;
+            int x = gap, y = (int)ygap;
             int c = 0;
             foreach (Image i in shown) {
                 Size s;
@@ -131,8 +129,8 @@ namespace PhotoManager {
                 i.YPos = y;
                 x += gap + imagescale;
                 c++;
-                if (c > rtrn) {
-                    y += Properties.Settings.Default.GAPSCALE + imagescale;
+                if (c > tmp[1]) {
+                    y += (int)ygap + imagescale;
                     x = gap;
                     c = 0;
                 }
@@ -149,7 +147,7 @@ namespace PhotoManager {
             multiedit.Clear();
             DragandDropWorker dnd = new DragandDropWorker(files, currentworkingdirectory, dir_full, dir_preview, imagescale, db, new MessageBoxInfo(Location.X, Location.Y, Width, Height), tsprogressbar);
             tabControl1.SelectedTab = tabPage_main;
-            Enabled = false;
+            tableLayoutPanel1.Enabled = false;
             dnd.RunWorkerCompleted += Dnd_RunWorkerCompleted;
             dnd.RunWorkerAsync();
         }
@@ -158,7 +156,7 @@ namespace PhotoManager {
             justDragDropped = ((DragandDropWorker)sender).getjustDragDropped();
             MessageBoxInfo mbi = ((DragandDropWorker)sender).getMessgageBox();
             mbi.BringToFront();
-            Enabled = true;
+            tableLayoutPanel1.Enabled = true;
             newWorker();
         }
 
@@ -411,7 +409,7 @@ namespace PhotoManager {
         private void Delete_Click(Object sender, EventArgs e) {
             DialogResult dialogResult = MessageBox.Show("Do you want to delete " + multiedit.Count() + " files?", "Critical Operation", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes) {
-                Enabled = false;
+                tableLayoutPanel1.Enabled = false;
                 List<string> dbdelete = new List<string>();
                 while (multiedit.Count != 0) {              //get files to delete
                     dbdelete.Add(multiedit[0].getName());
@@ -436,7 +434,7 @@ namespace PhotoManager {
                 db.deleteEntry(dbdelete.ToArray()); //delete all at once
                 db.close();
                 multiedit.Clear();
-                Enabled = true;
+                tableLayoutPanel1.Enabled = true;
                 newWorker();
             }
         }
@@ -485,7 +483,7 @@ namespace PhotoManager {
                 MessageBox.Show("No items selected!");
                 return;
             }
-            Enabled = false;
+            tableLayoutPanel1.Enabled = false;
             Cursor.Current = Cursors.WaitCursor;
             tsprogressbar.Maximum = multiedit.Count();
             tsprogressbar.Value = 0;
@@ -540,7 +538,7 @@ namespace PhotoManager {
             } else {
                 MessageBox.Show("Error - Invalid date");
             }
-            Enabled = true;
+            tableLayoutPanel1.Enabled = true;
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
             resetMultiedit();
@@ -638,6 +636,7 @@ namespace PhotoManager {
                 flowLayoutPanel_tags.Controls.AddRange(tee);
                 flowLayoutPanel_tags.Refresh();
             }
+            tabControl1.Refresh();
         }
 
         private void loadViewerImage(Image i) {
@@ -706,7 +705,7 @@ namespace PhotoManager {
             if (dialogResult != DialogResult.Yes) {
                 return;
             }
-            Enabled = false;
+            tableLayoutPanel1.Enabled = false;
             db.open();
             List<string> ids = new List<string>();
             foreach (Image i in multiedit) {
@@ -721,7 +720,7 @@ namespace PhotoManager {
             db.updateEntry(ids.ToArray(), "date", Utils.YEAR_STD);
             db.close();
             fillTags(null);
-            Enabled = true;
+            tableLayoutPanel1.Enabled = true;
         }
 
         private void trackBar1_Scroll(object sender, EventArgs e) {
@@ -883,7 +882,7 @@ namespace PhotoManager {
         }
 
         private void trackBar_scale_Scroll(object sender, EventArgs e) {
-            Properties.Settings.Default.GAPSCALE = 10 + 2 * trackBar_scale_gap.Value;
+            Properties.Settings.Default.GAPSCALE = 5 + trackBar_scale_gap.Value * 5;
         }
 
         /* Disable Keys in tabcontrol to avoid switching to another tab while scroling through fotos*/
@@ -957,7 +956,7 @@ namespace PhotoManager {
             if (multiedit.Count() != 0) {
                 DialogResult dialogResult = MessageBox.Show("Date information for each image in list will be updated and overwritten - Do you want to proceed?", "Critical Operation", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes) {
-                    Enabled = false;
+                    tableLayoutPanel1.Enabled = false;
                     MessageBoxInfo mbi = new MessageBoxInfo(Location.X, Location.Y, Width, Height);
                     mbi.Show();
                     foreach (Image i in multiedit) {
@@ -999,7 +998,7 @@ namespace PhotoManager {
                 }
             }
             db.close();
-            Enabled = true;
+            tableLayoutPanel1.Enabled = true;
         }
 
         private void checkBox_autoinsertcomment_CheckedChanged(object sender, EventArgs e) {
