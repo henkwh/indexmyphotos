@@ -131,7 +131,7 @@ namespace PhotoManager {
                 i.YPos = y;
                 x += gap + imagescale;
                 c++;
-                if (c == rtrn - 2) {
+                if (c > rtrn) {
                     y += Properties.Settings.Default.GAPSCALE + imagescale;
                     x = gap;
                     c = 0;
@@ -493,54 +493,53 @@ namespace PhotoManager {
             string tags = tb_tags.Text.Equals(" ") ? " " : tb_tags.Text.Replace(" ", "").Replace("\r\n", "");
             bool tagjoin = checkBox_JoinTags.Checked;
             string location = tb_location.Text;
-            string dtin = Utils.parseDate(tb_dateyear.Text, true) + Utils.parseDate(tb_datemonth.Text, false) + Utils.parseDate(tb_dateday.Text, false);
-            if (dtin.Count() != 8 || dtin[0] == '0') {
-                MessageBox.Show("Invalid Date");
-                return;
-            }
-            db.open();
-            List<string> ids = new List<string>();
-            foreach (Image i in multiedit) {
-                ids.Add(i.getName());
-            }
-            string[] idarr = ids.ToArray();
-            if (!tags.Equals("") && !checkBox_JoinTags.Checked) {
-                db.removeTags(idarr);
-                Debug.WriteLine("Removed tags");
-            }
-            tsprogressbar.Value = tsprogressbar.Maximum / 4;
-            if (!tags.Equals(" ") && !tags.Equals("")) {
-                string[] tagssplit = tags.Split(',');
+            string dtin = tb_dateyear.Text.Equals(" ") ? Utils.YEAR_STD : Utils.parseDate(tb_dateyear.Text, true) + Utils.parseDate(tb_datemonth.Text, false) + Utils.parseDate(tb_dateday.Text, false);
+            if (dtin.Count() == 8 && dtin[0] != '0') {
+                db.open();
+                List<string> ids = new List<string>();
                 foreach (Image i in multiedit) {
-                    db.connectTag(i.getName(), tagssplit, i == multiedit[0]);
+                    ids.Add(i.getName());
                 }
+                string[] idarr = ids.ToArray();
+                if (!tags.Equals("") && !checkBox_JoinTags.Checked) {
+                    db.removeTags(idarr);
+                }
+                tsprogressbar.Value = tsprogressbar.Maximum / 4;
+                if (!tags.Equals(" ") && !tags.Equals("")) {
+                    string[] tagssplit = tags.Split(',');
+                    foreach (Image i in multiedit) {
+                        db.connectTag(i.getName(), tagssplit, i == multiedit[0]);
+                    }
+                }
+                tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, tsprogressbar.Maximum / 2);
+                if (desc.Equals(" ")) {
+                    db.updateEntry(idarr, "description", "");
+                    foreach (Image i in multiedit) { i.setDescription(""); }
+                } else if (!desc.Equals("")) {
+                    db.updateEntry(idarr, "description", desc);
+                    foreach (Image i in multiedit) { i.setDescription(desc); }
+                }
+                if (location.Equals(" ")) {
+                    db.updateEntry(idarr, new double[] { 0, 0 });
+                    foreach (Image i in multiedit) { i.setLocation(new double[] { 0, 0 }); }
+                } else if (!location.Equals("")) {
+                    double[] loc = Utils.parseLocation(location);
+                    db.updateEntry(idarr, loc);
+                    foreach (Image i in multiedit) { i.setLocation(loc); }
+                }
+                tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, (tsprogressbar.Maximum * 3) / 4);
+                if ((tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals(" ")) {
+                    db.updateEntry(idarr, "date", Utils.YEAR_STD);
+                    foreach (Image i in multiedit) { i.setDate(Utils.YEAR_STD); }
+                } else if (!(tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals("")) {
+                    db.updateEntry(idarr, "date", dtin);
+                    foreach (Image i in multiedit) { i.setDate(dtin); }
+                }
+                db.close();
+                tsprogressbar.Value = tsprogressbar.Maximum;
+            } else {
+                MessageBox.Show("Error - Invalid date");
             }
-            tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, tsprogressbar.Maximum / 2);
-            if (desc.Equals(" ")) {
-                db.updateEntry(idarr, "description", "");
-                foreach (Image i in multiedit) { i.setDescription(""); }
-            } else if (!desc.Equals("")) {
-                db.updateEntry(idarr, "description", desc);
-                foreach (Image i in multiedit) { i.setDescription(desc); }
-            }
-            if (location.Equals(" ")) {
-                db.updateEntry(idarr, new double[] { 0, 0 });
-                foreach (Image i in multiedit) { i.setLocation(new double[] { 0, 0 }); }
-            } else if (!location.Equals("")) {
-                double[] loc = Utils.parseLocation(location);
-                db.updateEntry(idarr, loc);
-                foreach (Image i in multiedit) { i.setLocation(loc); }
-            }
-            tsprogressbar.Value = Math.Min(tsprogressbar.Maximum - 1, (tsprogressbar.Maximum * 3) / 4);
-            if ((tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals(" ")) {
-                db.updateEntry(idarr, "date", Utils.YEAR_STD);
-                foreach (Image i in multiedit) { i.setDate(Utils.YEAR_STD); }
-            } else if (!(tb_dateyear.Text + tb_datemonth.Text + tb_dateday.Text).Equals("")) {
-                db.updateEntry(idarr, "date", dtin);
-                foreach (Image i in multiedit) { i.setDate(dtin); }
-            }
-            db.close();
-            tsprogressbar.Value = tsprogressbar.Maximum;
             Enabled = true;
         }
         private void btn_clearlist_Click(object sender, EventArgs e) {
@@ -760,7 +759,13 @@ namespace PhotoManager {
         private void comboBox_selectionColor_SelectedIndexChanged(object sender, EventArgs e) {
             ImageGenerator.selectionColor = ((ColorSetting)comboBox_selectionColor.Items[comboBox_selectionColor.SelectedIndex]).Color;
             Properties.Settings.Default.SELCOLOR = ImageGenerator.selectionColor;
+            redrawFrameafterChange();
+        }
 
+        private void redrawFrameafterChange() {
+            for (int i = 0; i < multiedit.Count(); i++) {
+                multiedit[i].showBorder(Properties.Settings.Default.BORDERSTYLE_FRAME);
+            }
         }
 
         private void button_printAll_Click(object sender, EventArgs e) {
@@ -874,6 +879,7 @@ namespace PhotoManager {
 
         private void radioButton_SelectionMarker_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.BORDERSTYLE_FRAME = radioButton_Frame.Checked ? true : false;
+            redrawFrameafterChange();
         }
 
         private void trackBar_scale_Scroll(object sender, EventArgs e) {
@@ -998,10 +1004,6 @@ namespace PhotoManager {
 
         private void checkBox_autoinsertcomment_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.AUTOINSERTCOMMENT = checkBox_autoinsertcomment.Checked;
-        }
-
-        private void panel_overview_Paint_1(object sender, PaintEventArgs e) {
-
         }
 
         public void ClickedMap(string location) {

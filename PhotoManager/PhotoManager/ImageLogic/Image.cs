@@ -7,7 +7,6 @@ namespace PhotoManager {
         /*
          * Image represents an image file from the database and its image in /preview and /full folder
          */
-
         private Bitmap preview;
         private string name, filetype, date, description, tags;
         private double[] location;
@@ -115,23 +114,13 @@ namespace PhotoManager {
 
 
         public void showBorder(bool frame) {
-            if (!borderShown) {
-                Image = ImageGenerator.drawFrame((Bitmap)preview, frame);
-                borderShown = true;
-            }
+            Image = ImageGenerator.drawFrame((Bitmap)preview, frame);
+            borderShown = true;
         }
 
         public void hideBorder() {
-            if (borderShown) {
-                Image = preview;
-                borderShown = false;
-                System.Diagnostics.Debug.WriteLine("OMG");
-            }
+            Image = preview;
+            borderShown = false;
         }
-
-
     }
-
-
-
 }

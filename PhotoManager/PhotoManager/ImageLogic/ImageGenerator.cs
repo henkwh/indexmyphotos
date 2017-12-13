@@ -113,21 +113,16 @@ namespace PhotoManager {
         }
 
         public static int[] calculateGap(int gap, int imagescale, int panelwidth) {
-            int one = 0, c = 1;
-            while (one <= panelwidth) {
-                c++;
-                one += (gap + imagescale);
-            }
-            if (c < 3) {
-                return new int[] { 0, 3 };
-            }
             if (autoscale) {
-                one -= (gap + imagescale);
-                return new int[] { gap + ((panelwidth - one) / c), c };
+                double factor = (panelwidth - gap * 1.5f) * 1.0f / (imagescale + gap * 1.5f);
+                int round = (int)Math.Round(factor);
+                double retgap = (panelwidth - (round) * imagescale) * 1.0f / (round + 1);
+                return new int[] { (int)Math.Round(retgap), round - 1 };
             } else {
-                return new int[] { gap, c };
+                double factor = (panelwidth - gap) * 1.0f / (imagescale + gap);
+                int round = (int)Math.Floor(factor);
+                return new int[] { gap, (round - 1) };
             }
-
         }
 
         public static MetadataElement getMetaData(string path, bool getComment, bool getDate) {
