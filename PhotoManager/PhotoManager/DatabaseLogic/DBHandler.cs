@@ -382,7 +382,7 @@ namespace PhotoManager {
                     }
                 }
             } catch {
-                //   Debug.WriteLine("Error processing: " + comm);
+                Debug.WriteLine(comm);
             }
             return loadinglist;
         }

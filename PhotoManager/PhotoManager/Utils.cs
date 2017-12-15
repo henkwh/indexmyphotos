@@ -40,6 +40,8 @@ namespace PhotoManager {
             combobox_sorting.Items.Add(new OrderElement("Location W to E", " ORDER BY f.loclng ASC"));
             combobox_sorting.Items.Add(new OrderElement("Location E to W", " ORDER BY f.loclng DESC"));
             combobox_sorting.Items.Add(new OrderElement("Filetype", " ORDER BY f.filetype ASC"));
+            combobox_sorting.Items.Add(new OrderElement("# tags ascending", " GROUP BY f.id ORDER BY Count(ft.tagid) ASC"));
+            combobox_sorting.Items.Add(new OrderElement("# tags descending", " GROUP BY ft.fotoid ORDER BY Count(ft.tagid) DESC"));
             combobox_sorting.SelectedIndex = 1;
 
             combobox_MapPovider.Items.Add(new OrderElement("Google Maps", GMap.NET.MapProviders.GoogleMapProvider.Instance));

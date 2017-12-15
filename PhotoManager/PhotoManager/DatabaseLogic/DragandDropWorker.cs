@@ -56,16 +56,16 @@ namespace PhotoManager.DatabaseLogic {
                     foreach (string fileName in fileEntries) {
                         string n = loadFile(fileName, mbi, addDate, addComment);
                         if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
-                        //pb.BeginInvoke((MethodInvoker)delegate {
-                        //    pb.Value++;
-                        //});
+                        pb.BeginInvoke((MethodInvoker)delegate {
+                            if (pb.Value < pb.Maximum) { pb.Value++; }
+                        });
                     }
                 } else {
                     string n = loadFile(file, mbi, addDate, addComment);
                     if (!n.Equals("")) { justDragDropped.Add(n); counter++; }
-                    //pb.BeginInvoke((MethodInvoker)delegate {
-                    //    pb.Value++;
-                    //});
+                    pb.BeginInvoke((MethodInvoker)delegate {
+                        if (pb.Value < pb.Maximum) { pb.Value++; }
+                    });
                 }
             }
             db.close();
@@ -127,7 +127,7 @@ namespace PhotoManager.DatabaseLogic {
                     db.deleteEntry(new string[] { hash });
                     mbi.addText("FAIL: Broken file: " + img.getName() + " was now removed from DB");
                 } else {
-                    mbi.addText("OK:  Added " + img.getName()+", date: "+date+", description: "+comment);
+                    mbi.addText("OK:  Added " + img.getName() + ", date: " + date + ", description: " + comment);
                     if (addDate && !date.Equals(Utils.YEAR_STD)) {
                         mbi.addText("          set date to " + date);
                     }

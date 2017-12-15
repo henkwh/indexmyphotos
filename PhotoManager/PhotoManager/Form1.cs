@@ -38,10 +38,15 @@ namespace PhotoManager {
 
         private bool changedEditlist;
 
+        private string lastsearch;
+
+        private bool scrollToSelection = false;
+
         public TableLayoutInfoElement NavigationBarViewerPanel;
 
         public Form1() {
             InitializeComponent();
+            lastsearch = "";
             this.AllowDrop = true;
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
@@ -128,6 +133,11 @@ namespace PhotoManager {
                 i.XPos = x;
                 i.YPos = y;
                 x += gap + imagescale;
+
+                if (scrollToSelection && multiedit.Count() > 0 && i == multiedit[0]) {
+                    panel.VerticalScroll.Value = y;
+                    scrollToSelection = false;
+                }
                 c++;
                 if (c > tmp[1]) {
                     y += (int)ygap + imagescale;
@@ -143,6 +153,7 @@ namespace PhotoManager {
          */
         void Form1_DragDrop(object sender, DragEventArgs e) {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            worker.CancelAsync();
             justDragDropped.Clear();
             multiedit.Clear();
             DragandDropWorker dnd = new DragandDropWorker(files, currentworkingdirectory, dir_full, dir_preview, imagescale, db, new MessageBoxInfo(Location.X, Location.Y, Width, Height), tsprogressbar);
@@ -156,6 +167,8 @@ namespace PhotoManager {
             justDragDropped = ((DragandDropWorker)sender).getjustDragDropped();
             MessageBoxInfo mbi = ((DragandDropWorker)sender).getMessgageBox();
             mbi.BringToFront();
+                scrollToSelection = true;
+            tb_search.Text = "";
             tableLayoutPanel1.Enabled = true;
             newWorker();
         }
@@ -198,6 +211,10 @@ namespace PhotoManager {
             //Get images matching the input string
             SearchQuery sq = new SearchQuery(tb_search.Text, selectedorder.Query);
             shown = db.loadEntries(sq);
+            if (!tb_search.Text.Equals(lastsearch)) {
+                panel_overview.VerticalScroll.Value = 0;
+                lastsearch = tb_search.Text;
+            }
             if (InvokeRequired) {
                 panel_overview.BeginInvoke((MethodInvoker)delegate {
                     map.removeMarkers();
@@ -227,7 +244,7 @@ namespace PhotoManager {
                 }
                 if (Environment.TickCount - ticks > 1000) {
                     panel_overview.BeginInvoke((MethodInvoker)delegate {
-                        tsprogressbar.Value = shown.IndexOf(img);
+                        if (shown.IndexOf(img) <= tsprogressbar.Maximum) { tsprogressbar.Value = shown.IndexOf(img); }
                         panel_overview.Refresh();
                         ticks = Environment.TickCount;
                     });
@@ -1003,6 +1020,17 @@ namespace PhotoManager {
 
         private void checkBox_autoinsertcomment_CheckedChanged(object sender, EventArgs e) {
             Properties.Settings.Default.AUTOINSERTCOMMENT = checkBox_autoinsertcomment.Checked;
+        }
+
+        private void pictureBox_search_Click(object sender, EventArgs e) {
+            tb_mapsearch.Visible = !tb_mapsearch.Visible;
+        }
+
+        private void tb_mapsearch_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Return) {
+                map.SetPositionByKeywords(tb_mapsearch.Text);
+                map.Zoom = 13;
+            }
         }
 
         public void ClickedMap(string location) {

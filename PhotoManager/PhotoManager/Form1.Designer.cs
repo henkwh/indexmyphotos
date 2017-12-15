@@ -23,12 +23,11 @@
         /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tb_search = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage_main = new System.Windows.Forms.TabPage();
-            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.tabPage_viewer = new System.Windows.Forms.TabPage();
-            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
             this.tabPage_tags = new System.Windows.Forms.TabPage();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -89,16 +88,19 @@
             this.tsprogressbar = new System.Windows.Forms.ProgressBar();
             this.combobox_sorting = new System.Windows.Forms.ComboBox();
             this.comboBox_MapProvider = new System.Windows.Forms.ComboBox();
-            this.trackBar_scale = new PhotoManager.TrackBarControl();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.panel_tabHolder = new System.Windows.Forms.Panel();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.btn_fav = new System.Windows.Forms.Button();
+            this.trackBar_scale = new PhotoManager.TrackBarControl();
+            this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
+            this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
+            this.pictureBox_search = new System.Windows.Forms.PictureBox();
+            this.tb_mapsearch = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
             this.tabPage_tags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -111,6 +113,7 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
+            this.tabPage_Map.SuspendLayout();
             this.tabPage_Settings.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -125,12 +128,14 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.bottomNaviBar.SuspendLayout();
             this.bottomNaviSettings.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             this.panel_tabHolder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_search)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_search
@@ -177,15 +182,6 @@
             this.tabPage_main.Text = "Overview";
             this.tabPage_main.UseVisualStyleBackColor = true;
             // 
-            // panel_overview
-            // 
-            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_overview.Location = new System.Drawing.Point(3, 3);
-            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
-            this.panel_overview.Name = "panel_overview";
-            this.panel_overview.Size = new System.Drawing.Size(782, 290);
-            this.panel_overview.TabIndex = 0;
-            // 
             // tabPage_viewer
             // 
             this.tabPage_viewer.Controls.Add(this.pictureBox_viewer);
@@ -195,17 +191,6 @@
             this.tabPage_viewer.Size = new System.Drawing.Size(788, 296);
             this.tabPage_viewer.TabIndex = 5;
             this.tabPage_viewer.Text = "View";
-            // 
-            // pictureBox_viewer
-            // 
-            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox_viewer.Name = "pictureBox_viewer";
-            this.pictureBox_viewer.ShownImage = null;
-            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 290);
-            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox_viewer.TabIndex = 0;
-            this.pictureBox_viewer.TabStop = false;
             // 
             // tabPage_tags
             // 
@@ -534,6 +519,8 @@
             // 
             // tabPage_Map
             // 
+            this.tabPage_Map.Controls.Add(this.tb_mapsearch);
+            this.tabPage_Map.Controls.Add(this.pictureBox_search);
             this.tabPage_Map.Location = new System.Drawing.Point(4, 22);
             this.tabPage_Map.Name = "tabPage_Map";
             this.tabPage_Map.Padding = new System.Windows.Forms.Padding(3);
@@ -957,6 +944,7 @@
             // combobox_sorting
             // 
             this.combobox_sorting.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.combobox_sorting.DropDownHeight = 200;
             this.combobox_sorting.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.combobox_sorting.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.combobox_sorting.FormattingEnabled = true;
@@ -984,18 +972,6 @@
             this.comboBox_MapProvider.TabIndex = 5;
             this.comboBox_MapProvider.SelectedIndexChanged += new System.EventHandler(this.comboBox_MapProvider_SelectedIndexChanged);
             this.comboBox_MapProvider.TextChanged += new System.EventHandler(this.combobox_sorting_TextChanged);
-            // 
-            // trackBar_scale
-            // 
-            this.trackBar_scale.Cursor = System.Windows.Forms.Cursors.Default;
-            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar_scale.LargeChange = 1;
-            this.trackBar_scale.Location = new System.Drawing.Point(502, 3);
-            this.trackBar_scale.Name = "trackBar_scale";
-            this.trackBar_scale.Size = new System.Drawing.Size(189, 21);
-            this.trackBar_scale.TabIndex = 2;
-            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // label10
             // 
@@ -1056,6 +1032,65 @@
             this.btn_fav.UseVisualStyleBackColor = true;
             this.btn_fav.Click += new System.EventHandler(this.btn_fav_Click);
             // 
+            // trackBar_scale
+            // 
+            this.trackBar_scale.Cursor = System.Windows.Forms.Cursors.Default;
+            this.trackBar_scale.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar_scale.LargeChange = 1;
+            this.trackBar_scale.Location = new System.Drawing.Point(502, 3);
+            this.trackBar_scale.Name = "trackBar_scale";
+            this.trackBar_scale.Size = new System.Drawing.Size(189, 21);
+            this.trackBar_scale.TabIndex = 2;
+            this.trackBar_scale.TickStyle = System.Windows.Forms.TickStyle.None;
+            this.trackBar_scale.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
+            // panel_overview
+            // 
+            this.panel_overview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_overview.Location = new System.Drawing.Point(3, 3);
+            this.panel_overview.Margin = new System.Windows.Forms.Padding(0);
+            this.panel_overview.Name = "panel_overview";
+            this.panel_overview.Size = new System.Drawing.Size(782, 290);
+            this.panel_overview.TabIndex = 0;
+            // 
+            // pictureBox_viewer
+            // 
+            this.pictureBox_viewer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox_viewer.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox_viewer.Name = "pictureBox_viewer";
+            this.pictureBox_viewer.ShownImage = null;
+            this.pictureBox_viewer.Size = new System.Drawing.Size(782, 290);
+            this.pictureBox_viewer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox_viewer.TabIndex = 0;
+            this.pictureBox_viewer.TabStop = false;
+            // 
+            // pictureBox_search
+            // 
+            this.pictureBox_search.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_search.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_search.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox_search.BackgroundImage")));
+            this.pictureBox_search.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_search.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBox_search.Location = new System.Drawing.Point(749, 6);
+            this.pictureBox_search.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_search.Name = "pictureBox_search";
+            this.pictureBox_search.Size = new System.Drawing.Size(36, 27);
+            this.pictureBox_search.TabIndex = 0;
+            this.pictureBox_search.TabStop = false;
+            this.pictureBox_search.Click += new System.EventHandler(this.pictureBox_search_Click);
+            // 
+            // tb_mapsearch
+            // 
+            this.tb_mapsearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tb_mapsearch.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_mapsearch.Location = new System.Drawing.Point(6, 6);
+            this.tb_mapsearch.Name = "tb_mapsearch";
+            this.tb_mapsearch.Size = new System.Drawing.Size(738, 27);
+            this.tb_mapsearch.TabIndex = 1;
+            this.tb_mapsearch.Visible = false;
+            this.tb_mapsearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_mapsearch_KeyDown);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -1070,7 +1105,6 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage_main.ResumeLayout(false);
             this.tabPage_viewer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
             this.tabPage_tags.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -1085,6 +1119,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
+            this.tabPage_Map.ResumeLayout(false);
+            this.tabPage_Map.PerformLayout();
             this.tabPage_Settings.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
@@ -1104,13 +1140,15 @@
             this.bottomNaviBar.ResumeLayout(false);
             this.bottomNaviSettings.ResumeLayout(false);
             this.bottomNaviSettings.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             this.panel_tabHolder.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel1.PerformLayout();
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_search)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1188,6 +1226,8 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.Button btn_loadcommentfromfile;
+        private System.Windows.Forms.PictureBox pictureBox_search;
+        private System.Windows.Forms.TextBox tb_mapsearch;
     }
 }
 

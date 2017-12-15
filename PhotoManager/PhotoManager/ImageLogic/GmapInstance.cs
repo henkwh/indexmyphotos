@@ -17,20 +17,23 @@ namespace PhotoManager {
 
         private long lastClick;
 
+        private double deltadistance = 0.2;
+
         public GMapInstance(Form1 f, string cwd) {
             form = f;
             overlay = new GMapOverlay("markers");
             addBrowser();
             pincursor = new Cursor(Assembly.GetExecutingAssembly().GetManifestResourceStream("PhotoManager.Resources.pin2.cur"));
+           
             editmode = false;
             pinscale = Properties.Settings.Default.SCALE_MAP;
         }
-
 
         public void addBrowser() {
             MouseDown += new MouseEventHandler(myMap_Click);
             MouseUp += new MouseEventHandler(myMap_Up);
             PreviewKeyDown += GMapInstance_PreviewKeyDown;
+            OnMapZoomChanged += GMapInstance_OnMapZoomChanged;
             Dock = System.Windows.Forms.DockStyle.Fill;
             DragButton = MouseButtons.Left;
             IgnoreMarkerOnMouseWheel = true;
@@ -46,6 +49,7 @@ namespace PhotoManager {
             MinZoom = 2;
             MaxZoom = 22;
             Position = new PointLatLng(48.8617774, 2.349272);
+
         }
 
         private void GMapInstance_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
@@ -105,6 +109,11 @@ namespace PhotoManager {
                 lastClick = Environment.TickCount;
 
             }
+            System.Diagnostics.Debug.WriteLine(Zoom + "");
+        }
+
+        private void GMapInstance_OnMapZoomChanged() {
+            
         }
 
         /*
@@ -116,9 +125,18 @@ namespace PhotoManager {
             GMarkerElement marker = new GMarkerElement(point, ImageGenerator.resizeImage(preview, pinscale));
             marker.Bitmap_DefSize = preview;
             foreach (GMarkerElement ie in overlay.Markers) {
-                if (ie.Position.Lat == point.Lat && ie.Position.Lng == point.Lng) {
-                    ie.IncrementToolTipCounter();
-                    return;
+                if (deltadistance == 0) {
+                    if (ie.Position.Lat == point.Lat && ie.Position.Lng == point.Lng) {
+                        ie.IncrementToolTipCounter();
+                        return;
+                    }
+                } else {
+                    System.Diagnostics.Debug.WriteLine(deltadistance * Zoom / 10);
+                    if (Math.Sqrt(Math.Pow(ie.Position.Lat - point.Lat, 2) + Math.Pow(ie.Position.Lng - point.Lng, 2)) < deltadistance * 6.2 / Zoom) {
+
+                        ie.IncrementToolTipCounter();
+                        return;
+                    }
                 }
             }
             overlay.Markers.Add(marker);
