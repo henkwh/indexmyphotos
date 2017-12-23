@@ -54,6 +54,8 @@
             this.btn_clearlist = new System.Windows.Forms.Button();
             this.panel_tagedit = new System.Windows.Forms.FlowLayoutPanel();
             this.tabPage_Map = new System.Windows.Forms.TabPage();
+            this.tb_mapsearch = new System.Windows.Forms.TextBox();
+            this.pictureBox_search = new System.Windows.Forms.PictureBox();
             this.tabPage_Settings = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.btn_deleteUnusedFiles = new System.Windows.Forms.Button();
@@ -96,8 +98,6 @@
             this.trackBar_scale = new PhotoManager.TrackBarControl();
             this.panel_overview = new PhotoManager.CustomControls.FlowLayoutOverview();
             this.pictureBox_viewer = new PhotoManager.CustomControls.PictureBoxViewer();
-            this.pictureBox_search = new System.Windows.Forms.PictureBox();
-            this.tb_mapsearch = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage_main.SuspendLayout();
             this.tabPage_viewer.SuspendLayout();
@@ -114,6 +114,7 @@
             this.splitContainer1.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.tabPage_Map.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_search)).BeginInit();
             this.tabPage_Settings.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -135,7 +136,6 @@
             this.splitContainer4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_search)).BeginInit();
             this.SuspendLayout();
             // 
             // tb_search
@@ -413,13 +413,14 @@
             // 
             // checkBox_JoinTags
             // 
-            this.checkBox_JoinTags.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBox_JoinTags.Location = new System.Drawing.Point(16, 0);
+            this.checkBox_JoinTags.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.checkBox_JoinTags.Dock = System.Windows.Forms.DockStyle.Left;
+            this.checkBox_JoinTags.Location = new System.Drawing.Point(0, 0);
             this.checkBox_JoinTags.Name = "checkBox_JoinTags";
-            this.checkBox_JoinTags.Size = new System.Drawing.Size(63, 25);
+            this.checkBox_JoinTags.Size = new System.Drawing.Size(63, 31);
             this.checkBox_JoinTags.TabIndex = 0;
             this.checkBox_JoinTags.Text = "Join";
+            this.checkBox_JoinTags.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.checkBox_JoinTags.UseVisualStyleBackColor = true;
             this.checkBox_JoinTags.CheckedChanged += new System.EventHandler(this.checkBox_JoinTags_CheckedChanged);
             // 
@@ -498,10 +499,11 @@
             // 
             // btn_clearlist
             // 
-            this.btn_clearlist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_clearlist.Location = new System.Drawing.Point(363, 253);
+            this.btn_clearlist.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btn_clearlist.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btn_clearlist.Location = new System.Drawing.Point(0, 269);
             this.btn_clearlist.Name = "btn_clearlist";
-            this.btn_clearlist.Size = new System.Drawing.Size(77, 34);
+            this.btn_clearlist.Size = new System.Drawing.Size(443, 21);
             this.btn_clearlist.TabIndex = 4;
             this.btn_clearlist.Text = "Clear List";
             this.btn_clearlist.UseVisualStyleBackColor = true;
@@ -528,6 +530,33 @@
             this.tabPage_Map.TabIndex = 3;
             this.tabPage_Map.Text = "Map";
             this.tabPage_Map.UseVisualStyleBackColor = true;
+            // 
+            // tb_mapsearch
+            // 
+            this.tb_mapsearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tb_mapsearch.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tb_mapsearch.Location = new System.Drawing.Point(6, 6);
+            this.tb_mapsearch.Name = "tb_mapsearch";
+            this.tb_mapsearch.Size = new System.Drawing.Size(738, 27);
+            this.tb_mapsearch.TabIndex = 1;
+            this.tb_mapsearch.Visible = false;
+            this.tb_mapsearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_mapsearch_KeyDown);
+            // 
+            // pictureBox_search
+            // 
+            this.pictureBox_search.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_search.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_search.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox_search.BackgroundImage")));
+            this.pictureBox_search.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox_search.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBox_search.Location = new System.Drawing.Point(749, 6);
+            this.pictureBox_search.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox_search.Name = "pictureBox_search";
+            this.pictureBox_search.Size = new System.Drawing.Size(36, 27);
+            this.pictureBox_search.TabIndex = 0;
+            this.pictureBox_search.TabStop = false;
+            this.pictureBox_search.Click += new System.EventHandler(this.pictureBox_search_Click);
             // 
             // tabPage_Settings
             // 
@@ -718,7 +747,7 @@
             this.trackBar_scale_gap.Location = new System.Drawing.Point(0, 0);
             this.trackBar_scale_gap.Maximum = 6;
             this.trackBar_scale_gap.Name = "trackBar_scale_gap";
-            this.trackBar_scale_gap.Size = new System.Drawing.Size(123, 29);
+            this.trackBar_scale_gap.Size = new System.Drawing.Size(123, 45);
             this.trackBar_scale_gap.TabIndex = 0;
             this.trackBar_scale_gap.Scroll += new System.EventHandler(this.trackBar_scale_Scroll);
             // 
@@ -901,7 +930,7 @@
             // tslabel_picturesof
             // 
             this.tslabel_picturesof.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tslabel_picturesof.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tslabel_picturesof.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tslabel_picturesof.Location = new System.Drawing.Point(0, 3);
             this.tslabel_picturesof.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.tslabel_picturesof.Name = "tslabel_picturesof";
@@ -1064,33 +1093,6 @@
             this.pictureBox_viewer.TabIndex = 0;
             this.pictureBox_viewer.TabStop = false;
             // 
-            // pictureBox_search
-            // 
-            this.pictureBox_search.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_search.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_search.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox_search.BackgroundImage")));
-            this.pictureBox_search.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox_search.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox_search.Location = new System.Drawing.Point(749, 6);
-            this.pictureBox_search.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox_search.Name = "pictureBox_search";
-            this.pictureBox_search.Size = new System.Drawing.Size(36, 27);
-            this.pictureBox_search.TabIndex = 0;
-            this.pictureBox_search.TabStop = false;
-            this.pictureBox_search.Click += new System.EventHandler(this.pictureBox_search_Click);
-            // 
-            // tb_mapsearch
-            // 
-            this.tb_mapsearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tb_mapsearch.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tb_mapsearch.Location = new System.Drawing.Point(6, 6);
-            this.tb_mapsearch.Name = "tb_mapsearch";
-            this.tb_mapsearch.Size = new System.Drawing.Size(738, 27);
-            this.tb_mapsearch.TabIndex = 1;
-            this.tb_mapsearch.Visible = false;
-            this.tb_mapsearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tb_mapsearch_KeyDown);
-            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -1121,6 +1123,7 @@
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tabPage_Map.ResumeLayout(false);
             this.tabPage_Map.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_search)).EndInit();
             this.tabPage_Settings.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
@@ -1148,7 +1151,6 @@
             this.splitContainer4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_scale)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_viewer)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_search)).EndInit();
             this.ResumeLayout(false);
 
         }

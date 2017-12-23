@@ -17,7 +17,7 @@ namespace PhotoManager {
 
         private long lastClick;
 
-        private double deltadistance = 0.2;
+        private double deltadistance = 0;
 
         public GMapInstance(Form1 f, string cwd) {
             form = f;
@@ -193,10 +193,6 @@ namespace PhotoManager {
                 form.setOnMapDone(Utils.getWorkingLocation(new double[] { lat, lng }));
                 setEditMode(false);
             }
-        }
-
-        public bool getEditMode() {
-            return editmode;
         }
 
         private void GMapInstance_Load(object sender, EventArgs e) {

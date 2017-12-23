@@ -19,24 +19,25 @@ namespace PhotoManager.CustomControls {
             RowCount = 0;
             ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 1F));
-            ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+            date = newLabel(System.Drawing.ContentAlignment.MiddleRight);
+            ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, date.Width));
             AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 
             //Add separator
-            Label separator= new Label();
+            Label separator = new Label();
             separator.AutoSize = false;
             separator.Height = 24;
             separator.BorderStyle = BorderStyle.Fixed3D;
             Controls.Add(separator, 1, 0);
 
-            description = newLabel(System.Drawing.ContentAlignment.TopCenter);
-            date = newLabel(System.Drawing.ContentAlignment.TopRight);
+            description = newLabel(System.Drawing.ContentAlignment.MiddleCenter);
+
             Controls.Add(description, 0, 0);
             Controls.Add(date, 2, 0);
         }
 
         public void setDescription(string d) {
-            description.Text = d.Replace("\n"," ");
+            description.Text = d.Replace("\n", "; ");
         }
 
         public Label getLabel() {
@@ -51,6 +52,7 @@ namespace PhotoManager.CustomControls {
                     t = s + "." + t;
                 }
             }
+            MessageBox.Show(t);
             date.Text = t.Substring(0, Math.Max(0, t.Count() - 1));
         }
 

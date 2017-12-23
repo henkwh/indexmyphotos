@@ -11,6 +11,7 @@ namespace PhotoManager {
         private string SQLCommand;
 
         public SearchQuery(string q, string sorting) {
+            q = q.ToLower().Replace(" und ", " and ").Replace(" oder ", " or ").Replace(" not ", " -").Replace(" nicht ", " -").Replace("ort:", Utils.KEYWORD_LOC).Replace("datum:", Utils.KEYWORD_DATE).Replace("beschreibung:", Utils.KEYWORD_DESCRIPTION);
             SQLCommand += parseQuery(q);
             if (SQLCommand.Equals("")) {
                 SQLCommand += "/";
@@ -23,7 +24,7 @@ namespace PhotoManager {
                 return "";
             }
             List<string> contains = new List<string>();
-            contains.AddRange(q.ToLower().Split(' '));
+            contains.AddRange(q.Split(' '));
             string s = "";
             for (int i = 0; i < contains.Count(); i++) {
                 string keyword = contains[i];

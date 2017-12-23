@@ -25,7 +25,7 @@ namespace PhotoManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AUTOSCALE {
             get {
                 return ((bool)(this["AUTOSCALE"]));
@@ -37,7 +37,7 @@ namespace PhotoManager.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Wheat")]
+        [global::System.Configuration.DefaultSettingValueAttribute("PapayaWhip")]
         public global::System.Drawing.Color BGCOLOR {
             get {
                 return ((global::System.Drawing.Color)(this["BGCOLOR"]));

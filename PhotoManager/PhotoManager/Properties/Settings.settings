@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="AUTOSCALE" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="BGCOLOR" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)">Wheat</Value>
+      <Value Profile="(Default)">PapayaWhip</Value>
     </Setting>
     <Setting Name="SELCOLOR" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">Red</Value>
